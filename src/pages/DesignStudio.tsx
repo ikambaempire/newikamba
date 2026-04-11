@@ -186,7 +186,7 @@ const DesignStudio = () => {
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
             className="text-muted-foreground mb-8 text-lg">
-            While AI tools are great for quick creative work, nothing beats professional storytelling. Let Ikamba Media bring your vision to life.
+            While AI tools are great for quick creative work, nothing beats professional storytelling. Let Ikamba bring your vision to life.
           </motion.p>
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
             className="flex flex-col sm:flex-row gap-3 justify-center">

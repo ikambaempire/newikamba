@@ -92,7 +92,7 @@ const Work = () => (
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="text-lg text-muted-foreground max-w-2xl mb-16">
-          Ikamba Media produces documentaries, video stories, and photography that communicate real impact. Our work focuses on capturing authentic stories that inspire action and build trust.
+          Ikamba produces documentaries, video stories, and photography that communicate real impact. Our work focuses on capturing authentic stories that inspire action and build trust.
         </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

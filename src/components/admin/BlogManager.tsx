@@ -31,7 +31,7 @@ const emptyPost = {
   content: "",
   category: "",
   cover_image_url: "",
-  author: "Ikamba Media",
+  author: "Ikamba",
   published: false,
 };
 

@@ -125,7 +125,7 @@ const Solutions = () => {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-lg text-white/70 max-w-2xl mb-16">
-            Ikamba Media provides storytelling and media production solutions designed for organizations that want to communicate their work clearly and effectively.
+            Ikamba provides storytelling and media production solutions designed for organizations that want to communicate their work clearly and effectively.
           </motion.p>
         </div>
       </section>
