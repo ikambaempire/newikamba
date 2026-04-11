@@ -67,7 +67,7 @@ const HowItWorks = () => (
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="text-lg text-white/70 max-w-2xl mb-16">
-          Ikamba Media follows a simple and structured production process that makes storytelling easier for communication teams.
+          Ikamba follows a simple and structured production process that makes storytelling easier for communication teams.
         </motion.p>
       </div>
     </section>

@@ -67,7 +67,7 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
         <div className="md:col-span-1">
           <p className="font-heading text-xl font-extrabold tracking-tight mb-3">
-            <span className="text-accent">i</span>KAMBA<span className="text-primary-foreground/60 text-base font-semibold ml-1">Media</span>
+            <span className="text-accent">i</span>KAMBA
           </p>
           <p className="text-sm text-primary-foreground/60 leading-relaxed mb-4">
             Impact Storytelling & Media Production for Organizations.
@@ -122,7 +122,7 @@ const Footer = () => (
       </div>
 
       <div className="border-t border-primary-foreground/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-xs text-primary-foreground/40">© {new Date().getFullYear()} Ikamba Media. All rights reserved.</p>
+        <p className="text-xs text-primary-foreground/40">© {new Date().getFullYear()} Ikamba. All rights reserved.</p>
         <p className="text-xs text-primary-foreground/40">Impact Storytelling & Media Production.</p>
       </div>
     </div>

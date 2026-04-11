@@ -73,11 +73,48 @@ const whoWeWorkWith = [
 ];
 
 const challenges = [
-  "Coordinating freelancers across multiple projects",
-  "Managing production workflows without a system",
-  "Slow approval processes delaying delivery",
-  "Scattered media assets with no central archive",
-  "Important stories remaining undocumented",
+  {
+    number: "01",
+    title: "Inconsistent Brand Storytelling",
+    desc: "Your brand story changes depending on who tells it — different teams, agencies, and freelancers produce fragmented content that dilutes your message.",
+    stat: "73%",
+    statLabel: "of audiences distrust inconsistent brands",
+  },
+  {
+    number: "02",
+    title: "Slow & Expensive Production",
+    desc: "Traditional production workflows involve weeks of back-and-forth, hidden costs, and unpredictable timelines that drain budgets and delay campaigns.",
+    stat: "6-8wks",
+    statLabel: "average production cycle",
+  },
+  {
+    number: "03",
+    title: "No Central Content Hub",
+    desc: "Media assets scattered across drives, emails, and platforms make it impossible to find, reuse, or repurpose existing content efficiently.",
+    stat: "65%",
+    statLabel: "of content never gets reused",
+  },
+  {
+    number: "04",
+    title: "Stories That Don't Convert",
+    desc: "Beautiful videos and photos that fail to drive action. Without strategic storytelling, content becomes decoration instead of a growth engine.",
+    stat: "2x",
+    statLabel: "higher engagement with story-driven content",
+  },
+  {
+    number: "05",
+    title: "Scaling Content Across Regions",
+    desc: "Operating in multiple markets means adapting stories for local audiences — but most organizations lack the infrastructure to produce at scale.",
+    stat: "100+",
+    statLabel: "countries need localized content",
+  },
+  {
+    number: "06",
+    title: "Measuring Impact Is Guesswork",
+    desc: "Without clear metrics and feedback loops, organizations can't tell which stories resonate, making it impossible to optimize future campaigns.",
+    stat: "40%",
+    statLabel: "of teams lack content performance data",
+  },
 ];
 
 const FeaturedInsights = () => {
@@ -267,7 +304,7 @@ const Index = () => {
             transition={{ duration: 0.6, delay: 1.8 }}
             className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed mb-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
           >
-            Ikamba Media helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
+            Ikamba helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
           </motion.p>
 
           <motion.div
@@ -297,112 +334,221 @@ const Index = () => {
       {/* Trusted By */}
       <TrustedBySlider />
 
-      {/* The Challenge */}
+      {/* The Challenge - 90seconds inspired full-width overlay cards */}
       <section className="section-padding gradient-navy text-white">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-4 text-white">
-            The Challenge
-          </motion.h2>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
-            className="text-white/70 mb-10 max-w-xl text-lg">
-            Many organizations struggle to manage storytelling and media production.
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {challenges.map((text, i) => (
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">
+              The Challenge
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-white">
+              What's Holding Your Stories Back?
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-white/60 max-w-2xl mx-auto text-lg">
+              Organizations face real barriers when trying to communicate impact through storytelling.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {challenges.map((c, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                  className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/10 h-full hover:bg-white/15 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center mb-3">
-                    <span className="text-accent font-bold text-sm">{i + 1}</span>
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative bg-white/[0.06] backdrop-blur-sm rounded-2xl p-6 border border-white/[0.08] h-full hover:bg-white/[0.1] hover:border-accent/30 transition-all duration-500 overflow-hidden">
+                  {/* Decorative gradient corner */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-accent/10 to-transparent rounded-bl-full pointer-events-none" />
+                  
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-accent/70 font-semibold">{c.number}</span>
+                    <div className="text-right">
+                      <p className="text-xl font-extrabold text-accent leading-none">{c.stat}</p>
+                      <p className="text-[9px] uppercase tracking-wider text-white/40 mt-0.5">{c.statLabel}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-white/90 leading-relaxed">{text}</p>
+                  
+                  <h3 className="text-base font-bold text-white mb-2 leading-tight">{c.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{c.desc}</p>
                 </motion.div>
               </Card3D>
             ))}
           </div>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
-            className="text-white/60 mt-8 text-base">
-            As a result, important stories often remain undocumented.
-          </motion.p>
         </div>
       </section>
 
-      {/* Our Solutions with images */}
+      {/* Our Solutions - 90seconds-inspired full-width overlay cards */}
       <section className="section-padding bg-secondary">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-3 text-foreground">Our Solutions</motion.h2>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
-            className="text-muted-foreground mb-12 max-w-xl text-lg">
-            Ikamba Media provides a structured approach to storytelling and media production.
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
+              Our Solutions
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              Storytelling solutions for every need
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Ikamba provides a structured approach to storytelling and media production.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {solutions.map((s, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                  className="bg-card border border-border rounded-xl overflow-hidden h-full shadow-[0_2px_12px_hsl(var(--foreground)/0.04)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.1)] hover:border-accent/30 transition-all duration-300">
-                  <div className="h-48 overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-8">
-                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
-                      <s.icon className="text-accent" size={24} />
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative rounded-2xl overflow-hidden h-72 cursor-pointer">
+                  {/* Full background image */}
+                  <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {/* Content overlay */}
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-accent/20 backdrop-blur-sm flex items-center justify-center border border-accent/30">
+                        <s.icon className="text-accent" size={20} />
+                      </div>
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">{s.title}</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-2 text-foreground">{s.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                    <p className="text-sm text-white/70 leading-relaxed max-w-sm">{s.desc}</p>
                   </div>
                 </motion.div>
               </Card3D>
             ))}
           </div>
-          <div className="mt-10">
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
+            className="mt-10 text-center">
             <Link to="/solutions">
               <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
                 View All Solutions <ArrowRight className="ml-1" size={14} />
               </Button>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Featured Work with images */}
+      {/* Featured Work - 90seconds overlay card style */}
       <section className="section-padding">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-3 text-foreground">Featured Work</motion.h2>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
-            className="text-muted-foreground mb-10 max-w-xl text-lg">
-            Our storytelling work captures real stories that communicate impact and inspire action.
-          </motion.p>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
+              Featured Work
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              Real stories from real organizations
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Our storytelling work captures authentic narratives that communicate impact and inspire action.
+            </motion.p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Documentary Storytelling", desc: "Real stories from the field, produced with cinematic quality.", image: storytellingCommunity },
-              { title: "Impact Campaigns", desc: "Visual campaigns that amplify organizational missions.", image: impactCampaign },
-              { title: "Photography Stories", desc: "Authentic photography that captures leadership and community.", image: photographyLandscape },
+              { title: "Documentary Storytelling", desc: "Real stories from the field, produced with cinematic quality.", image: storytellingCommunity, stat: "45K+", statLabel: "Views" },
+              { title: "Impact Campaigns", desc: "Visual campaigns that amplify organizational missions.", image: impactCampaign, stat: "200K+", statLabel: "Reach" },
+              { title: "Photography Stories", desc: "Authentic photography that captures leadership and community.", image: photographyLandscape, stat: "50+", statLabel: "Projects" },
             ].map((item, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                  className="rounded-xl overflow-hidden h-full shadow-[0_4px_20px_hsl(var(--foreground)/0.1)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.15)] transition-shadow">
-                  <div className="h-44 overflow-hidden relative">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative rounded-2xl overflow-hidden h-80 cursor-pointer">
+                  <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+                  <div className="absolute top-4 right-4 bg-accent/90 backdrop-blur-sm rounded-lg px-3 py-1.5 text-center">
+                    <p className="text-sm font-extrabold text-accent-foreground leading-none">{item.stat}</p>
+                    <p className="text-[8px] uppercase tracking-wider text-accent-foreground/70">{item.statLabel}</p>
                   </div>
-                  <div className="bg-primary text-primary-foreground p-6">
-                    <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                    <p className="text-sm text-primary-foreground/60 leading-relaxed">{item.desc}</p>
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                    <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
                   </div>
                 </motion.div>
               </Card3D>
             ))}
           </div>
-          <div className="mt-10">
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}
+            className="mt-10 text-center">
             <Link to="/work">
               <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
                 Explore Our Work <ArrowRight className="ml-1" size={14} />
               </Button>
             </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Start Creating - inspired by 90seconds Self Serve Creation */}
+      <section className="section-padding bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">
+              Start Creating
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              Order storytelling projects like you order anything else.
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Browse our storytelling solutions, configure your project scope, and get started. Transparent process, guaranteed quality.
+            </motion.p>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: FileText, title: "Brief It", desc: "Share your vision, goals, and audience. We'll craft the perfect storytelling approach.", color: "from-blue-500/20 to-blue-600/5" },
+              { icon: Video, title: "Produce It", desc: "Our crew handles filming, photography, and production — anywhere you need us.", color: "from-accent/20 to-accent/5" },
+              { icon: CheckCircle2, title: "Review It", desc: "Structured review cycles with real-time collaboration. No endless back-and-forth.", color: "from-emerald-500/20 to-emerald-600/5" },
+              { icon: ArrowRight, title: "Launch It", desc: "Receive final assets optimized for every platform — ready to publish and share.", color: "from-purple-500/20 to-purple-600/5" },
+            ].map((step, i) => (
+              <Card3D key={i} className="group">
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative bg-card rounded-2xl p-6 border border-border h-full hover:border-accent/30 hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.08)] transition-all duration-500 overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${step.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                      <step.icon className="text-accent" size={22} />
+                    </div>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold mb-2">Step {i + 1}</div>
+                    <h3 className="text-base font-bold text-foreground mb-2">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
+                  </div>
+                </motion.div>
+              </Card3D>
+            ))}
+          </div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
+            className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex items-center gap-8 text-center">
+              {[
+                { value: "50+", label: "Projects Delivered" },
+                { value: "Structured", label: "Process" },
+                { value: "100%", label: "Transparent" },
+              ].map((s, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5 + i * 0.1 }}>
+                  <p className="text-2xl font-extrabold text-foreground">{s.value}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={9}
+            className="mt-8 text-center">
+            <Link to="/start-a-project">
+              <Button variant="hero" size="lg">
+                Start a Project <ArrowRight className="ml-1" size={16} />
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
