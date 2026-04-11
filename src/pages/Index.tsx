@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   ArrowRight, FileText, Video, Target, FolderOpen,
-  Camera, Film, Clapperboard, Aperture, Focus, MonitorPlay,
-  Mic, Headphones, Radio, Tv, Projector, Podcast, ScanLine,
-  CheckCircle2, Image, Megaphone, Users,
+  Camera, Film, Image, Megaphone, Users, CheckCircle2,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -19,6 +17,9 @@ import storytellingCommunity from "@/assets/images/storytelling-community.jpg";
 import impactCampaign from "@/assets/images/impact-campaign.jpg";
 import photographyLandscape from "@/assets/images/photography-landscape.jpg";
 import heroDocumentary from "@/assets/images/hero-documentary.jpg";
+import workDocumentary from "@/assets/images/work-documentary.jpg";
+import workCampaign from "@/assets/images/work-campaign.jpg";
+import workPhotography from "@/assets/images/work-photography.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -27,29 +28,6 @@ const fadeUp = {
     transition: { delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
   }),
 };
-
-const heroIcons = [
-  { Icon: Camera, x: "5%", y: "10%", size: 28, delay: 0, dur: 6 },
-  { Icon: Film, x: "18%", y: "5%", size: 22, delay: 0.8, dur: 7 },
-  { Icon: Clapperboard, x: "32%", y: "14%", size: 24, delay: 0.4, dur: 5.5 },
-  { Icon: Video, x: "48%", y: "8%", size: 20, delay: 1.2, dur: 6.5 },
-  { Icon: Aperture, x: "62%", y: "12%", size: 28, delay: 0.6, dur: 7.5 },
-  { Icon: MonitorPlay, x: "78%", y: "6%", size: 22, delay: 1.5, dur: 6 },
-  { Icon: Mic, x: "90%", y: "14%", size: 20, delay: 0.3, dur: 5 },
-  { Icon: Focus, x: "7%", y: "38%", size: 22, delay: 1, dur: 8 },
-  { Icon: Headphones, x: "20%", y: "48%", size: 24, delay: 0.5, dur: 6 },
-  { Icon: Projector, x: "40%", y: "42%", size: 22, delay: 1.8, dur: 7 },
-  { Icon: Radio, x: "58%", y: "46%", size: 20, delay: 0.7, dur: 5.5 },
-  { Icon: ScanLine, x: "72%", y: "36%", size: 26, delay: 1.3, dur: 6.5 },
-  { Icon: Podcast, x: "88%", y: "44%", size: 20, delay: 0.2, dur: 7.5 },
-  { Icon: Tv, x: "94%", y: "55%", size: 22, delay: 1.6, dur: 6 },
-  { Icon: Camera, x: "10%", y: "72%", size: 24, delay: 0.9, dur: 5.5 },
-  { Icon: Film, x: "25%", y: "80%", size: 20, delay: 1.4, dur: 7 },
-  { Icon: Clapperboard, x: "42%", y: "68%", size: 26, delay: 0.1, dur: 6 },
-  { Icon: Video, x: "56%", y: "76%", size: 22, delay: 2, dur: 8 },
-  { Icon: Aperture, x: "70%", y: "70%", size: 24, delay: 0.6, dur: 5 },
-  { Icon: MonitorPlay, x: "84%", y: "78%", size: 22, delay: 1.1, dur: 6.5 },
-];
 
 const solutions = [
   { icon: Film, title: "Documentary Production", desc: "Short documentaries highlighting real stories, community impact, and organizational achievements.", image: storytellingCommunity },
@@ -117,6 +95,25 @@ const challenges = [
   },
 ];
 
+/* Hero floating image cards */
+const heroCards = [
+  { image: workDocumentary, rotate: -6, x: 0, y: 0, scale: 1 },
+  { image: storytellingCommunity, rotate: 3, x: 60, y: -20, scale: 0.92 },
+  { image: workCampaign, rotate: -3, x: 20, y: 80, scale: 0.88 },
+  { image: impactCampaign, rotate: 5, x: 80, y: 60, scale: 0.85 },
+  { image: workPhotography, rotate: -2, x: -10, y: 160, scale: 0.9 },
+];
+
+/* Featured Work cards for carousel */
+const featuredWork = [
+  { title: "Documentary Storytelling", category: "DOCUMENTARY", desc: "Real stories from the field, produced with cinematic quality.", image: storytellingCommunity, stat: "45K+ Views" },
+  { title: "Impact Campaigns", category: "CAMPAIGN", desc: "Visual campaigns that amplify organizational missions.", image: impactCampaign, stat: "200K+ Reach" },
+  { title: "Photography Stories", category: "PHOTOGRAPHY", desc: "Authentic photography that captures leadership and community.", image: photographyLandscape, stat: "50+ Projects" },
+  { title: "Youth Entrepreneurship", category: "DOCUMENTARY", desc: "How young entrepreneurs are reshaping local economies across East Africa.", image: workDocumentary, stat: "3 Conferences" },
+  { title: "Climate Action Kigali", category: "CAMPAIGN", desc: "Multi-format campaign content for a regional climate conference.", image: workCampaign, stat: "12 Assets" },
+  { title: "Education Access", category: "PHOTOGRAPHY", desc: "Photographic documentation of education programs reaching underserved communities.", image: workPhotography, stat: "Annual Report" },
+];
+
 const FeaturedInsights = () => {
   const [posts, setPosts] = useState<{ id: string; title: string; slug: string; excerpt: string | null; category: string | null; cover_image_url: string | null; published_at: string | null }[]>([]);
   useEffect(() => {
@@ -163,178 +160,262 @@ const FeaturedInsights = () => {
 
 const typewriterWords = ["Storytelling", "Documentaries", "Campaigns", "Photography"];
 
+/* Featured Work Carousel - 90seconds Self Serve Creation style */
+const FeaturedWorkCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % featuredWork.length);
+    }, 3500);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  return (
+    <section className="section-padding bg-background overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+            className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
+            Featured Work
+          </motion.p>
+          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+            className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+            Real stories from real organizations
+          </motion.h2>
+          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+            className="text-muted-foreground max-w-2xl mx-auto text-lg">
+            Our storytelling work captures authentic narratives that communicate impact and inspire action.
+          </motion.p>
+        </div>
+
+        {/* Carousel container */}
+        <div className="relative flex items-center justify-center h-[420px] md:h-[480px]">
+          {featuredWork.map((item, i) => {
+            const offset = i - activeIndex;
+            const absOffset = Math.abs(offset);
+            const isActive = offset === 0;
+            const isVisible = absOffset <= 2;
+            if (!isVisible) return null;
+
+            return (
+              <motion.div
+                key={i}
+                className="absolute cursor-pointer"
+                onClick={() => {
+                  setActiveIndex(i);
+                  if (intervalRef.current) clearInterval(intervalRef.current);
+                }}
+                animate={{
+                  x: offset * 220,
+                  scale: isActive ? 1 : 0.82 - absOffset * 0.06,
+                  zIndex: 10 - absOffset,
+                  opacity: isActive ? 1 : 0.5 - absOffset * 0.15,
+                  rotateY: offset * -8,
+                }}
+                transition={{ duration: 0.6, ease: [0.32, 0.72, 0, 1] }}
+                style={{ perspective: 1000 }}
+              >
+                <div className={`relative w-[280px] md:w-[320px] h-[380px] md:h-[420px] rounded-2xl overflow-hidden shadow-2xl ${isActive ? 'ring-2 ring-accent/50' : ''}`}>
+                  <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                  <div className="absolute top-4 left-4">
+                    <span className="text-[9px] uppercase tracking-[0.2em] bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-semibold">
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                    {isActive && (
+                      <motion.p
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-sm text-white/70 mb-2"
+                      >
+                        {item.desc}
+                      </motion.p>
+                    )}
+                    <span className="text-xs font-semibold text-accent">{item.stat}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-6">
+          {featuredWork.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setActiveIndex(i);
+                if (intervalRef.current) clearInterval(intervalRef.current);
+              }}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${i === activeIndex ? 'bg-accent w-6' : 'bg-muted-foreground/30'}`}
+            />
+          ))}
+        </div>
+
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}
+          className="mt-10 text-center">
+          <Link to="/work">
+            <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
+              Explore Our Work <ArrowRight className="ml-1" size={14} />
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero with background video */}
-      <section className="section-padding pt-28 pb-20 sm:pt-32 sm:pb-24 md:pt-40 md:pb-32 relative overflow-hidden">
+      {/* Hero - 90seconds inspired split layout with video background */}
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
         <HeroBackgroundVideo />
 
-        {heroIcons.map(({ Icon, x, y, size, delay, dur }, i) => (
-          <motion.div
-            key={i}
-            className="absolute pointer-events-none text-white"
-            style={{ left: x, top: y }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0, 0.12, 0.06, 0.12, 0],
-              scale: [0.6, 1, 1.15, 1, 0.6],
-              y: [0, -8, 0, 8, 0],
-              rotate: [0, 6, -4, 3, 0],
-            }}
-            transition={{ duration: dur, delay, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Icon size={size} strokeWidth={1.5} />
-          </motion.div>
-        ))}
-
-        <motion.div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-[1]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          <motion.div
-            className="absolute w-[600px] h-[2px] bg-gradient-to-r from-transparent via-accent/30 to-transparent"
-            style={{ top: "30%", left: "-300px", rotate: "-12deg" }}
-            animate={{ x: ["-300px", "calc(100vw + 300px)"] }}
-            transition={{ duration: 4, delay: 1, repeat: Infinity, repeatDelay: 8, ease: "easeInOut" }}
-          />
-        </motion.div>
-
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none z-[1]"
-          style={{ background: "radial-gradient(circle, hsl(38 92% 50% / 0.08) 0%, transparent 70%)" }}
-          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-
-        <div className="max-w-5xl mx-auto relative z-10">
-          <motion.div
-            className="hidden md:block absolute -top-6 -left-8 w-16 h-16 border-l-2 border-t-2 border-accent/40 rounded-tl-sm"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          />
-          <motion.div
-            className="hidden md:block absolute -bottom-6 -right-8 w-16 h-16 border-r-2 border-b-2 border-accent/40 rounded-br-sm"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          />
-
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-2 mb-6"
-          >
-            <motion.div
-              className="w-2 h-2 rounded-full bg-accent"
-              animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <p className="text-xs uppercase tracking-[0.2em] font-semibold text-white/70 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-              Impact Storytelling & Media Production
-            </p>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] as const }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.08] text-white mb-6 text-balance drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-          >
-            {"Powerful ".split("").map((char, i) => (
-              <motion.span
-                key={`p-${i}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + i * 0.04, duration: 0.3 }}
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 lg:px-20 relative z-10 py-28 sm:py-32 md:py-40">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            {/* Left side - Text */}
+            <div>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-2 mb-6"
               >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-            <motion.span
-              className="inline-block"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-            >
-              {typewriterWords.map((word, wi) => (
+                <motion.div
+                  className="w-2 h-2 rounded-full bg-accent"
+                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <p className="text-xs uppercase tracking-[0.2em] font-semibold text-white/70">
+                  Impact Storytelling & Media Production
+                </p>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.7, delay: 0.15 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.08] text-white mb-6 text-balance"
+              >
+                {"Powerful ".split("").map((char, i) => (
+                  <motion.span
+                    key={`p-${i}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.04, duration: 0.3 }}
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
                 <motion.span
-                  key={word}
-                  className="absolute text-accent"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{
-                    opacity: [0, 1, 1, 0],
-                    y: [20, 0, 0, -20],
-                  }}
-                  transition={{
-                    duration: 3,
-                    delay: 0.8 + wi * 3,
-                    repeat: Infinity,
-                    repeatDelay: (typewriterWords.length - 1) * 3,
-                    ease: "easeInOut",
-                    times: [0, 0.1, 0.9, 1],
-                  }}
+                  className="inline-block"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.7, duration: 0.5 }}
                 >
-                  {word}
+                  {typewriterWords.map((word, wi) => (
+                    <motion.span
+                      key={word}
+                      className="absolute text-accent"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{
+                        opacity: [0, 1, 1, 0],
+                        y: [20, 0, 0, -20],
+                      }}
+                      transition={{
+                        duration: 3,
+                        delay: 0.8 + wi * 3,
+                        repeat: Infinity,
+                        repeatDelay: (typewriterWords.length - 1) * 3,
+                        ease: "easeInOut",
+                        times: [0, 0.1, 0.9, 1],
+                      }}
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                  <span className="invisible">{typewriterWords[0]}</span>
                 </motion.span>
-              ))}
-              <span className="invisible">{typewriterWords[0]}</span>
-            </motion.span>
-            {" for Organizations That Create Impact.".split("").map((char, i) => (
-              <motion.span
-                key={`s-${i}`}
+                <br />
+                <span>for Organizations That Create Impact.</span>
+              </motion.h1>
+
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 + i * 0.02, duration: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="text-base sm:text-lg text-white/75 max-w-lg leading-relaxed mb-8"
               >
-                {char === " " ? "\u00A0" : char}
-              </motion.span>
-            ))}
-          </motion.h1>
+                Ikamba helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
+              </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.6, delay: 1.8 }}
-            className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed mb-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
-          >
-            Ikamba helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
-          </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.0 }}
+                className="flex flex-col sm:flex-row gap-3"
+              >
+                <Link to="/start-a-project">
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button variant="hero" size="lg">
+                      Start a Project <ArrowRight className="ml-1" size={16} />
+                    </Button>
+                  </motion.div>
+                </Link>
+                <Link to="/design-studio">
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button variant="outline" size="lg" className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90">
+                      ✨ Free AI Creative Tools
+                    </Button>
+                  </motion.div>
+                </Link>
+              </motion.div>
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 2.0 }}
-            className="flex flex-col sm:flex-row gap-3"
-          >
-            <Link to="/start-a-project">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                <Button variant="hero" size="lg">
-                  Start a Project <ArrowRight className="ml-1" size={16} />
-                </Button>
-              </motion.div>
-            </Link>
-            <Link to="/design-studio">
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                <Button variant="outline" size="lg" className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90">
-                  ✨ Free AI Creative Tools
-                </Button>
-              </motion.div>
-            </Link>
-          </motion.div>
+            {/* Right side - Floating image cards grid (transparent bg, like 90seconds) */}
+            <div className="hidden lg:block relative h-[500px]">
+              <div className="relative w-full h-full">
+                {/* Card grid - 3 columns, 2 rows of floating cards */}
+                {[
+                  { image: workDocumentary, className: "top-0 left-0 w-[180px] h-[220px] rotate-[-4deg]", delay: 0.2 },
+                  { image: storytellingCommunity, className: "top-[-10px] left-[200px] w-[160px] h-[200px] rotate-[3deg]", delay: 0.4 },
+                  { image: workCampaign, className: "top-[10px] right-0 w-[150px] h-[190px] rotate-[-2deg]", delay: 0.6 },
+                  { image: impactCampaign, className: "bottom-[60px] left-[30px] w-[170px] h-[200px] rotate-[2deg]", delay: 0.8 },
+                  { image: heroDocumentary, className: "bottom-[40px] left-[220px] w-[160px] h-[210px] rotate-[-3deg]", delay: 1.0 },
+                  { image: workPhotography, className: "bottom-[70px] right-[10px] w-[140px] h-[180px] rotate-[4deg]", delay: 0.5 },
+                ].map((card, i) => (
+                  <motion.div
+                    key={i}
+                    className={`absolute rounded-xl overflow-hidden shadow-2xl ${card.className}`}
+                    initial={{ opacity: 0, y: 40, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.7, delay: card.delay, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.05, zIndex: 20, rotate: 0 }}
+                  >
+                    <img src={card.image} alt="" className="w-full h-full object-cover" />
+                    {/* Subtle gradient overlay at bottom */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Trusted By */}
       <TrustedBySlider />
 
-      {/* The Challenge - 90seconds inspired full-width overlay cards */}
+      {/* The Challenge */}
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -357,9 +438,7 @@ const Index = () => {
               <Card3D key={i} className="group">
                 <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
                   className="relative bg-white/[0.06] backdrop-blur-sm rounded-2xl p-6 border border-white/[0.08] h-full hover:bg-white/[0.1] hover:border-accent/30 transition-all duration-500 overflow-hidden">
-                  {/* Decorative gradient corner */}
                   <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-accent/10 to-transparent rounded-bl-full pointer-events-none" />
-                  
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] uppercase tracking-[0.2em] text-accent/70 font-semibold">{c.number}</span>
                     <div className="text-right">
@@ -367,7 +446,6 @@ const Index = () => {
                       <p className="text-[9px] uppercase tracking-wider text-white/40 mt-0.5">{c.statLabel}</p>
                     </div>
                   </div>
-                  
                   <h3 className="text-base font-bold text-white mb-2 leading-tight">{c.title}</h3>
                   <p className="text-sm text-white/60 leading-relaxed">{c.desc}</p>
                 </motion.div>
@@ -377,7 +455,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Solutions - 90seconds-inspired full-width overlay cards */}
+      {/* Our Solutions */}
       <section className="section-padding bg-secondary">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -400,11 +478,8 @@ const Index = () => {
               <Card3D key={i} className="group">
                 <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
                   className="relative rounded-2xl overflow-hidden h-72 cursor-pointer">
-                  {/* Full background image */}
                   <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  {/* Content overlay */}
                   <div className="absolute inset-0 p-8 flex flex-col justify-end">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 rounded-xl bg-accent/20 backdrop-blur-sm flex items-center justify-center border border-accent/30">
@@ -430,61 +505,11 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Work - 90seconds overlay card style */}
-      <section className="section-padding">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
-              className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
-              Featured Work
-            </motion.p>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
-              Real stories from real organizations
-            </motion.h2>
-            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
-              className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Our storytelling work captures authentic narratives that communicate impact and inspire action.
-            </motion.p>
-          </div>
+      {/* Featured Work - 90seconds Self Serve Creation carousel style */}
+      <FeaturedWorkCarousel />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { title: "Documentary Storytelling", desc: "Real stories from the field, produced with cinematic quality.", image: storytellingCommunity, stat: "45K+", statLabel: "Views" },
-              { title: "Impact Campaigns", desc: "Visual campaigns that amplify organizational missions.", image: impactCampaign, stat: "200K+", statLabel: "Reach" },
-              { title: "Photography Stories", desc: "Authentic photography that captures leadership and community.", image: photographyLandscape, stat: "50+", statLabel: "Projects" },
-            ].map((item, i) => (
-              <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
-                  className="relative rounded-2xl overflow-hidden h-80 cursor-pointer">
-                  <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
-                  <div className="absolute top-4 right-4 bg-accent/90 backdrop-blur-sm rounded-lg px-3 py-1.5 text-center">
-                    <p className="text-sm font-extrabold text-accent-foreground leading-none">{item.stat}</p>
-                    <p className="text-[8px] uppercase tracking-wider text-accent-foreground/70">{item.statLabel}</p>
-                  </div>
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                    <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
-                  </div>
-                </motion.div>
-              </Card3D>
-            ))}
-          </div>
-
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}
-            className="mt-10 text-center">
-            <Link to="/work">
-              <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
-                Explore Our Work <ArrowRight className="ml-1" size={14} />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Start Creating - inspired by 90seconds Self Serve Creation */}
-      <section className="section-padding bg-background">
+      {/* Start Creating */}
+      <section className="section-padding bg-secondary">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
@@ -591,7 +616,7 @@ const Index = () => {
       {/* Featured Insights */}
       <FeaturedInsights />
 
-      {/* Who We Work With - with background image */}
+      {/* Who We Work With */}
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={photographyLandscape} alt="" className="w-full h-full object-cover" />
