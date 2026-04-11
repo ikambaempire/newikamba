@@ -75,7 +75,7 @@ const BlogManager = () => {
       content: post.content,
       category: post.category || "",
       cover_image_url: post.cover_image_url || "",
-      author: post.author || "Ikamba Media",
+      author: post.author || "Ikamba",
       published: post.published,
     });
     setEditorMode(true);
