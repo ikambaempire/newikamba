@@ -73,11 +73,48 @@ const whoWeWorkWith = [
 ];
 
 const challenges = [
-  "Coordinating freelancers across multiple projects",
-  "Managing production workflows without a system",
-  "Slow approval processes delaying delivery",
-  "Scattered media assets with no central archive",
-  "Important stories remaining undocumented",
+  {
+    number: "01",
+    title: "Inconsistent Brand Storytelling",
+    desc: "Your brand story changes depending on who tells it — different teams, agencies, and freelancers produce fragmented content that dilutes your message.",
+    stat: "73%",
+    statLabel: "of audiences distrust inconsistent brands",
+  },
+  {
+    number: "02",
+    title: "Slow & Expensive Production",
+    desc: "Traditional production workflows involve weeks of back-and-forth, hidden costs, and unpredictable timelines that drain budgets and delay campaigns.",
+    stat: "6-8wks",
+    statLabel: "average production cycle",
+  },
+  {
+    number: "03",
+    title: "No Central Content Hub",
+    desc: "Media assets scattered across drives, emails, and platforms make it impossible to find, reuse, or repurpose existing content efficiently.",
+    stat: "65%",
+    statLabel: "of content never gets reused",
+  },
+  {
+    number: "04",
+    title: "Stories That Don't Convert",
+    desc: "Beautiful videos and photos that fail to drive action. Without strategic storytelling, content becomes decoration instead of a growth engine.",
+    stat: "2x",
+    statLabel: "higher engagement with story-driven content",
+  },
+  {
+    number: "05",
+    title: "Scaling Content Across Regions",
+    desc: "Operating in multiple markets means adapting stories for local audiences — but most organizations lack the infrastructure to produce at scale.",
+    stat: "100+",
+    statLabel: "countries need localized content",
+  },
+  {
+    number: "06",
+    title: "Measuring Impact Is Guesswork",
+    desc: "Without clear metrics and feedback loops, organizations can't tell which stories resonate, making it impossible to optimize future campaigns.",
+    stat: "40%",
+    statLabel: "of teams lack content performance data",
+  },
 ];
 
 const FeaturedInsights = () => {
