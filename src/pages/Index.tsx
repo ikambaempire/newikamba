@@ -334,34 +334,46 @@ const Index = () => {
       {/* Trusted By */}
       <TrustedBySlider />
 
-      {/* The Challenge */}
+      {/* The Challenge - 90seconds inspired full-width overlay cards */}
       <section className="section-padding gradient-navy text-white">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-4 text-white">
-            The Challenge
-          </motion.h2>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
-            className="text-white/70 mb-10 max-w-xl text-lg">
-            Many organizations struggle to manage storytelling and media production.
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {challenges.map((text, i) => (
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">
+              The Challenge
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-white">
+              What's Holding Your Stories Back?
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-white/60 max-w-2xl mx-auto text-lg">
+              Organizations face real barriers when trying to communicate impact through storytelling.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {challenges.map((c, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                  className="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/10 h-full hover:bg-white/15 transition-colors">
-                  <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center mb-3">
-                    <span className="text-accent font-bold text-sm">{i + 1}</span>
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative bg-white/[0.06] backdrop-blur-sm rounded-2xl p-6 border border-white/[0.08] h-full hover:bg-white/[0.1] hover:border-accent/30 transition-all duration-500 overflow-hidden">
+                  {/* Decorative gradient corner */}
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-accent/10 to-transparent rounded-bl-full pointer-events-none" />
+                  
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-accent/70 font-semibold">{c.number}</span>
+                    <div className="text-right">
+                      <p className="text-xl font-extrabold text-accent leading-none">{c.stat}</p>
+                      <p className="text-[9px] uppercase tracking-wider text-white/40 mt-0.5">{c.statLabel}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-white/90 leading-relaxed">{text}</p>
+                  
+                  <h3 className="text-base font-bold text-white mb-2 leading-tight">{c.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed">{c.desc}</p>
                 </motion.div>
               </Card3D>
             ))}
           </div>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
-            className="text-white/60 mt-8 text-base">
-            As a result, important stories often remain undocumented.
-          </motion.p>
         </div>
       </section>
 
