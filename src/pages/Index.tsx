@@ -377,41 +377,56 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Solutions with images */}
+      {/* Our Solutions - 90seconds-inspired full-width overlay cards */}
       <section className="section-padding bg-secondary">
-        <div className="max-w-5xl mx-auto">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-3 text-foreground">Our Solutions</motion.h2>
-          <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
-            className="text-muted-foreground mb-12 max-w-xl text-lg">
-            Ikamba Media provides a structured approach to storytelling and media production.
-          </motion.p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
+              Our Solutions
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              Storytelling solutions for every need
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Ikamba provides a structured approach to storytelling and media production.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {solutions.map((s, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                  className="bg-card border border-border rounded-xl overflow-hidden h-full shadow-[0_2px_12px_hsl(var(--foreground)/0.04)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.1)] hover:border-accent/30 transition-all duration-300">
-                  <div className="h-48 overflow-hidden">
-                    <img src={s.image} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-8">
-                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
-                      <s.icon className="text-accent" size={24} />
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
+                  className="relative rounded-2xl overflow-hidden h-72 cursor-pointer">
+                  {/* Full background image */}
+                  <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  {/* Content overlay */}
+                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-accent/20 backdrop-blur-sm flex items-center justify-center border border-accent/30">
+                        <s.icon className="text-accent" size={20} />
+                      </div>
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">{s.title}</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-2 text-foreground">{s.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                    <p className="text-sm text-white/70 leading-relaxed max-w-sm">{s.desc}</p>
                   </div>
                 </motion.div>
               </Card3D>
             ))}
           </div>
-          <div className="mt-10">
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
+            className="mt-10 text-center">
             <Link to="/solutions">
               <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
                 View All Solutions <ArrowRight className="ml-1" size={14} />
               </Button>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
