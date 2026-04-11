@@ -304,7 +304,7 @@ const Index = () => {
             transition={{ duration: 0.6, delay: 1.8 }}
             className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed mb-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
           >
-            Ikamba Media helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
+            Ikamba helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
           </motion.p>
 
           <motion.div
