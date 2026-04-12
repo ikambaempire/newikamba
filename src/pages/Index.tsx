@@ -432,15 +432,15 @@ const Index = () => {
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
               className="text-3xl md:text-4xl font-extrabold mb-4 text-white">
-              What's Holding Your Stories Back?
+              Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
               className="text-white/60 max-w-2xl mx-auto text-lg">
-              Organizations face real barriers when trying to communicate impact through storytelling.
+              Many organizations struggle to communicate their impact clearly, engage their audience deeply, and present their work in a way that resonates with donors, stakeholders, and communities.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {challenges.map((c, i) => (
               <Card3D key={i} className="group">
                 <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
@@ -458,6 +458,26 @@ const Index = () => {
                 </motion.div>
               </Card3D>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Our Response */}
+      <section className="section-padding bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">
+              Our Response
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              We combine storytelling strategy with premium production.
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Ikamba helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
+            </motion.p>
           </div>
         </div>
       </section>
