@@ -651,21 +651,40 @@ const Index = () => {
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={photographyLandscape} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-primary/90" />
+          <div className="absolute inset-0 bg-primary/95" />
         </div>
-        <div className="max-w-5xl mx-auto relative z-10 text-primary-foreground">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-8">
-            Who We Work With
-          </motion.h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whoWeWorkWith.map((org, i) => (
-              <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-                className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-5 py-4">
-                <Users className="text-accent shrink-0" size={18} />
-                <p className="text-sm text-white/80">{org}</p>
-              </motion.div>
-            ))}
+        <div className="max-w-6xl mx-auto relative z-10 text-primary-foreground">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
+                className="text-2xl md:text-3xl font-bold mb-4">
+                Who We Work With
+              </motion.h2>
+              <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+                className="text-white/60 mb-8 text-lg">
+                We partner with organizations creating meaningful impact across sectors.
+              </motion.p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {whoWeWorkWith.map((org, i) => (
+                  <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
+                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    <Users className="text-accent shrink-0" size={16} />
+                    <p className="text-sm text-white/80">{org}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+              <SlicedImageCarousel
+                images={[
+                  { src: storytellingCommunity, alt: "Community storytelling" },
+                  { src: workDocumentary, alt: "Documentary production" },
+                  { src: impactCampaign, alt: "Impact campaign" },
+                  { src: workCampaign, alt: "Campaign visuals" },
+                  { src: workPhotography, alt: "Photography" },
+                ]}
+              />
+            </motion.div>
           </div>
         </div>
       </section>
