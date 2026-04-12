@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
+import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
 
 import storytellingCommunity from "@/assets/images/storytelling-community.jpg";
 import impactCampaign from "@/assets/images/impact-campaign.jpg";
@@ -30,10 +31,10 @@ const fadeUp = {
 };
 
 const solutions = [
-  { icon: Film, title: "Documentary Production", desc: "Short documentaries highlighting real stories, community impact, and organizational achievements.", image: storytellingCommunity },
-  { icon: Video, title: "Video Production", desc: "Professional video for campaigns, programs, interviews, and events.", image: impactCampaign },
-  { icon: Image, title: "Photography", desc: "High-quality photography capturing communities, initiatives, and leadership stories.", image: photographyLandscape },
-  { icon: Megaphone, title: "Campaign Storytelling", desc: "Visual storytelling designed for advocacy campaigns and communication initiatives.", image: heroDocumentary },
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: storytellingCommunity },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: impactCampaign },
+  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: heroDocumentary },
 ];
 
 const processSteps = [
@@ -53,46 +54,45 @@ const whoWeWorkWith = [
 const challenges = [
   {
     number: "01",
-    title: "Inconsistent Brand Storytelling",
-    desc: "Your brand story changes depending on who tells it — different teams, agencies, and freelancers produce fragmented content that dilutes your message.",
-    stat: "73%",
-    statLabel: "of audiences distrust inconsistent brands",
+    title: "Low Engagement",
+    desc: "Content fails to capture attention or build the emotional connection needed to move audiences.",
+    stat: "82%",
+    statLabel: "of content gets ignored",
   },
   {
     number: "02",
-    title: "Slow & Expensive Production",
-    desc: "Traditional production workflows involve weeks of back-and-forth, hidden costs, and unpredictable timelines that drain budgets and delay campaigns.",
-    stat: "6-8wks",
-    statLabel: "average production cycle",
+    title: "Unclear Impact",
+    desc: "Projects, outcomes, and achievements are not translated into strong visual stories people can understand quickly.",
+    stat: "3sec",
+    statLabel: "average attention span",
   },
   {
     number: "03",
-    title: "No Central Content Hub",
-    desc: "Media assets scattered across drives, emails, and platforms make it impossible to find, reuse, or repurpose existing content efficiently.",
+    title: "Weak Storytelling",
+    desc: "Messages often lack structure, cinematic quality, and emotional depth, which reduces credibility and reach.",
     stat: "65%",
-    statLabel: "of content never gets reused",
+    statLabel: "of stories fail to convert",
   },
-  {
-    number: "04",
-    title: "Stories That Don't Convert",
-    desc: "Beautiful videos and photos that fail to drive action. Without strategic storytelling, content becomes decoration instead of a growth engine.",
-    stat: "2x",
-    statLabel: "higher engagement with story-driven content",
-  },
-  {
-    number: "05",
-    title: "Scaling Content Across Regions",
-    desc: "Operating in multiple markets means adapting stories for local audiences — but most organizations lack the infrastructure to produce at scale.",
-    stat: "100+",
-    statLabel: "countries need localized content",
-  },
-  {
-    number: "06",
-    title: "Measuring Impact Is Guesswork",
-    desc: "Without clear metrics and feedback loops, organizations can't tell which stories resonate, making it impossible to optimize future campaigns.",
-    stat: "40%",
-    statLabel: "of teams lack content performance data",
-  },
+];
+
+const extendedCapabilities = [
+  "Campaign Strategy & Story Development",
+  "Scriptwriting & Creative Direction",
+  "Drone & Aerial Coverage",
+  "Livestream & Hybrid Event Production",
+  "Monitoring & Evaluation Storytelling",
+  "Impact Reporting Videos",
+  "Annual Report Visual Content",
+  "Website & Campaign Photography",
+];
+
+const servicesList = [
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners." },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard." },
+  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events." },
+  { icon: Users, title: "Interviews & Testimonials", desc: "Executive interviews, beneficiary stories, case studies, and stakeholder testimonials crafted with clarity and emotion." },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility." },
+  { icon: Image, title: "Photography for Organizations", desc: "Corporate, documentary, event, and editorial photography aligned with your identity and communication goals." },
 ];
 
 /* Hero floating image cards */
@@ -397,12 +397,19 @@ const Index = () => {
                     key={i}
                     className={`absolute rounded-xl overflow-hidden shadow-2xl ${card.className}`}
                     initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.7, delay: card.delay, ease: [0.22, 1, 0.36, 1] }}
-                    whileHover={{ scale: 1.05, zIndex: 20, rotate: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: [0, -12, 0, 8, 0], 
+                      scale: 1,
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.7, delay: card.delay },
+                      scale: { duration: 0.7, delay: card.delay },
+                      y: { duration: 4 + i * 0.5, delay: card.delay + 0.7, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                    whileHover={{ scale: 1.08, zIndex: 20, rotate: 0 }}
                   >
                     <img src={card.image} alt="" className="w-full h-full object-cover" />
-                    {/* Subtle gradient overlay at bottom */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </motion.div>
                 ))}
@@ -425,15 +432,15 @@ const Index = () => {
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
               className="text-3xl md:text-4xl font-extrabold mb-4 text-white">
-              What's Holding Your Stories Back?
+              Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
               className="text-white/60 max-w-2xl mx-auto text-lg">
-              Organizations face real barriers when trying to communicate impact through storytelling.
+              Many organizations struggle to communicate their impact clearly, engage their audience deeply, and present their work in a way that resonates with donors, stakeholders, and communities.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {challenges.map((c, i) => (
               <Card3D key={i} className="group">
                 <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
@@ -455,46 +462,70 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Solutions */}
+      {/* Our Response */}
+      <section className="section-padding bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
+              className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">
+              Our Response
+            </motion.p>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              We combine storytelling strategy with premium production.
+            </motion.h2>
+            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
+              className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              Ikamba helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
+            </motion.p>
+          </div>
+        </div>
+      </section>
+
+      {/* Services */}
       <section className="section-padding bg-secondary">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
               className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
-              Our Solutions
+              Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
               className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
-              Storytelling solutions for every need
+              What we offer organizations and institutions.
             </motion.h2>
-            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
-              className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Ikamba provides a structured approach to storytelling and media production.
-            </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {solutions.map((s, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {servicesList.map((s, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
-                  className="relative rounded-2xl overflow-hidden h-72 cursor-pointer">
-                  <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-accent/20 backdrop-blur-sm flex items-center justify-center border border-accent/30">
-                        <s.icon className="text-accent" size={20} />
-                      </div>
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">{s.title}</span>
-                    </div>
-                    <p className="text-sm text-white/70 leading-relaxed max-w-sm">{s.desc}</p>
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
+                  className="bg-card border border-border rounded-2xl p-6 h-full hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.08)] hover:border-accent/30 transition-all duration-500">
+                  <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <s.icon className="text-accent" size={22} />
                   </div>
+                  <h3 className="text-base font-bold text-foreground mb-2">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 </motion.div>
               </Card3D>
             ))}
           </div>
 
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
+          {/* Extended Capabilities */}
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={9}
+            className="mt-12 bg-card border border-border rounded-2xl p-8">
+            <h3 className="text-lg font-bold text-foreground mb-1">Extended Capabilities</h3>
+            <p className="text-sm text-muted-foreground mb-5">More ways we support strategic communication.</p>
+            <div className="flex flex-wrap gap-2">
+              {extendedCapabilities.map((cap, i) => (
+                <span key={i} className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium border border-accent/20">
+                  {cap}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={10}
             className="mt-10 text-center">
             <Link to="/solutions">
               <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
@@ -620,21 +651,40 @@ const Index = () => {
       <section className="section-padding relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={photographyLandscape} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-primary/90" />
+          <div className="absolute inset-0 bg-primary/95" />
         </div>
-        <div className="max-w-5xl mx-auto relative z-10 text-primary-foreground">
-          <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-8">
-            Who We Work With
-          </motion.h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {whoWeWorkWith.map((org, i) => (
-              <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1}
-                className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-5 py-4">
-                <Users className="text-accent shrink-0" size={18} />
-                <p className="text-sm text-white/80">{org}</p>
-              </motion.div>
-            ))}
+        <div className="max-w-6xl mx-auto relative z-10 text-primary-foreground">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
+                className="text-2xl md:text-3xl font-bold mb-4">
+                Who We Work With
+              </motion.h2>
+              <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
+                className="text-white/60 mb-8 text-lg">
+                We partner with organizations creating meaningful impact across sectors.
+              </motion.p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {whoWeWorkWith.map((org, i) => (
+                  <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
+                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    <Users className="text-accent shrink-0" size={16} />
+                    <p className="text-sm text-white/80">{org}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
+              <SlicedImageCarousel
+                images={[
+                  { src: storytellingCommunity, alt: "Community storytelling" },
+                  { src: workDocumentary, alt: "Documentary production" },
+                  { src: impactCampaign, alt: "Impact campaign" },
+                  { src: workCampaign, alt: "Campaign visuals" },
+                  { src: workPhotography, alt: "Photography" },
+                ]}
+              />
+            </motion.div>
           </div>
         </div>
       </section>
