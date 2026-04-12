@@ -53,6 +53,7 @@ const whoWeWorkWith = [
   "Corporate communication teams",
   "Government institutions",
   "Social enterprises",
+  "Creative talents",
 ];
 
 const challenges = [
