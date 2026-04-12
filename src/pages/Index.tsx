@@ -397,12 +397,19 @@ const Index = () => {
                     key={i}
                     className={`absolute rounded-xl overflow-hidden shadow-2xl ${card.className}`}
                     initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.7, delay: card.delay, ease: [0.22, 1, 0.36, 1] }}
-                    whileHover={{ scale: 1.05, zIndex: 20, rotate: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: [0, -12, 0, 8, 0], 
+                      scale: 1,
+                    }}
+                    transition={{ 
+                      opacity: { duration: 0.7, delay: card.delay },
+                      scale: { duration: 0.7, delay: card.delay },
+                      y: { duration: 4 + i * 0.5, delay: card.delay + 0.7, repeat: Infinity, ease: "easeInOut" },
+                    }}
+                    whileHover={{ scale: 1.08, zIndex: 20, rotate: 0 }}
                   >
                     <img src={card.image} alt="" className="w-full h-full object-cover" />
-                    {/* Subtle gradient overlay at bottom */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                   </motion.div>
                 ))}
