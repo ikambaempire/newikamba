@@ -21,6 +21,10 @@ import heroDocumentary from "@/assets/images/hero-documentary.jpg";
 import workDocumentary from "@/assets/images/work-documentary.jpg";
 import workCampaign from "@/assets/images/work-campaign.jpg";
 import workPhotography from "@/assets/images/work-photography.jpg";
+import carouselFilmcrew from "@/assets/images/carousel-filmcrew.jpg";
+import carouselEvent from "@/assets/images/carousel-event.jpg";
+import carouselCommunity from "@/assets/images/carousel-community.jpg";
+import carouselPhotoshoot from "@/assets/images/carousel-photoshoot.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -49,6 +53,7 @@ const whoWeWorkWith = [
   "Corporate communication teams",
   "Government institutions",
   "Social enterprises",
+  "Creative talents",
 ];
 
 const challenges = [
@@ -268,6 +273,67 @@ const FeaturedWorkCarousel = () => {
         </motion.div>
       </div>
     </section>
+  );
+};
+
+const carouselImages = [
+  { src: carouselFilmcrew, alt: "Film crew on location", caption: "Documentary Production" },
+  { src: carouselEvent, alt: "Conference event coverage", caption: "Event Coverage" },
+  { src: carouselCommunity, alt: "Community impact", caption: "Community Stories" },
+  { src: carouselPhotoshoot, alt: "Brand photoshoot", caption: "Brand Photography" },
+  { src: workDocumentary, alt: "Documentary storytelling", caption: "Visual Storytelling" },
+];
+
+const NormalImageCarousel = () => {
+  const [current, setCurrent] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAutoPlay = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % carouselImages.length);
+    }, 4000);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  return (
+    <div className="relative w-full max-w-lg mx-auto">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl">
+        {carouselImages.map((img, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0"
+            initial={false}
+            animate={{
+              opacity: i === current ? 1 : 0,
+              scale: i === current ? 1 : 1.05,
+            }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+          >
+            <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" width={800} height={600} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <span className="text-xs uppercase tracking-[0.15em] bg-accent/90 text-accent-foreground px-3 py-1 rounded-full font-semibold">
+                {img.caption}
+              </span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <div className="flex justify-center gap-2 mt-4">
+        {carouselImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setCurrent(i); startAutoPlay(); }}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-accent' : 'w-1.5 bg-white/30'}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -649,10 +715,24 @@ const Index = () => {
 
       {/* Who We Work With */}
       <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img src={photographyLandscape} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-primary/95" />
+        {/* Sliced background effect */}
+        <div className="absolute inset-0 z-0 flex">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <div
+              key={i}
+              className="relative flex-1 overflow-hidden"
+              style={{
+                backgroundImage: `url(${carouselFilmcrew})`,
+                backgroundSize: `900% 100%`,
+                backgroundPosition: `${(i / 8) * 100}% center`,
+                opacity: 0.08,
+                filter: "blur(1px)",
+              }}
+            />
+          ))}
         </div>
+        <div className="absolute inset-0 z-0 bg-primary/92" />
+
         <div className="max-w-6xl mx-auto relative z-10 text-primary-foreground">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -662,28 +742,22 @@ const Index = () => {
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
                 className="text-white/60 mb-8 text-lg">
-                We partner with organizations creating meaningful impact across sectors.
+                We partner with organizations and individuals creating meaningful impact across sectors.
               </motion.p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {whoWeWorkWith.map((org, i) => (
                   <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3 hover:bg-white/10 transition-colors">
                     <Users className="text-accent shrink-0" size={16} />
                     <p className="text-sm text-white/80">{org}</p>
                   </motion.div>
                 ))}
               </div>
             </div>
+
+            {/* Normal image carousel */}
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-              <SlicedImageCarousel
-                images={[
-                  { src: storytellingCommunity, alt: "Community storytelling" },
-                  { src: workDocumentary, alt: "Documentary production" },
-                  { src: impactCampaign, alt: "Impact campaign" },
-                  { src: workCampaign, alt: "Campaign visuals" },
-                  { src: workPhotography, alt: "Photography" },
-                ]}
-              />
+              <NormalImageCarousel />
             </motion.div>
           </div>
         </div>
