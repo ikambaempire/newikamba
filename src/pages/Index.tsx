@@ -126,7 +126,7 @@ const FeaturedInsights = () => {
         <div className="flex items-end justify-between mb-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">Latest Insights</h2>
-            <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from impact storytelling.</p>
+            <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from strategic storytelling.</p>
           </motion.div>
           <Link to="/insights" className="hidden sm:inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">View all <ArrowRight size={14} /></Link>
         </div>
@@ -296,7 +296,7 @@ const Index = () => {
                   transition={{ duration: 2, repeat: Infinity }}
                 />
                 <p className="text-xs uppercase tracking-[0.2em] font-semibold text-white/70">
-                  Impact Storytelling & Media Production
+                  Strategic Storytelling & Media Production
                 </p>
               </motion.div>
 

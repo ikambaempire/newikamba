@@ -32,7 +32,7 @@ const About = () => (
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 text-balance text-white">
-          Impact Storytelling & Media Production
+          Strategic Storytelling & Media Production
         </motion.h1>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="text-white/70 max-w-2xl space-y-4 mb-16">
