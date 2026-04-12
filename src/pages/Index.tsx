@@ -482,46 +482,50 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Solutions */}
+      {/* Services */}
       <section className="section-padding bg-secondary">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}
               className="text-xs uppercase tracking-[0.25em] font-semibold text-muted-foreground mb-3">
-              Our Solutions
+              Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
               className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
-              Storytelling solutions for every need
+              What we offer organizations and institutions.
             </motion.h2>
-            <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
-              className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Ikamba provides a structured approach to storytelling and media production.
-            </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {solutions.map((s, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {servicesList.map((s, i) => (
               <Card3D key={i} className="group">
-                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 3}
-                  className="relative rounded-2xl overflow-hidden h-72 cursor-pointer">
-                  <img src={s.image} alt={s.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-accent/20 backdrop-blur-sm flex items-center justify-center border border-accent/30">
-                        <s.icon className="text-accent" size={20} />
-                      </div>
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-accent font-semibold">{s.title}</span>
-                    </div>
-                    <p className="text-sm text-white/70 leading-relaxed max-w-sm">{s.desc}</p>
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
+                  className="bg-card border border-border rounded-2xl p-6 h-full hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.08)] hover:border-accent/30 transition-all duration-500">
+                  <div className="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <s.icon className="text-accent" size={22} />
                   </div>
+                  <h3 className="text-base font-bold text-foreground mb-2">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
                 </motion.div>
               </Card3D>
             ))}
           </div>
 
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
+          {/* Extended Capabilities */}
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={9}
+            className="mt-12 bg-card border border-border rounded-2xl p-8">
+            <h3 className="text-lg font-bold text-foreground mb-1">Extended Capabilities</h3>
+            <p className="text-sm text-muted-foreground mb-5">More ways we support strategic communication.</p>
+            <div className="flex flex-wrap gap-2">
+              {extendedCapabilities.map((cap, i) => (
+                <span key={i} className="text-xs bg-accent/10 text-accent px-3 py-1.5 rounded-full font-medium border border-accent/20">
+                  {cap}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={10}
             className="mt-10 text-center">
             <Link to="/solutions">
               <Button variant="outline" size="sm" className="font-semibold border-border text-foreground hover:bg-accent hover:text-accent-foreground">
