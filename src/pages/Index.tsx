@@ -276,6 +276,67 @@ const FeaturedWorkCarousel = () => {
   );
 };
 
+const carouselImages = [
+  { src: carouselFilmcrew, alt: "Film crew on location", caption: "Documentary Production" },
+  { src: carouselEvent, alt: "Conference event coverage", caption: "Event Coverage" },
+  { src: carouselCommunity, alt: "Community impact", caption: "Community Stories" },
+  { src: carouselPhotoshoot, alt: "Brand photoshoot", caption: "Brand Photography" },
+  { src: workDocumentary, alt: "Documentary storytelling", caption: "Visual Storytelling" },
+];
+
+const NormalImageCarousel = () => {
+  const [current, setCurrent] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAutoPlay = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % carouselImages.length);
+    }, 4000);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, []);
+
+  return (
+    <div className="relative w-full max-w-lg mx-auto">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-2xl">
+        {carouselImages.map((img, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0"
+            initial={false}
+            animate={{
+              opacity: i === current ? 1 : 0,
+              scale: i === current ? 1 : 1.05,
+            }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+          >
+            <img src={img.src} alt={img.alt} className="w-full h-full object-cover" loading="lazy" width={800} height={600} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4">
+              <span className="text-xs uppercase tracking-[0.15em] bg-accent/90 text-accent-foreground px-3 py-1 rounded-full font-semibold">
+                {img.caption}
+              </span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <div className="flex justify-center gap-2 mt-4">
+        {carouselImages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => { setCurrent(i); startAutoPlay(); }}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-6 bg-accent' : 'w-1.5 bg-white/30'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
