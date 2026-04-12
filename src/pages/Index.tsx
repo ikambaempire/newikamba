@@ -654,10 +654,24 @@ const Index = () => {
 
       {/* Who We Work With */}
       <section className="section-padding relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img src={photographyLandscape} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-primary/95" />
+        {/* Sliced background effect */}
+        <div className="absolute inset-0 z-0 flex">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <div
+              key={i}
+              className="relative flex-1 overflow-hidden"
+              style={{
+                backgroundImage: `url(${carouselFilmcrew})`,
+                backgroundSize: `900% 100%`,
+                backgroundPosition: `${(i / 8) * 100}% center`,
+                opacity: 0.08,
+                filter: "blur(1px)",
+              }}
+            />
+          ))}
         </div>
+        <div className="absolute inset-0 z-0 bg-primary/92" />
+
         <div className="max-w-6xl mx-auto relative z-10 text-primary-foreground">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -667,28 +681,22 @@ const Index = () => {
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
                 className="text-white/60 mb-8 text-lg">
-                We partner with organizations creating meaningful impact across sectors.
+                We partner with organizations and individuals creating meaningful impact across sectors.
               </motion.p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {whoWeWorkWith.map((org, i) => (
                   <motion.div key={i} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 2}
-                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3">
+                    className="flex gap-3 items-center bg-white/5 border border-white/10 rounded-lg px-4 py-3 hover:bg-white/10 transition-colors">
                     <Users className="text-accent shrink-0" size={16} />
                     <p className="text-sm text-white/80">{org}</p>
                   </motion.div>
                 ))}
               </div>
             </div>
+
+            {/* Normal image carousel */}
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}>
-              <SlicedImageCarousel
-                images={[
-                  { src: storytellingCommunity, alt: "Community storytelling" },
-                  { src: workDocumentary, alt: "Documentary production" },
-                  { src: impactCampaign, alt: "Impact campaign" },
-                  { src: workCampaign, alt: "Campaign visuals" },
-                  { src: workPhotography, alt: "Photography" },
-                ]}
-              />
+              <NormalImageCarousel />
             </motion.div>
           </div>
         </div>
