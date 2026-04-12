@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
+import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
 
 import storytellingCommunity from "@/assets/images/storytelling-community.jpg";
 import impactCampaign from "@/assets/images/impact-campaign.jpg";
