@@ -70,7 +70,7 @@ const Footer = () => (
             <span className="text-accent">i</span>KAMBA
           </p>
           <p className="text-sm text-primary-foreground/60 leading-relaxed mb-4">
-            Impact Storytelling & Media Production for Organizations.
+            Strategic Storytelling & Media Production for Organizations.
           </p>
           <div className="flex flex-col gap-2">
             <Link to="/start-a-project">
@@ -123,7 +123,7 @@ const Footer = () => (
 
       <div className="border-t border-primary-foreground/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-xs text-primary-foreground/40">© {new Date().getFullYear()} Ikamba. All rights reserved.</p>
-        <p className="text-xs text-primary-foreground/40">Impact Storytelling & Media Production.</p>
+        <p className="text-xs text-primary-foreground/40">Strategic Storytelling & Media Production.</p>
       </div>
     </div>
   </footer>
