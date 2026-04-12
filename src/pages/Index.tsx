@@ -31,10 +31,10 @@ const fadeUp = {
 };
 
 const solutions = [
-  { icon: Film, title: "Documentary Production", desc: "Short documentaries highlighting real stories, community impact, and organizational achievements.", image: storytellingCommunity },
-  { icon: Video, title: "Video Production", desc: "Professional video for campaigns, programs, interviews, and events.", image: impactCampaign },
-  { icon: Image, title: "Photography", desc: "High-quality photography capturing communities, initiatives, and leadership stories.", image: photographyLandscape },
-  { icon: Megaphone, title: "Campaign Storytelling", desc: "Visual storytelling designed for advocacy campaigns and communication initiatives.", image: heroDocumentary },
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: storytellingCommunity },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: impactCampaign },
+  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: heroDocumentary },
 ];
 
 const processSteps = [
@@ -54,46 +54,45 @@ const whoWeWorkWith = [
 const challenges = [
   {
     number: "01",
-    title: "Inconsistent Brand Storytelling",
-    desc: "Your brand story changes depending on who tells it — different teams, agencies, and freelancers produce fragmented content that dilutes your message.",
-    stat: "73%",
-    statLabel: "of audiences distrust inconsistent brands",
+    title: "Low Engagement",
+    desc: "Content fails to capture attention or build the emotional connection needed to move audiences.",
+    stat: "82%",
+    statLabel: "of content gets ignored",
   },
   {
     number: "02",
-    title: "Slow & Expensive Production",
-    desc: "Traditional production workflows involve weeks of back-and-forth, hidden costs, and unpredictable timelines that drain budgets and delay campaigns.",
-    stat: "6-8wks",
-    statLabel: "average production cycle",
+    title: "Unclear Impact",
+    desc: "Projects, outcomes, and achievements are not translated into strong visual stories people can understand quickly.",
+    stat: "3sec",
+    statLabel: "average attention span",
   },
   {
     number: "03",
-    title: "No Central Content Hub",
-    desc: "Media assets scattered across drives, emails, and platforms make it impossible to find, reuse, or repurpose existing content efficiently.",
+    title: "Weak Storytelling",
+    desc: "Messages often lack structure, cinematic quality, and emotional depth, which reduces credibility and reach.",
     stat: "65%",
-    statLabel: "of content never gets reused",
+    statLabel: "of stories fail to convert",
   },
-  {
-    number: "04",
-    title: "Stories That Don't Convert",
-    desc: "Beautiful videos and photos that fail to drive action. Without strategic storytelling, content becomes decoration instead of a growth engine.",
-    stat: "2x",
-    statLabel: "higher engagement with story-driven content",
-  },
-  {
-    number: "05",
-    title: "Scaling Content Across Regions",
-    desc: "Operating in multiple markets means adapting stories for local audiences — but most organizations lack the infrastructure to produce at scale.",
-    stat: "100+",
-    statLabel: "countries need localized content",
-  },
-  {
-    number: "06",
-    title: "Measuring Impact Is Guesswork",
-    desc: "Without clear metrics and feedback loops, organizations can't tell which stories resonate, making it impossible to optimize future campaigns.",
-    stat: "40%",
-    statLabel: "of teams lack content performance data",
-  },
+];
+
+const extendedCapabilities = [
+  "Campaign Strategy & Story Development",
+  "Scriptwriting & Creative Direction",
+  "Drone & Aerial Coverage",
+  "Livestream & Hybrid Event Production",
+  "Monitoring & Evaluation Storytelling",
+  "Impact Reporting Videos",
+  "Annual Report Visual Content",
+  "Website & Campaign Photography",
+];
+
+const servicesList = [
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners." },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard." },
+  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events." },
+  { icon: Users, title: "Interviews & Testimonials", desc: "Executive interviews, beneficiary stories, case studies, and stakeholder testimonials crafted with clarity and emotion." },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility." },
+  { icon: Image, title: "Photography for Organizations", desc: "Corporate, documentary, event, and editorial photography aligned with your identity and communication goals." },
 ];
 
 /* Hero floating image cards */
