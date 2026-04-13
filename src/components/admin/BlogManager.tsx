@@ -59,6 +59,87 @@ const BlogManager = () => {
 
   useEffect(() => { fetchPosts(); }, []);
 
+  const seedSamplePosts = async () => {
+    const samplePosts = [
+      {
+        title: "The Power of Documentary Storytelling in Development Communication",
+        slug: "power-documentary-storytelling-development",
+        excerpt: "How documentary films are transforming the way organizations communicate impact, engage stakeholders, and drive meaningful change across communities.",
+        content: "## Why Documentary Storytelling Matters\n\nIn the world of development communication, there's a growing recognition that traditional reports and statistics alone aren't enough to capture the full picture of impact. Documentary storytelling bridges this gap by combining authentic narratives with cinematic production quality.\n\n## The Human Connection\n\nDocumentaries create emotional connections that data alone cannot achieve. When viewers see real people sharing their experiences, they develop empathy and understanding that drives action.\n\n## Key Elements of Effective Impact Documentaries\n\n- **Authentic voices**: Let beneficiaries and stakeholders tell their own stories\n- **Visual quality**: Professional cinematography elevates credibility\n- **Strategic narrative**: Structure the story around clear impact themes\n- **Call to action**: Guide viewers toward meaningful engagement\n\n## Our Approach at Ikamba\n\nAt Ikamba, we combine strategic storytelling with premium production to create documentaries that don't just inform — they inspire. Our process begins with understanding the organization's communication goals and identifying the stories that matter most.\n\n## The Impact\n\nOrganizations that invest in documentary storytelling consistently see higher engagement rates, stronger donor relationships, and more effective communication of their mission and impact.",
+        category: "Documentary",
+        cover_image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        title: "5 Visual Storytelling Strategies Every NGO Should Adopt in 2026",
+        slug: "visual-storytelling-strategies-ngos-2026",
+        excerpt: "From short-form social content to immersive documentaries, these five strategies will help your organization communicate impact more effectively.",
+        content: "## The Visual Communication Landscape\n\nThe way audiences consume content has fundamentally shifted. Attention spans are shorter, but appetite for meaningful stories has never been greater. Here are five strategies that leading NGOs are using to cut through the noise.\n\n## 1. Short-Form Impact Reels\n\nCreate 60-90 second impact reels that capture key achievements. These work powerfully on social media and in donor presentations.\n\n## 2. Beneficiary-Led Narratives\n\nPut the people you serve at the center of your storytelling. Authentic first-person narratives build trust and emotional connection.\n\n## 3. Behind-the-Scenes Content\n\nShow the process, the challenges, and the team behind the work. This transparency builds credibility and humanizes your organization.\n\n## 4. Data Visualization Videos\n\nTransform your impact data into compelling animated stories. Numbers become memorable when they're visually brought to life.\n\n## 5. Annual Report Videos\n\nReplace lengthy PDF reports with concise video summaries. Stakeholders are far more likely to watch a 3-minute video than read a 50-page document.\n\n## Getting Started\n\nThe key is to start with strategy before production. Understand your audience, define your message, and then choose the right format to deliver it.",
+        category: "Strategy",
+        cover_image_url: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        title: "How Photography Shapes Organizational Identity",
+        slug: "photography-shapes-organizational-identity",
+        excerpt: "Professional photography is more than aesthetics — it's a strategic tool that defines how organizations are perceived by stakeholders and communities.",
+        content: "## Beyond the Snapshot\n\nIn an era of smartphone cameras and stock photos, professional photography might seem like a luxury. But for organizations working in development, corporate communication, and social impact, authentic imagery is a strategic necessity.\n\n## Building Visual Identity\n\nYour photography style communicates your values before a single word is read. Consistent, professional imagery across your website, reports, and social media creates a cohesive brand that stakeholders trust.\n\n## Documentary vs. Corporate Photography\n\nThe best organizational photography blends documentary authenticity with corporate polish. It captures real moments while maintaining the quality standards that institutional partners expect.\n\n## Practical Tips\n\n- **Plan your shot list**: Align photography with your communication strategy\n- **Capture diversity**: Show the full range of your work and the people involved\n- **Think long-term**: Build a photo library that serves multiple campaigns\n- **Invest in editing**: Post-production elevates raw captures into powerful visuals\n\n## The Ikamba Difference\n\nWe approach every photography project with a storytelling mindset. Every image should contribute to the larger narrative your organization is building.",
+        category: "Photography",
+        cover_image_url: "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        title: "Event Coverage That Goes Beyond Highlights: Capturing the Full Story",
+        slug: "event-coverage-beyond-highlights",
+        excerpt: "Professional event coverage should capture not just what happened, but why it mattered. Here's how strategic event filming creates lasting value.",
+        content: "## The Problem with Traditional Event Coverage\n\nMost event videos are forgettable — generic highlight reels set to upbeat music. They capture the surface but miss the substance. Strategic event coverage is different.\n\n## Capturing What Matters\n\nThe best event content tells the story of transformation. What did attendees learn? What connections were made? What commitments were formed?\n\n## Our Multi-Format Approach\n\n- **Same-day edits**: Quick turnaround highlights for social media\n- **Speaker profiles**: Individual interviews with key presenters\n- **Documentary coverage**: The full event narrative for reports and archives\n- **Photography**: High-quality stills for press releases and publications\n\n## Pre-Production Planning\n\nGreat event coverage starts weeks before the event. We work with organizers to understand the agenda, identify key moments, and plan our coverage strategy.\n\n## Maximizing Content Value\n\nA single well-covered event can generate months of content: social media clips, newsletter features, annual report visuals, and stakeholder presentations.",
+        category: "Media Production",
+        cover_image_url: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        title: "Impact Storytelling: Turning M&E Data into Compelling Narratives",
+        slug: "impact-storytelling-me-data-narratives",
+        excerpt: "Monitoring and evaluation data holds powerful stories. Learn how to transform raw impact metrics into visual narratives that move stakeholders to action.",
+        content: "## The Data-Story Gap\n\nOrganizations collect mountains of monitoring and evaluation data, but rarely translate it into stories that resonate. This gap between data and narrative is where impact storytelling lives.\n\n## Why Numbers Need Stories\n\nA statistic tells you what happened. A story tells you why it matters. The most effective impact communication combines both — using data for credibility and narrative for emotional engagement.\n\n## The Storytelling Framework\n\n**1. Start with the human**: Every data point represents a real person or community\n\n**2. Show the journey**: Before, during, and after — transformation is inherently compelling\n\n**3. Use data as proof points**: Weave statistics naturally into the narrative arc\n\n**4. End with vision**: Connect current impact to future possibility\n\n## Visual Approaches\n\n- Animated data visualizations\n- Beneficiary testimonial videos paired with infographics\n- Photo essays with embedded statistics\n- Interactive annual report websites\n\n## The Result\n\nWhen M&E data meets strategic storytelling, organizations see dramatically improved stakeholder engagement, donor retention, and public understanding of their work.",
+        category: "Impact",
+        cover_image_url: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        title: "Corporate Video Production: What Sets Professional Work Apart",
+        slug: "corporate-video-production-professional-standards",
+        excerpt: "The difference between amateur and professional corporate video isn't just equipment — it's strategy, storytelling craft, and production discipline.",
+        content: "## The Quality Question\n\nEvery organization needs video content, but not all video is created equal. The gap between amateur and professional corporate video has real consequences for brand perception and stakeholder trust.\n\n## What Makes Professional Video Different\n\n### Strategic Foundation\nProfessional productions start with clear communication objectives. Every creative decision serves the strategic goal.\n\n### Production Discipline\nFrom lighting and sound to camera movement and composition, professional crews bring technical excellence that elevates every frame.\n\n### Post-Production Craft\nEditing, color grading, sound design, and graphics — this is where raw footage becomes a polished story.\n\n## When to Invest in Professional Video\n\n- Brand launch or rebrand campaigns\n- Annual impact reports\n- Major stakeholder presentations\n- Recruitment and employer branding\n- Product or service launches\n\n## The ROI of Quality\n\nProfessional video content has a significantly longer shelf life, higher engagement rates, and stronger brand impact than amateur alternatives. The initial investment pays dividends across multiple campaigns and channels.",
+        category: "Media Production",
+        cover_image_url: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80",
+        author: "Ikamba",
+        published: true,
+        published_at: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+      },
+    ];
+
+    for (const post of samplePosts) {
+      const { error } = await supabase.from("blog_posts").insert(post);
+      if (error && !error.message.includes("duplicate")) {
+        toast.error("Failed to seed: " + error.message);
+        return;
+      }
+    }
+    toast.success("Sample insights added successfully!");
+    fetchPosts();
+  };
+
   const openNew = () => {
     setEditing(null);
     setForm(emptyPost);
