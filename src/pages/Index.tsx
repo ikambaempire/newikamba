@@ -6,6 +6,7 @@ import { motion, useInView } from "framer-motion";
 import {
   ArrowRight, FileText, Video, Target, FolderOpen,
   Camera, Film, Image, Megaphone, Users, CheckCircle2,
+  Clapperboard, Aperture, Focus, MonitorPlay, Mic, Headphones, Radio, Tv, Projector, Podcast, ScanLine,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -342,6 +343,45 @@ const Index = () => {
       {/* Hero - 90seconds inspired split layout with video background */}
       <section className="relative overflow-hidden min-h-[90vh] flex items-center">
         <HeroBackgroundVideo />
+
+        {/* Creative floating icons - like footer */}
+        {[
+          { Icon: Camera, x: "4%", y: "12%", size: 24, delay: 0, dur: 6 },
+          { Icon: Film, x: "15%", y: "6%", size: 20, delay: 0.8, dur: 7 },
+          { Icon: Clapperboard, x: "28%", y: "18%", size: 22, delay: 0.4, dur: 5.5 },
+          { Icon: Video, x: "42%", y: "8%", size: 18, delay: 1.2, dur: 6.5 },
+          { Icon: Aperture, x: "58%", y: "14%", size: 26, delay: 0.6, dur: 7.5 },
+          { Icon: MonitorPlay, x: "72%", y: "7%", size: 20, delay: 1.5, dur: 6 },
+          { Icon: Mic, x: "86%", y: "16%", size: 18, delay: 0.3, dur: 5 },
+          { Icon: Focus, x: "6%", y: "45%", size: 18, delay: 1, dur: 8 },
+          { Icon: Headphones, x: "20%", y: "55%", size: 22, delay: 0.5, dur: 6 },
+          { Icon: Projector, x: "35%", y: "46%", size: 20, delay: 1.8, dur: 7 },
+          { Icon: Radio, x: "52%", y: "52%", size: 16, delay: 0.7, dur: 5.5 },
+          { Icon: ScanLine, x: "68%", y: "42%", size: 24, delay: 1.3, dur: 6.5 },
+          { Icon: Podcast, x: "82%", y: "48%", size: 18, delay: 0.2, dur: 7.5 },
+          { Icon: Tv, x: "90%", y: "56%", size: 20, delay: 1.6, dur: 6 },
+          { Icon: Camera, x: "10%", y: "78%", size: 20, delay: 0.9, dur: 5.5 },
+          { Icon: Film, x: "25%", y: "85%", size: 18, delay: 1.4, dur: 7 },
+          { Icon: Clapperboard, x: "40%", y: "74%", size: 24, delay: 0.1, dur: 6 },
+          { Icon: Aperture, x: "70%", y: "76%", size: 22, delay: 0.6, dur: 5 },
+          { Icon: MonitorPlay, x: "85%", y: "82%", size: 18, delay: 1.1, dur: 6.5 },
+        ].map(({ Icon, x, y, size, delay, dur }, i) => (
+          <motion.div
+            key={`hero-icon-${i}`}
+            className="absolute pointer-events-none text-white z-[1]"
+            style={{ left: x, top: y }}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{
+              opacity: [0, 0.12, 0.06, 0.12, 0],
+              scale: [0.6, 1, 1.15, 1, 0.6],
+              y: [0, -8, 0, 8, 0],
+              rotate: [0, 6, -4, 3, 0],
+            }}
+            transition={{ duration: dur, delay, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Icon size={size} strokeWidth={1.5} />
+          </motion.div>
+        ))}
 
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 lg:px-20 relative z-10 py-28 sm:py-32 md:py-40">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
