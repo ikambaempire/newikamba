@@ -21,10 +21,6 @@ import heroDocumentary from "@/assets/images/hero-documentary.jpg";
 import workDocumentary from "@/assets/images/work-documentary.jpg";
 import workCampaign from "@/assets/images/work-campaign.jpg";
 import workPhotography from "@/assets/images/work-photography.jpg";
-import carouselFilmcrew from "@/assets/images/carousel-filmcrew.jpg";
-import carouselEvent from "@/assets/images/carousel-event.jpg";
-import carouselCommunity from "@/assets/images/carousel-community.jpg";
-import carouselPhotoshoot from "@/assets/images/carousel-photoshoot.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
