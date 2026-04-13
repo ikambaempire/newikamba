@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart, Eye, Compass, Sparkles } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
-import aboutTeam from "@/assets/images/about-team.jpg";
+const aboutTeam = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
