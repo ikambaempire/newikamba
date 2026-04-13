@@ -451,9 +451,16 @@ Click the image or YouTube icons in the toolbar to embed media."
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-foreground">Blog Posts</h2>
-        <Button size="sm" onClick={openNew} className="gap-1.5">
-          <Plus size={14} /> New Post
-        </Button>
+        <div className="flex items-center gap-2">
+          {posts.length === 0 && (
+            <Button size="sm" variant="outline" onClick={seedSamplePosts} className="gap-1.5">
+              Seed Sample Posts
+            </Button>
+          )}
+          <Button size="sm" onClick={openNew} className="gap-1.5">
+            <Plus size={14} /> New Post
+          </Button>
+        </div>
       </div>
 
       <div className="bg-card border border-border rounded-lg overflow-x-auto">
