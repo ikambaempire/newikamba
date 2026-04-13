@@ -21,10 +21,6 @@ import heroDocumentary from "@/assets/images/hero-documentary.jpg";
 import workDocumentary from "@/assets/images/work-documentary.jpg";
 import workCampaign from "@/assets/images/work-campaign.jpg";
 import workPhotography from "@/assets/images/work-photography.jpg";
-import carouselFilmcrew from "@/assets/images/carousel-filmcrew.jpg";
-import carouselEvent from "@/assets/images/carousel-event.jpg";
-import carouselCommunity from "@/assets/images/carousel-community.jpg";
-import carouselPhotoshoot from "@/assets/images/carousel-photoshoot.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -277,11 +273,11 @@ const FeaturedWorkCarousel = () => {
 };
 
 const carouselImages = [
-  { src: carouselFilmcrew, alt: "Film crew on location", caption: "Documentary Production" },
-  { src: carouselEvent, alt: "Conference event coverage", caption: "Event Coverage" },
-  { src: carouselCommunity, alt: "Community impact", caption: "Community Stories" },
-  { src: carouselPhotoshoot, alt: "Brand photoshoot", caption: "Brand Photography" },
-  { src: workDocumentary, alt: "Documentary storytelling", caption: "Visual Storytelling" },
+  { src: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80", alt: "Film crew on location", caption: "Documentary Production" },
+  { src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", alt: "Conference event coverage", caption: "Event Coverage" },
+  { src: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80", alt: "Community storytelling", caption: "Community Stories" },
+  { src: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80", alt: "Professional photography session", caption: "Brand Photography" },
+  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Visual Storytelling" },
 ];
 
 const NormalImageCarousel = () => {
@@ -714,24 +710,7 @@ const Index = () => {
       <FeaturedInsights />
 
       {/* Who We Work With */}
-      <section className="section-padding relative overflow-hidden">
-        {/* Sliced background effect */}
-        <div className="absolute inset-0 z-0 flex">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div
-              key={i}
-              className="relative flex-1 overflow-hidden"
-              style={{
-                backgroundImage: `url(${carouselFilmcrew})`,
-                backgroundSize: `900% 100%`,
-                backgroundPosition: `${(i / 8) * 100}% center`,
-                opacity: 0.08,
-                filter: "blur(1px)",
-              }}
-            />
-          ))}
-        </div>
-        <div className="absolute inset-0 z-0 bg-primary/92" />
+      <section className="section-padding relative overflow-hidden" style={{ background: 'hsl(217, 72%, 14%)' }}>
 
         <div className="max-w-6xl mx-auto relative z-10 text-primary-foreground">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
