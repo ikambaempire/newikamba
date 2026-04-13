@@ -6,12 +6,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Film, Camera, Megaphone } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
 
-import workDocumentary from "@/assets/images/work-documentary.jpg";
-import workCampaign from "@/assets/images/work-campaign.jpg";
-import workPhotography from "@/assets/images/work-photography.jpg";
-import storytellingCommunity from "@/assets/images/storytelling-community.jpg";
-import impactCampaign from "@/assets/images/impact-campaign.jpg";
-import heroDocumentary from "@/assets/images/hero-documentary.jpg";
+const workDocumentary = "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80";
+const workCampaign = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80";
+const workPhotography = "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80";
+const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
+const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
+const heroDocumentary = "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
