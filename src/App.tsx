@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Solutions from "./pages/Solutions";
+import ForTalents from "./pages/ForTalents";
 import Work from "./pages/Work";
 import HowItWorks from "./pages/HowItWorks";
 import Insights from "./pages/Insights";
@@ -39,6 +40,9 @@ const AnimatedRoutes = () => {
         {/* Public */}
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/solutions" element={<PageTransition><Solutions /></PageTransition>} />
+        <Route path="/solutions/corporates" element={<PageTransition><Solutions /></PageTransition>} />
+        <Route path="/solutions/talents" element={<PageTransition><ForTalents /></PageTransition>} />
+        <Route path="/work" element={<PageTransition><Work /></PageTransition>} />
         <Route path="/work" element={<PageTransition><Work /></PageTransition>} />
         <Route path="/how-it-works" element={<PageTransition><HowItWorks /></PageTransition>} />
         <Route path="/insights" element={<PageTransition><Insights /></PageTransition>} />
