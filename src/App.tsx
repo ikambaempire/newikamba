@@ -9,7 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Solutions from "./pages/Solutions";
-import Work from "./pages/Work";
+import ForTalents from "./pages/ForTalents";
 import HowItWorks from "./pages/HowItWorks";
 import Insights from "./pages/Insights";
 import About from "./pages/About";
