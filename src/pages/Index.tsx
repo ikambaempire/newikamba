@@ -14,8 +14,11 @@ import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
+import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+import creativeCamera from "@/assets/creative-camera.webp";
+import creativeVR from "@/assets/creative-vr.jpg";
 
-// Real Unsplash photos
+// Real photos - mix of Unsplash and uploaded creative African imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
 const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
 const photographyLandscape = "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80";
@@ -280,11 +283,11 @@ const FeaturedWorkCarousel = () => {
 };
 
 const carouselImages = [
-  { src: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80", alt: "Film crew on location", caption: "Documentary Production" },
+  { src: creativeFilmmaker, alt: "African filmmaker with cinema camera", caption: "Documentary Production" },
   { src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", alt: "Conference event coverage", caption: "Event Coverage" },
-  { src: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80", alt: "Community storytelling", caption: "Community Stories" },
-  { src: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80", alt: "Professional photography session", caption: "Brand Photography" },
-  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Visual Storytelling" },
+  { src: creativeCamera, alt: "Creative camera operator in studio", caption: "Visual Storytelling" },
+  { src: creativeVR, alt: "Creative technology and innovation", caption: "Creative Innovation" },
+  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Brand Photography" },
 ];
 
 const NormalImageCarousel = () => {
