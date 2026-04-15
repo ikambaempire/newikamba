@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 const ThemeToggle = () => {
   const [dark, setDark] = useState(() => {
     if (typeof window !== "undefined") {
-      return document.documentElement.classList.contains("dark");
+      const saved = localStorage.getItem("theme");
+      if (saved) return saved === "dark";
+      return true; // default to dark
     }
-    return false;
+    return true;
   });
 
   useEffect(() => {
@@ -22,8 +24,8 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-      setDark(true);
+    if (!saved) {
+      document.documentElement.classList.add("dark");
     }
   }, []);
 

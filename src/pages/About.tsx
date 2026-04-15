@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart, Eye, Compass, Sparkles } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
-const aboutTeam = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80";
+import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+const aboutTeam = creativeFilmmaker;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -64,7 +65,7 @@ const About = () => (
           <img src={aboutTeam} alt="Ikamba team collaborating" className="w-full h-64 md:h-80 object-cover" loading="lazy" />
         </motion.div>
 
-        <h2 className="text-2xl font-bold mb-8">Our Values</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-8">Our Values</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {values.map((v, i) => (
             <Card3D key={i} className="group">

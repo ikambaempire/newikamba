@@ -14,8 +14,11 @@ import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
+import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+import creativeCamera from "@/assets/creative-camera.webp";
+import creativeVR from "@/assets/creative-vr.jpg";
 
-// Real Unsplash photos
+// Real photos - mix of Unsplash and uploaded creative African imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
 const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
 const photographyLandscape = "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80";
@@ -35,7 +38,7 @@ const fadeUp = {
 const solutions = [
   { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: storytellingCommunity },
   { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: impactCampaign },
-  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
+  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
   { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: heroDocumentary },
 ];
 
@@ -92,7 +95,7 @@ const extendedCapabilities = [
 const servicesList = [
   { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners." },
   { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard." },
-  { icon: Camera, title: "Event Coverage & Highlights", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events." },
+  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events." },
   { icon: Users, title: "Interviews & Testimonials", desc: "Executive interviews, beneficiary stories, case studies, and stakeholder testimonials crafted with clarity and emotion." },
   { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility." },
   { icon: Image, title: "Photography for Organizations", desc: "Corporate, documentary, event, and editorial photography aligned with your identity and communication goals." },
@@ -133,7 +136,7 @@ const FeaturedInsights = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between mb-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Latest Insights</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">Latest Insights</h2>
             <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from strategic storytelling.</p>
           </motion.div>
           <Link to="/insights" className="hidden sm:inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">View all <ArrowRight size={14} /></Link>
@@ -189,7 +192,7 @@ const FeaturedWorkCarousel = () => {
             Featured Work
           </motion.p>
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-            className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
             Real stories from real organizations
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -280,11 +283,11 @@ const FeaturedWorkCarousel = () => {
 };
 
 const carouselImages = [
-  { src: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80", alt: "Film crew on location", caption: "Documentary Production" },
+  { src: creativeFilmmaker, alt: "African filmmaker with cinema camera", caption: "Documentary Production" },
   { src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", alt: "Conference event coverage", caption: "Event Coverage" },
-  { src: "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80", alt: "Community storytelling", caption: "Community Stories" },
-  { src: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80", alt: "Professional photography session", caption: "Brand Photography" },
-  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Visual Storytelling" },
+  { src: creativeCamera, alt: "Creative camera operator in studio", caption: "Visual Storytelling" },
+  { src: creativeVR, alt: "Creative technology and innovation", caption: "Creative Innovation" },
+  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Brand Photography" },
 ];
 
 const NormalImageCarousel = () => {
@@ -539,7 +542,7 @@ const Index = () => {
               The Challenge
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl font-extrabold mb-4 text-white">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-white">
               Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -579,7 +582,7 @@ const Index = () => {
               Our Response
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
               We combine storytelling strategy with premium production.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -599,7 +602,7 @@ const Index = () => {
               Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
               What we offer organizations and institutions.
             </motion.h2>
           </div>
@@ -656,7 +659,7 @@ const Index = () => {
               Start Creating
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl font-extrabold mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
               Order storytelling projects like you order anything else.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -720,7 +723,7 @@ const Index = () => {
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-5xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-3 text-white">How It Works</motion.h2>
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 text-white">How It Works</motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
             className="text-white/70 mb-12 max-w-xl text-lg">
             Our simple process makes storytelling production easier for communication teams.
@@ -762,7 +765,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-                className="text-2xl md:text-3xl font-bold mb-4">
+                className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
                 Who We Work With
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
@@ -792,7 +795,7 @@ const Index = () => {
       <section className="section-padding bg-background text-center">
         <div className="max-w-3xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
             Let's Tell Your Story
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}

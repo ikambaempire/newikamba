@@ -8,6 +8,9 @@ import {
   Mic, Star, BookOpen, Lightbulb, Handshake, Target, Rocket
 } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
+import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+import creativeCamera from "@/assets/creative-camera.webp";
+import creativeVR from "@/assets/creative-vr.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -22,7 +25,7 @@ const talentServices = [
     icon: GraduationCap,
     title: "Creative Training Programs",
     desc: "Hands-on workshops in filmmaking, photography, editing, and storytelling designed for emerging and mid-career creatives.",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&q=80",
+    image: creativeFilmmaker,
     features: ["Cinematography & Editing Workshops", "Storytelling Masterclasses", "Equipment & Technical Training", "Portfolio Development"],
   },
   {
@@ -36,14 +39,14 @@ const talentServices = [
     icon: Briefcase,
     title: "Production Opportunities",
     desc: "Get matched to real production projects — documentaries, campaigns, events, and corporate productions.",
-    image: "https://images.unsplash.com/photo-1605117882932-f9e32b03fea9?w=600&q=80",
+    image: creativeCamera,
     features: ["Freelance Project Matching", "Crew & Talent Database", "On-set Experience", "Client Introductions"],
   },
   {
     icon: Rocket,
     title: "Career Development",
     desc: "Build a sustainable creative career with business skills, personal branding, and industry knowledge.",
-    image: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=600&q=80",
+    image: creativeVR,
     features: ["Personal Branding Workshops", "Pricing & Negotiation Skills", "Client Management Training", "Digital Presence Building"],
   },
   {
@@ -122,7 +125,7 @@ const ForTalents = () => {
       <section className="section-padding bg-muted/30">
         <div className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">Creative Categories</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-2">Creative Categories</h2>
             <p className="text-muted-foreground">We support creatives across disciplines</p>
           </motion.div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
@@ -145,7 +148,7 @@ const ForTalents = () => {
       <section className="section-padding">
         <div className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-2">What We Offer Talents</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-2">What We Offer Talents</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
               From training programs to production opportunities — everything you need to build a thriving creative career.
             </p>
@@ -186,7 +189,7 @@ const ForTalents = () => {
       <section className="section-padding" style={{ background: "hsl(217, 72%, 14%)" }}>
         <div className="max-w-5xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0} className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-2">How It Works</h2>
             <p className="text-white/60">Your path from aspiring to thriving creative</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -231,7 +234,7 @@ const ForTalents = () => {
       <section className="section-padding">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-4">Ready to Level Up Your Creative Career?</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4">Ready to Level Up Your Creative Career?</h2>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
               Join Ikamba's creative community and get access to training, collaboration opportunities, and real production projects.
             </p>
