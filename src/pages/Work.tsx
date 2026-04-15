@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Film, Camera, Megaphone } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
+import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+import creativeCamera from "@/assets/creative-camera.webp";
 
 const workDocumentary = "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80";
 const workCampaign = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80";
 const workPhotography = "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80";
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
-const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
-const heroDocumentary = "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -56,7 +56,7 @@ const projects = [
     client: "Regional Financial Institution",
     desc: "Short documentary highlighting community banking programs and their impact on local families and small businesses.",
     result: "Used in investor presentations and annual stakeholder communications.",
-    image: storytellingCommunity,
+    image: creativeFilmmaker,
   },
   {
     icon: Megaphone,
@@ -65,7 +65,7 @@ const projects = [
     client: "Healthcare NGO Coalition",
     desc: "Video series featuring health workers in rural clinics, highlighting challenges, resilience, and the impact of international health programs.",
     result: "8 videos produced. Content used across fundraising and advocacy channels.",
-    image: impactCampaign,
+    image: creativeCamera,
   },
   {
     icon: Camera,
@@ -74,7 +74,7 @@ const projects = [
     client: "Property Development Company",
     desc: "Architectural and lifestyle photography for a premium real estate portfolio, capturing properties, communities, and the vision behind developments.",
     result: "Photography integrated into marketing materials and online listings.",
-    image: heroDocumentary,
+    image: creativeFilmmaker,
   },
 ];
 
