@@ -42,10 +42,10 @@ const fadeUp = {
 };
 
 const solutions = [
-  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: storytellingCommunity },
-  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: impactCampaign },
-  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
-  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: heroDocumentary },
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: creativeAudiovisual },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: creativeSilhouette },
+  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: creativeJoy },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: creativeVRWoman },
 ];
 
 const processSteps = [
