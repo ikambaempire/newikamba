@@ -23,6 +23,12 @@ import creativeVRWoman from "@/assets/creative-vr-woman.jpg";
 import creativeCollage from "@/assets/creative-collage.jpg";
 import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeJoy from "@/assets/creative-joy.jpg";
+import hero1 from "@/assets/hero-1.jpg";
+import hero2 from "@/assets/hero-2.jpg";
+import hero3 from "@/assets/hero-3.jpg";
+import hero4 from "@/assets/hero-4.webp";
+import hero5 from "@/assets/hero-5.webp";
+import hero6 from "@/assets/hero-6.jpg";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
@@ -109,11 +115,11 @@ const servicesList = [
 
 /* Hero floating image cards */
 const heroCards = [
-  { image: creativeAudiovisual, rotate: -6, x: 0, y: 0, scale: 1 },
+  { image: hero1, rotate: -6, x: 0, y: 0, scale: 1 },
   { image: storytellingCommunity, rotate: 3, x: 60, y: -20, scale: 0.92 },
-  { image: creativeSilhouette, rotate: -3, x: 20, y: 80, scale: 0.88 },
-  { image: creativeVRWoman, rotate: 5, x: 80, y: 60, scale: 0.85 },
-  { image: creativeCollage, rotate: -2, x: -10, y: 160, scale: 0.9 },
+  { image: hero3, rotate: -3, x: 20, y: 80, scale: 0.88 },
+  { image: hero4, rotate: 5, x: 80, y: 60, scale: 0.85 },
+  { image: hero6, rotate: -2, x: -10, y: 160, scale: 0.9 },
 ];
 
 /* Featured Work cards for carousel */
