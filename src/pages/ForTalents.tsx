@@ -28,7 +28,7 @@ const talentServices = [
     icon: GraduationCap,
     title: "Creative Training Programs",
     desc: "Hands-on workshops in filmmaking, photography, editing, and storytelling designed for emerging and mid-career creatives.",
-    image: creativeFilmmaker,
+    image: creativeAudiovisual,
     features: ["Cinematography & Editing Workshops", "Storytelling Masterclasses", "Equipment & Technical Training", "Portfolio Development"],
   },
   {
@@ -49,7 +49,7 @@ const talentServices = [
     icon: Rocket,
     title: "Career Development",
     desc: "Build a sustainable creative career with business skills, personal branding, and industry knowledge.",
-    image: creativeVR,
+    image: creativeVRWoman,
     features: ["Personal Branding Workshops", "Pricing & Negotiation Skills", "Client Management Training", "Digital Presence Building"],
   },
   {
