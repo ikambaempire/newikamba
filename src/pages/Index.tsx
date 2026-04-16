@@ -22,6 +22,7 @@ import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import creativeVRWoman from "@/assets/creative-vr-woman.jpg";
 import creativeCollage from "@/assets/creative-collage.jpg";
 import creativeMindmap from "@/assets/creative-mindmap.jpg";
+import creativeJoy from "@/assets/creative-joy.jpg";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
@@ -41,10 +42,10 @@ const fadeUp = {
 };
 
 const solutions = [
-  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: storytellingCommunity },
-  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: impactCampaign },
-  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: photographyLandscape },
-  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: heroDocumentary },
+  { icon: Film, title: "Documentary & Impact Films", desc: "High-quality documentaries and storytelling films for NGOs, foundations, and development partners.", image: creativeAudiovisual },
+  { icon: Video, title: "Corporate Brand Videos", desc: "Brand stories, company profiles, and campaign videos designed to position organizations at a global standard.", image: creativeSilhouette },
+  { icon: Camera, title: "Event Coverage & Livestreaming", desc: "Professional coverage for conferences, summits, launches, workshops, and institutional events.", image: creativeJoy },
+  { icon: Megaphone, title: "Social Media Content", desc: "Short-form videos, reels, campaign edits, and digital storytelling assets tailored for engagement and visibility.", image: creativeVRWoman },
 ];
 
 const processSteps = [
@@ -117,12 +118,12 @@ const heroCards = [
 
 /* Featured Work cards for carousel */
 const featuredWork = [
-  { title: "Documentary Storytelling", category: "DOCUMENTARY", desc: "Real stories from the field, produced with cinematic quality.", image: storytellingCommunity, stat: "45K+ Views" },
-  { title: "Impact Campaigns", category: "CAMPAIGN", desc: "Visual campaigns that amplify organizational missions.", image: impactCampaign, stat: "200K+ Reach" },
-  { title: "Photography Stories", category: "PHOTOGRAPHY", desc: "Authentic photography that captures leadership and community.", image: photographyLandscape, stat: "50+ Projects" },
-  { title: "Youth Entrepreneurship", category: "DOCUMENTARY", desc: "How young entrepreneurs are reshaping local economies across East Africa.", image: workDocumentary, stat: "3 Conferences" },
-  { title: "Climate Action Kigali", category: "CAMPAIGN", desc: "Multi-format campaign content for a regional climate conference.", image: workCampaign, stat: "12 Assets" },
-  { title: "Education Access", category: "PHOTOGRAPHY", desc: "Photographic documentation of education programs reaching underserved communities.", image: workPhotography, stat: "Annual Report" },
+  { title: "Documentary Storytelling", category: "DOCUMENTARY", desc: "Real stories from the field, produced with cinematic quality.", image: creativeAudiovisual, stat: "45K+ Views" },
+  { title: "Impact Campaigns", category: "CAMPAIGN", desc: "Visual campaigns that amplify organizational missions.", image: creativeVRWoman, stat: "200K+ Reach" },
+  { title: "Photography Stories", category: "PHOTOGRAPHY", desc: "Authentic photography that captures leadership and community.", image: creativeSilhouette, stat: "50+ Projects" },
+  { title: "Youth Entrepreneurship", category: "DOCUMENTARY", desc: "How young entrepreneurs are reshaping local economies across East Africa.", image: creativeJoy, stat: "3 Conferences" },
+  { title: "Climate Action Kigali", category: "CAMPAIGN", desc: "Multi-format campaign content for a regional climate conference.", image: creativeMindmap, stat: "12 Assets" },
+  { title: "Education Access", category: "PHOTOGRAPHY", desc: "Photographic documentation of education programs reaching underserved communities.", image: creativeCollage, stat: "Annual Report" },
 ];
 
 const fallbackInsights = [
