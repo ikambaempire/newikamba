@@ -8,9 +8,12 @@ import {
   Mic, Star, BookOpen, Lightbulb, Handshake, Target, Rocket
 } from "lucide-react";
 import Card3D from "@/components/home/Card3D";
-import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
+import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
+import creativeSilhouette from "@/assets/creative-silhouette.webp";
+import creativeVRWoman from "@/assets/creative-vr-woman.jpg";
+import creativeCollage from "@/assets/creative-collage.jpg";
+import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeCamera from "@/assets/creative-camera.webp";
-import creativeVR from "@/assets/creative-vr.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },

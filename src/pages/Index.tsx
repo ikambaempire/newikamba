@@ -288,11 +288,11 @@ const FeaturedWorkCarousel = () => {
 };
 
 const carouselImages = [
-  { src: creativeFilmmaker, alt: "African filmmaker with cinema camera", caption: "Documentary Production" },
-  { src: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80", alt: "Conference event coverage", caption: "Event Coverage" },
-  { src: creativeCamera, alt: "Creative camera operator in studio", caption: "Visual Storytelling" },
-  { src: creativeVR, alt: "Creative technology and innovation", caption: "Creative Innovation" },
-  { src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&q=80", alt: "Video production setup", caption: "Brand Photography" },
+  { src: creativeAudiovisual, alt: "African filmmaker with cinema camera", caption: "Documentary Production" },
+  { src: creativeSilhouette, alt: "Creative silhouette with camera", caption: "Visual Storytelling" },
+  { src: creativeVRWoman, alt: "African woman with VR headset", caption: "Creative Innovation" },
+  { src: creativeCamera, alt: "Creative camera operator in studio", caption: "Event Coverage" },
+  { src: creativeMindmap, alt: "Creative industries mindmap", caption: "Creative Strategy" },
 ];
 
 const NormalImageCarousel = () => {
