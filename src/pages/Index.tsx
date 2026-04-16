@@ -17,8 +17,13 @@ import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
 import creativeVR from "@/assets/creative-vr.jpg";
+import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
+import creativeSilhouette from "@/assets/creative-silhouette.webp";
+import creativeVRWoman from "@/assets/creative-vr-woman.jpg";
+import creativeCollage from "@/assets/creative-collage.jpg";
+import creativeMindmap from "@/assets/creative-mindmap.jpg";
 
-// Real photos - mix of Unsplash and uploaded creative African imagery
+// Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
 const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
 const photographyLandscape = "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80";
@@ -103,11 +108,11 @@ const servicesList = [
 
 /* Hero floating image cards */
 const heroCards = [
-  { image: workDocumentary, rotate: -6, x: 0, y: 0, scale: 1 },
+  { image: creativeAudiovisual, rotate: -6, x: 0, y: 0, scale: 1 },
   { image: storytellingCommunity, rotate: 3, x: 60, y: -20, scale: 0.92 },
-  { image: workCampaign, rotate: -3, x: 20, y: 80, scale: 0.88 },
-  { image: impactCampaign, rotate: 5, x: 80, y: 60, scale: 0.85 },
-  { image: workPhotography, rotate: -2, x: -10, y: 160, scale: 0.9 },
+  { image: creativeSilhouette, rotate: -3, x: 20, y: 80, scale: 0.88 },
+  { image: creativeVRWoman, rotate: 5, x: 80, y: 60, scale: 0.85 },
+  { image: creativeCollage, rotate: -2, x: -10, y: 160, scale: 0.9 },
 ];
 
 /* Featured Work cards for carousel */
