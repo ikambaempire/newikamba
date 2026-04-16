@@ -35,7 +35,7 @@ const talentServices = [
     icon: Handshake,
     title: "Collaboration & Networking",
     desc: "Connect with fellow creatives, industry professionals, and organizations looking for talent across East Africa.",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80",
+    image: creativeCollage,
     features: ["Creative Meetups & Events", "Industry Networking Sessions", "Cross-discipline Collaboration", "Mentorship Matching"],
   },
   {
@@ -56,14 +56,14 @@ const talentServices = [
     icon: BookOpen,
     title: "Resources & Knowledge Hub",
     desc: "Access curated industry insights, templates, guides, and tools to sharpen your craft and grow your business.",
-    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80",
+    image: creativeMindmap,
     features: ["Industry Reports & Trends", "Contract & Agreement Templates", "Equipment Guides", "Creative Business Toolkit"],
   },
   {
     icon: Target,
     title: "Showcase & Visibility",
     desc: "Get your work seen by the right people — feature in our portfolio, events, and partner showcases.",
-    image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80",
+    image: creativeSilhouette,
     features: ["Portfolio Showcases", "Exhibition Opportunities", "Social Media Features", "Award Nominations Support"],
   },
 ];
