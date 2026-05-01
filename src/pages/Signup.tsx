@@ -23,12 +23,15 @@ const Signup = () => {
       return;
     }
     setLoading(true);
-    const { error } = await signUp(email, password, fullName);
+    const { data, error } = await signUp(email, password, fullName);
     setLoading(false);
     if (error) {
       toast.error(error.message);
+    } else if (!data.session) {
+      toast.success("Account created. Please check your email to confirm your account, then sign in.");
+      setTimeout(() => navigate("/login"), 800);
     } else {
-      toast.success("Account created! Signing you in...");
+      toast.success("Account created! Opening your dashboard...");
       setTimeout(() => navigate("/auth-redirect"), 500);
     }
   };

@@ -10,56 +10,36 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
       assets: {
         Row: {
-          campaign: string | null
           created_at: string
-          file_name: string
+          file_name: string | null
           file_type: string | null
-          file_url: string
+          file_url: string | null
           id: string
-          project_id: string
-          uploaded_by: string | null
-          version: string | null
-          year: number | null
+          project_id: string | null
         }
         Insert: {
-          campaign?: string | null
           created_at?: string
-          file_name: string
+          file_name?: string | null
           file_type?: string | null
-          file_url: string
+          file_url?: string | null
           id?: string
-          project_id: string
-          uploaded_by?: string | null
-          version?: string | null
-          year?: number | null
+          project_id?: string | null
         }
         Update: {
-          campaign?: string | null
           created_at?: string
-          file_name?: string
+          file_name?: string | null
           file_type?: string | null
-          file_url?: string
+          file_url?: string | null
           id?: string
-          project_id?: string
-          uploaded_by?: string | null
-          version?: string | null
-          year?: number | null
+          project_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "assets_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       blog_posts: {
         Row: {
@@ -109,74 +89,53 @@ export type Database = {
       clients: {
         Row: {
           contact_email: string | null
-          contact_person: string | null
           created_at: string
           id: string
-          industry: string | null
           name: string
           organization_id: string | null
           updated_at: string
         }
         Insert: {
           contact_email?: string | null
-          contact_person?: string | null
           created_at?: string
           id?: string
-          industry?: string | null
           name: string
           organization_id?: string | null
           updated_at?: string
         }
         Update: {
           contact_email?: string | null
-          contact_person?: string | null
           created_at?: string
           id?: string
-          industry?: string | null
           name?: string
           organization_id?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "clients_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       organizations: {
         Row: {
           created_at: string
           id: string
-          logo_url: string | null
           name: string
-          slug: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           id?: string
-          logo_url?: string | null
           name: string
-          slug: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          logo_url?: string | null
           name?: string
-          slug?: string
           updated_at?: string
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          avatar_url: string | null
           client_id: string | null
           created_at: string
           full_name: string | null
@@ -186,7 +145,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          avatar_url?: string | null
           client_id?: string | null
           created_at?: string
           full_name?: string | null
@@ -196,7 +154,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          avatar_url?: string | null
           client_id?: string | null
           created_at?: string
           full_name?: string | null
@@ -205,22 +162,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       project_status_logs: {
         Row: {
@@ -250,25 +192,16 @@ export type Database = {
           old_status?: Database["public"]["Enums"]["project_status"] | null
           project_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "project_status_logs_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       projects: {
         Row: {
           approval_contact: string | null
-          assigned_editor: string | null
-          assigned_producer: string | null
           budget_range: string | null
-          client_id: string
+          client_id: string | null
           contact_email: string | null
           created_at: string
+          created_by: string | null
           deadline: string | null
           distribution_plan: string | null
           id: string
@@ -285,12 +218,11 @@ export type Database = {
         }
         Insert: {
           approval_contact?: string | null
-          assigned_editor?: string | null
-          assigned_producer?: string | null
           budget_range?: string | null
-          client_id: string
+          client_id?: string | null
           contact_email?: string | null
           created_at?: string
+          created_by?: string | null
           deadline?: string | null
           distribution_plan?: string | null
           id?: string
@@ -307,12 +239,11 @@ export type Database = {
         }
         Update: {
           approval_contact?: string | null
-          assigned_editor?: string | null
-          assigned_producer?: string | null
           budget_range?: string | null
-          client_id?: string
+          client_id?: string | null
           contact_email?: string | null
           created_at?: string
+          created_by?: string | null
           deadline?: string | null
           distribution_plan?: string | null
           id?: string
@@ -327,93 +258,61 @@ export type Database = {
           target_audience?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "projects_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       revisions: {
         Row: {
           created_at: string
+          created_by: string | null
           feedback: string | null
           id: string
           project_id: string
           revision_number: number
-          submitted_by: string | null
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           feedback?: string | null
           id?: string
           project_id: string
-          revision_number: number
-          submitted_by?: string | null
+          revision_number?: number
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           feedback?: string | null
           id?: string
           project_id?: string
           revision_number?: number
-          submitted_by?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "revisions_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_roles: {
         Row: {
+          created_at: string
           id: string
-          organization_id: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          created_at?: string
           id?: string
-          organization_id?: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          created_at?: string
           id?: string
-          organization_id?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_org_role: {
-        Args: {
-          _org_id: string
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -421,19 +320,18 @@ export type Database = {
         }
         Returns: boolean
       }
-      user_org_id: { Args: { _user_id: string }; Returns: string }
+      is_internal_role: { Args: { _user_id: string }; Returns: boolean }
+      user_client_id: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
       app_role:
         | "super_admin"
+        | "org_admin"
         | "project_manager"
         | "producer"
         | "editor"
         | "client"
-        | "viewer"
-        | "platform_owner"
-        | "org_admin"
-        | "client_admin"
+        | "user"
       priority_level: "low" | "medium" | "high" | "urgent"
       project_status:
         | "brief_received"
@@ -572,14 +470,12 @@ export const Constants = {
     Enums: {
       app_role: [
         "super_admin",
+        "org_admin",
         "project_manager",
         "producer",
         "editor",
         "client",
-        "viewer",
-        "platform_owner",
-        "org_admin",
-        "client_admin",
+        "user",
       ],
       priority_level: ["low", "medium", "high", "urgent"],
       project_status: [
