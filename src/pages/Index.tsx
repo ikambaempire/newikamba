@@ -23,21 +23,16 @@ import creativeVRWoman from "@/assets/creative-vr-woman.jpg";
 import creativeCollage from "@/assets/creative-collage.jpg";
 import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeJoy from "@/assets/creative-joy.jpg";
-import hero1 from "@/assets/hero-1.jpg";
-import hero2 from "@/assets/hero-2.jpg";
-import hero3 from "@/assets/hero-3.jpg";
-import hero4 from "@/assets/hero-4.webp";
-import hero5 from "@/assets/hero-5.webp";
-import hero6 from "@/assets/hero-6.jpg";
+import helloFloating1 from "@/assets/hello-floating-1.webp";
+import helloFloating2 from "@/assets/hello-floating-2.webp";
+import helloFloating3 from "@/assets/hello-floating-3.jpg";
+import helloFloating4 from "@/assets/hello-floating-4.jpg";
+import helloFloating5 from "@/assets/hello-floating-5.jpg";
+import helloFloating6 from "@/assets/hello-floating-6.jpg";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
-const impactCampaign = "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80";
 const photographyLandscape = "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80";
-const heroDocumentary = "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80";
-const workDocumentary = "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80";
-const workCampaign = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80";
-const workPhotography = "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
@@ -115,11 +110,11 @@ const servicesList = [
 
 /* Hero floating image cards */
 const heroCards = [
-  { image: hero1, rotate: -6, x: 0, y: 0, scale: 1 },
-  { image: storytellingCommunity, rotate: 3, x: 60, y: -20, scale: 0.92 },
-  { image: hero3, rotate: -3, x: 20, y: 80, scale: 0.88 },
-  { image: hero4, rotate: 5, x: 80, y: 60, scale: 0.85 },
-  { image: hero6, rotate: -2, x: -10, y: 160, scale: 0.9 },
+  { image: helloFloating1, rotate: -6, x: 0, y: 0, scale: 1 },
+  { image: helloFloating2, rotate: 3, x: 60, y: -20, scale: 0.92 },
+  { image: helloFloating3, rotate: -3, x: 20, y: 80, scale: 0.88 },
+  { image: helloFloating4, rotate: 5, x: 80, y: 60, scale: 0.85 },
+  { image: helloFloating5, rotate: -2, x: -10, y: 160, scale: 0.9 },
 ];
 
 /* Featured Work cards for carousel */
