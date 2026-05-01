@@ -49,7 +49,7 @@ const Signup = () => {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="font-heading text-2xl font-extrabold tracking-tight text-primary-foreground">
-            IKAMBA<span className="text-accent">.</span>
+            iKAMBA<span className="text-accent">.</span>
           </Link>
           <p className="text-primary-foreground/50 text-sm mt-2">Create your account</p>
         </div>

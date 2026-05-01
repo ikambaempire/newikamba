@@ -47,7 +47,7 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-1.5 shrink-0">
           <img src={ikambaIcon} alt="Ikamba" className="h-7 sm:h-8 w-auto" />
           <span className="font-heading font-extrabold tracking-tight text-primary-foreground text-base sm:text-lg leading-none">
-            IKAMBA
+            iKAMBA
           </span>
         </Link>
 

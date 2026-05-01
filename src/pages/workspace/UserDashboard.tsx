@@ -66,7 +66,7 @@ const UserDashboard = () => {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link to="/" className="font-heading text-lg font-extrabold text-foreground">
-              IKAMBA<span className="text-accent">.</span>
+              iKAMBA<span className="text-accent">.</span>
             </Link>
             <span className="text-muted-foreground/30 text-xs">|</span>
             <span className="text-muted-foreground text-sm">Dashboard</span>

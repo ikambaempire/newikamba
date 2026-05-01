@@ -124,7 +124,7 @@ const AdminDashboard = () => {
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="font-heading text-lg font-extrabold text-foreground">
-              IKAMBA<span className="text-accent">.</span>
+              iKAMBA<span className="text-accent">.</span>
             </span>
             <span className="text-muted-foreground/30 text-xs">|</span>
             <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
