@@ -5,6 +5,12 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, ArrowRight, Clock } from "lucide-react";
+import insight1 from "@/assets/insight-1.jpg";
+import insight2 from "@/assets/insight-2.jpg";
+import insight3 from "@/assets/insight-3.jpg";
+import insight4 from "@/assets/insight-4.jpg";
+import insight5 from "@/assets/insight-5.jpg";
+import insight6 from "@/assets/insight-6.jpg";
 
 interface BlogPost {
   id: string;
