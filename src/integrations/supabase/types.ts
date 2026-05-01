@@ -14,6 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
+      assets: {
+        Row: {
+          created_at: string
+          file_name: string | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          project_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          project_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          project_id?: string | null
+        }
+        Relationships: []
+      }
+      blog_posts: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          content: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      clients: {
+        Row: {
+          contact_email: string | null
+          created_at: string
+          id: string
+          name: string
+          organization_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          organization_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          organization_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           client_id: string | null
@@ -41,6 +161,129 @@ export type Database = {
           organization_id?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      project_status_logs: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_status: Database["public"]["Enums"]["project_status"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["project_status"] | null
+          project_id: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status: Database["public"]["Enums"]["project_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["project_status"] | null
+          project_id: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["project_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["project_status"] | null
+          project_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          approval_contact: string | null
+          budget_range: string | null
+          client_id: string | null
+          contact_email: string | null
+          created_at: string
+          created_by: string | null
+          deadline: string | null
+          distribution_plan: string | null
+          id: string
+          key_message: string | null
+          name: string
+          objective: string | null
+          priority: Database["public"]["Enums"]["priority_level"]
+          project_type: string | null
+          revision_count: number
+          stage_entered_at: string
+          status: Database["public"]["Enums"]["project_status"]
+          target_audience: string | null
+          updated_at: string
+        }
+        Insert: {
+          approval_contact?: string | null
+          budget_range?: string | null
+          client_id?: string | null
+          contact_email?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          distribution_plan?: string | null
+          id?: string
+          key_message?: string | null
+          name: string
+          objective?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"]
+          project_type?: string | null
+          revision_count?: number
+          stage_entered_at?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approval_contact?: string | null
+          budget_range?: string | null
+          client_id?: string | null
+          contact_email?: string | null
+          created_at?: string
+          created_by?: string | null
+          deadline?: string | null
+          distribution_plan?: string | null
+          id?: string
+          key_message?: string | null
+          name?: string
+          objective?: string | null
+          priority?: Database["public"]["Enums"]["priority_level"]
+          project_type?: string | null
+          revision_count?: number
+          stage_entered_at?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          target_audience?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      revisions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          feedback: string | null
+          id: string
+          project_id: string
+          revision_number: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          feedback?: string | null
+          id?: string
+          project_id: string
+          revision_number?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          feedback?: string | null
+          id?: string
+          project_id?: string
+          revision_number?: number
         }
         Relationships: []
       }
@@ -77,6 +320,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_internal_role: { Args: { _user_id: string }; Returns: boolean }
+      user_client_id: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
       app_role:
@@ -87,6 +332,15 @@ export type Database = {
         | "editor"
         | "client"
         | "user"
+      priority_level: "low" | "medium" | "high" | "urgent"
+      project_status:
+        | "brief_received"
+        | "strategy_alignment"
+        | "production"
+        | "editing"
+        | "client_review"
+        | "final_delivery"
+        | "archive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -222,6 +476,16 @@ export const Constants = {
         "editor",
         "client",
         "user",
+      ],
+      priority_level: ["low", "medium", "high", "urgent"],
+      project_status: [
+        "brief_received",
+        "strategy_alignment",
+        "production",
+        "editing",
+        "client_review",
+        "final_delivery",
+        "archive",
       ],
     },
   },
