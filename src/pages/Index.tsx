@@ -504,12 +504,12 @@ const Index = () => {
               <div className="relative w-full h-full">
                 {/* Card grid - 3 columns, 2 rows of floating cards */}
                 {[
-                  { image: workDocumentary, className: "top-0 left-0 w-[180px] h-[220px] rotate-[-4deg]", delay: 0.2 },
-                  { image: storytellingCommunity, className: "top-[-10px] left-[200px] w-[160px] h-[200px] rotate-[3deg]", delay: 0.4 },
-                  { image: workCampaign, className: "top-[10px] right-0 w-[150px] h-[190px] rotate-[-2deg]", delay: 0.6 },
-                  { image: impactCampaign, className: "bottom-[60px] left-[30px] w-[170px] h-[200px] rotate-[2deg]", delay: 0.8 },
-                  { image: heroDocumentary, className: "bottom-[40px] left-[220px] w-[160px] h-[210px] rotate-[-3deg]", delay: 1.0 },
-                  { image: workPhotography, className: "bottom-[70px] right-[10px] w-[140px] h-[180px] rotate-[4deg]", delay: 0.5 },
+                  { image: helloFloating1, className: "top-0 left-0 w-[180px] h-[220px] rotate-[-4deg]", delay: 0.2 },
+                  { image: helloFloating2, className: "top-[-10px] left-[200px] w-[160px] h-[200px] rotate-[3deg]", delay: 0.4 },
+                  { image: helloFloating3, className: "top-[10px] right-0 w-[150px] h-[190px] rotate-[-2deg]", delay: 0.6 },
+                  { image: helloFloating4, className: "bottom-[60px] left-[30px] w-[170px] h-[200px] rotate-[2deg]", delay: 0.8 },
+                  { image: helloFloating5, className: "bottom-[40px] left-[220px] w-[160px] h-[210px] rotate-[-3deg]", delay: 1.0 },
+                  { image: helloFloating6, className: "bottom-[70px] right-[10px] w-[140px] h-[180px] rotate-[4deg]", delay: 0.5 },
                 ].map((card, i) => (
                   <motion.div
                     key={i}
