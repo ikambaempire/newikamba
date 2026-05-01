@@ -23,7 +23,7 @@ const Signup = () => {
       return;
     }
     setLoading(true);
-    const { error } = await signUp(email, password, fullName);
+    const { data, error } = await signUp(email, password, fullName);
     setLoading(false);
     if (error) {
       toast.error(error.message);
