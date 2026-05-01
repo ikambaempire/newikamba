@@ -61,7 +61,7 @@ const NewBrief = () => {
             </Button>
           </Link>
           <span className="font-heading text-lg font-extrabold text-foreground">
-            IKAMBA<span className="text-accent">.</span>
+            iKAMBA<span className="text-accent">.</span>
           </span>
           <span className="text-muted-foreground/30 text-xs">|</span>
           <span className="text-muted-foreground text-sm">Submit Brief</span>
