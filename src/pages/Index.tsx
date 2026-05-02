@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight, FileText, Video, Target, FolderOpen,
   Camera, Film, Image, Megaphone, Users, CheckCircle2,
@@ -14,6 +14,7 @@ import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
+import { ConversionSections, WebsitePopupSystem } from "@/components/home/ConversionSections";
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
 import creativeVR from "@/assets/creative-vr.jpg";
@@ -540,6 +541,8 @@ const Index = () => {
       {/* Trusted By */}
       <TrustedBySlider />
 
+      <ConversionSections />
+
       {/* The Challenge */}
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-6xl mx-auto">
@@ -803,7 +806,7 @@ const Index = () => {
         <div className="max-w-3xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
             className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
-            Let's Tell Your Story
+            Let’s tell your story the right way
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
             className="text-muted-foreground mb-8 max-w-xl mx-auto text-lg">
@@ -811,20 +814,26 @@ const Index = () => {
           </motion.p>
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
             className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/start-a-project">
-              <Button variant="hero" size="lg">
-                Start a Project <ArrowRight className="ml-1" size={16} />
-              </Button>
-            </Link>
             <Link to="/contact">
-              <Button variant="outline" size="lg" className="font-semibold">
-                Book Consultation
+              <Button variant="hero" size="lg">
+                Book a Call <ArrowRight className="ml-1" size={16} />
               </Button>
             </Link>
+            <a href="https://wa.me/?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization." target="_blank" rel="noreferrer">
+              <Button variant="outline" size="lg" className="font-semibold">
+                WhatsApp
+              </Button>
+            </a>
+            <a href="#audit">
+              <Button variant="outline" size="lg" className="font-semibold">
+                Get Audit
+              </Button>
+            </a>
           </motion.div>
         </div>
       </section>
 
+      <WebsitePopupSystem />
       <Footer />
     </div>
   );
