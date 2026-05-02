@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
@@ -108,7 +108,7 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
   const [form, setForm] = useState({ name: "", organization: "", email: "", whatsapp: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const parsed = auditSchema.safeParse(form);
     if (!parsed.success) {
@@ -405,7 +405,7 @@ export const WebsitePopupSystem = () => {
         )}
       </AnimatePresence>
       <a
-        href="https://wa.me/?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
+        href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-success text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
