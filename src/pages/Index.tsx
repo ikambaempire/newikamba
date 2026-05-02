@@ -819,7 +819,7 @@ const Index = () => {
                 Book a Call <ArrowRight className="ml-1" size={16} />
               </Button>
             </Link>
-            <a href="https://wa.me/?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization." target="_blank" rel="noreferrer">
+            <a href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization." target="_blank" rel="noreferrer">
               <Button variant="outline" size="lg" className="font-semibold">
                 WhatsApp
               </Button>
