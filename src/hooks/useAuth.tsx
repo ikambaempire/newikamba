@@ -35,6 +35,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUserData = async (userId: string) => {
+    await supabase.rpc("ensure_current_user_profile", {
+      _full_name: user?.user_metadata?.full_name || user?.user_metadata?.name || null,
+    });
+
     const [rolesRes, profileRes] = await Promise.all([
       supabase.from("user_roles").select("role").eq("user_id", userId),
       supabase.from("profiles").select("full_name, client_id, organization_id").eq("user_id", userId).single(),
