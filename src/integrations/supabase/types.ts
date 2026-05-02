@@ -113,6 +113,42 @@ export type Database = {
         }
         Relationships: []
       }
+      impact_audit_leads: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          organization: string | null
+          source: string
+          status: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          organization?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          organization?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           created_at: string
@@ -130,6 +166,48 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      popup_settings: {
+        Row: {
+          button_link: string
+          button_text: string
+          created_at: string
+          delay_seconds: number
+          enabled: boolean
+          id: string
+          message: string
+          name: string
+          popup_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          button_link?: string
+          button_text?: string
+          created_at?: string
+          delay_seconds?: number
+          enabled?: boolean
+          id?: string
+          message?: string
+          name: string
+          popup_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          button_link?: string
+          button_text?: string
+          created_at?: string
+          delay_seconds?: number
+          enabled?: boolean
+          id?: string
+          message?: string
+          name?: string
+          popup_type?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -313,6 +391,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_current_user_profile: {
+        Args: { _full_name?: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

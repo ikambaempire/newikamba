@@ -13,6 +13,8 @@ import {
 import KanbanBoard from "@/components/admin/KanbanBoard";
 import BlogManager from "@/components/admin/BlogManager";
 import UserManager from "@/components/admin/UserManager";
+import PopupManager from "@/components/admin/PopupManager";
+import LeadManager from "@/components/admin/LeadManager";
 import type { Database } from "@/integrations/supabase/types";
 
 type Project = Database["public"]["Tables"]["projects"]["Row"];
@@ -49,7 +51,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [orgName, setOrgName] = useState("");
   const [view, setView] = useState<"table" | "kanban">("table");
-  const [tab, setTab] = useState<"projects" | "blog" | "users">("projects");
+  const [tab, setTab] = useState<"projects" | "blog" | "leads" | "popups" | "users">("projects");
 
   const fetchData = async () => {
     const [projRes, clientRes] = await Promise.all([
@@ -170,6 +172,12 @@ const AdminDashboard = () => {
           <button onClick={() => setTab("blog")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "blog" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             <FileText size={14} /> Blog
           </button>
+          <button onClick={() => setTab("leads")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "leads" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            <TrendingUp size={14} /> Leads
+          </button>
+          <button onClick={() => setTab("popups")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "popups" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            <LayoutGrid size={14} /> Popups
+          </button>
           {roles.includes("super_admin") && (
             <button onClick={() => setTab("users")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "users" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
               <Users size={14} /> Users
@@ -179,6 +187,10 @@ const AdminDashboard = () => {
 
         {tab === "users" ? (
           <UserManager />
+        ) : tab === "popups" ? (
+          <PopupManager />
+        ) : tab === "leads" ? (
+          <LeadManager />
         ) : tab === "blog" ? (
           <BlogManager />
         ) : (

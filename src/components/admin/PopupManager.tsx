@@ -1,0 +1,102 @@
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Clock, MousePointer2, RefreshCw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import type { Database } from "@/integrations/supabase/types";
+
+type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"];
+
+const PopupManager = () => {
+  const [popups, setPopups] = useState<PopupSetting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [savingId, setSavingId] = useState<string | null>(null);
+
+  const fetchPopups = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.from("popup_settings").select("*").order("created_at", { ascending: true });
+    if (error) toast.error("Could not load popup settings");
+    if (data) setPopups(data);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchPopups(); }, []);
+
+  const updateLocal = (id: string, changes: Partial<PopupSetting>) => {
+    setPopups((items) => items.map((item) => (item.id === id ? { ...item, ...changes } : item)));
+  };
+
+  const savePopup = async (popup: PopupSetting) => {
+    setSavingId(popup.id);
+    const { error } = await supabase.from("popup_settings").update({
+      enabled: popup.enabled,
+      title: popup.title,
+      message: popup.message,
+      button_text: popup.button_text,
+      button_link: popup.button_link,
+      delay_seconds: popup.delay_seconds,
+    }).eq("id", popup.id);
+    setSavingId(null);
+    if (error) {
+      toast.error("Could not save popup settings");
+      return;
+    }
+    toast.success("Popup settings saved");
+  };
+
+  if (loading) return <div className="p-12 text-center text-muted-foreground">Loading popup settings...</div>;
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Popup System</h2>
+          <p className="text-sm text-muted-foreground">Enable, disable, and edit lead capture popups.</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={fetchPopups}><RefreshCw size={14} /> Refresh</Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {popups.map((popup) => {
+          const Icon = popup.popup_type === "exit_intent" ? MousePointer2 : Clock;
+          return (
+            <div key={popup.id} className="bg-card border border-border rounded-lg p-6 space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center"><Icon size={18} /></div>
+                  <div>
+                    <h3 className="font-bold text-foreground">{popup.name}</h3>
+                    <p className="text-xs text-muted-foreground capitalize">{popup.popup_type.replace("_", " ")}</p>
+                  </div>
+                </div>
+                <Switch checked={popup.enabled} onCheckedChange={(enabled) => updateLocal(popup.id, { enabled })} />
+              </div>
+
+              <div className="space-y-3">
+                <Input value={popup.title} onChange={(e) => updateLocal(popup.id, { title: e.target.value })} placeholder="Popup title" />
+                <Textarea value={popup.message} onChange={(e) => updateLocal(popup.id, { message: e.target.value })} placeholder="Popup message" />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input value={popup.button_text} onChange={(e) => updateLocal(popup.id, { button_text: e.target.value })} placeholder="Button text" />
+                  <Input value={popup.button_link} onChange={(e) => updateLocal(popup.id, { button_link: e.target.value })} placeholder="Button link" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1.5 block">Delay seconds</label>
+                  <Input type="number" min={1} max={120} value={popup.delay_seconds} onChange={(e) => updateLocal(popup.id, { delay_seconds: Number(e.target.value) })} />
+                </div>
+              </div>
+
+              <Button variant="hero" onClick={() => savePopup(popup)} disabled={savingId === popup.id}>
+                {savingId === popup.id ? "Saving..." : "Save Popup"}
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default PopupManager;
