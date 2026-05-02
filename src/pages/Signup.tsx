@@ -28,8 +28,8 @@ const Signup = () => {
     if (error) {
       toast.error(error.message);
     } else if (!data.session) {
-      toast.success("Account created. Please check your email to confirm your account, then sign in.");
-      setTimeout(() => navigate("/login"), 800);
+      toast.success("Account created. You can sign in now.");
+      setTimeout(() => navigate("/login"), 500);
     } else {
       toast.success("Account created! Opening your dashboard...");
       setTimeout(() => navigate("/auth-redirect"), 500);
