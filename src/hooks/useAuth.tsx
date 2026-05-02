@@ -34,14 +34,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserData = async (userId: string) => {
+  const fetchUserData = async (authUser: User) => {
     await supabase.rpc("ensure_current_user_profile", {
-      _full_name: user?.user_metadata?.full_name || user?.user_metadata?.name || null,
+      _full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || null,
     });
 
     const [rolesRes, profileRes] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", userId),
-      supabase.from("profiles").select("full_name, client_id, organization_id").eq("user_id", userId).single(),
+      supabase.from("user_roles").select("role").eq("user_id", authUser.id),
+      supabase.from("profiles").select("full_name, client_id, organization_id").eq("user_id", authUser.id).single(),
     ]);
     if (rolesRes.data) setRoles(rolesRes.data.map((r) => r.role));
     if (profileRes.data) setProfile(profileRes.data);
@@ -52,21 +52,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        setTimeout(() => fetchUserData(session.user.id), 0);
+        setTimeout(() => fetchUserData(session.user).finally(() => setLoading(false)), 0);
       } else {
         setRoles([]);
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchUserData(session.user.id);
+        fetchUserData(session.user).finally(() => setLoading(false));
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
