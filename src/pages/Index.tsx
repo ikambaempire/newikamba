@@ -501,13 +501,16 @@ const Index = () => {
                     </Button>
                   </motion.div>
                 </Link>
-                <Link to="/design-studio">
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                    <Button variant="outline" size="lg" className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90">
-                      ✨ Free AI Creative Tools
-                    </Button>
-                  </motion.div>
-                </Link>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setAiToolsOpen(true)}
+                    className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90"
+                  >
+                    ✨ Free AI Creative Tools
+                  </Button>
+                </motion.div>
               </motion.div>
             </div>
 
