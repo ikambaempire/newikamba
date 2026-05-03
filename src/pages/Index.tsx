@@ -14,7 +14,7 @@ import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
-import { ConversionSections, WebsitePopupSystem } from "@/components/home/ConversionSections";
+import { ConversionSections, WebsitePopupSystem, AIToolsLeadDialog } from "@/components/home/ConversionSections";
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
 import creativeVR from "@/assets/creative-vr.jpg";
