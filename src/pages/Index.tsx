@@ -358,6 +358,11 @@ const NormalImageCarousel = () => {
 };
 
 const Index = () => {
+  const [aiToolsOpen, setAiToolsOpen] = useState(false);
+  const navigateToTools = () => {
+    setAiToolsOpen(false);
+    window.location.assign("/design-studio");
+  };
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
