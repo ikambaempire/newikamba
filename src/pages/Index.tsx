@@ -14,7 +14,7 @@ import TrustedBySlider from "@/components/home/TrustedBySlider";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
-import { ConversionSections, WebsitePopupSystem } from "@/components/home/ConversionSections";
+import { ConversionSections, WebsitePopupSystem, AIToolsLeadDialog } from "@/components/home/ConversionSections";
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
 import creativeVR from "@/assets/creative-vr.jpg";
@@ -30,6 +30,12 @@ import helloFloating3 from "@/assets/hello-floating-3.jpg";
 import helloFloating4 from "@/assets/hello-floating-4.jpg";
 import helloFloating5 from "@/assets/hello-floating-5.jpg";
 import helloFloating6 from "@/assets/hello-floating-6.jpg";
+import insight1 from "@/assets/insight-1.jpg";
+import insight2 from "@/assets/insight-2.jpg";
+import insight3 from "@/assets/insight-3.jpg";
+import insight4 from "@/assets/insight-4.jpg";
+import insight5 from "@/assets/insight-5.jpg";
+import insight6 from "@/assets/insight-6.jpg";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
@@ -129,9 +135,9 @@ const featuredWork = [
 ];
 
 const fallbackInsights = [
-  { id: "1", title: "The Power of Documentary Storytelling for NGOs", slug: "documentary-storytelling-ngos", excerpt: "How documentary-style content helps non-profits communicate impact authentically and connect with donors on a deeper level.", category: "Strategy", cover_image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80", published_at: "2026-03-15" },
-  { id: "2", title: "5 Visual Strategies That Drive Donor Engagement", slug: "visual-strategies-donor-engagement", excerpt: "Proven approaches to creating compelling visual content that moves stakeholders from awareness to action.", category: "Impact", cover_image_url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80", published_at: "2026-02-28" },
-  { id: "3", title: "Behind the Lens: Ethical Storytelling in Development", slug: "ethical-storytelling-development", excerpt: "Balancing powerful narratives with dignity and respect when documenting communities and social impact work.", category: "Production", cover_image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80", published_at: "2026-01-20" },
+  { id: "1", title: "The Power of Documentary Storytelling for NGOs", slug: "documentary-storytelling-ngos", excerpt: "How documentary-style content helps non-profits communicate impact authentically and connect with donors on a deeper level.", category: "Strategy", cover_image_url: insight1, published_at: "2026-03-15" },
+  { id: "2", title: "5 Visual Strategies That Drive Donor Engagement", slug: "visual-strategies-donor-engagement", excerpt: "Proven approaches to creating compelling visual content that moves stakeholders from awareness to action.", category: "Impact", cover_image_url: insight2, published_at: "2026-02-28" },
+  { id: "3", title: "Behind the Lens: Ethical Storytelling in Development", slug: "ethical-storytelling-development", excerpt: "Balancing powerful narratives with dignity and respect when documenting communities and social impact work.", category: "Production", cover_image_url: insight3, published_at: "2026-01-20" },
 ];
 
 const FeaturedInsights = () => {
@@ -144,7 +150,7 @@ const FeaturedInsights = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between mb-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">Latest Insights</h2>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground">Latest Insights</h2>
             <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from strategic storytelling.</p>
           </motion.div>
           <Link to="/insights" className="hidden sm:inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">View all <ArrowRight size={14} /></Link>
@@ -200,7 +206,7 @@ const FeaturedWorkCarousel = () => {
             Featured Work
           </motion.p>
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
+            className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-foreground">
             Real stories from real organizations
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -352,6 +358,11 @@ const NormalImageCarousel = () => {
 };
 
 const Index = () => {
+  const [aiToolsOpen, setAiToolsOpen] = useState(false);
+  const navigateToTools = () => {
+    setAiToolsOpen(false);
+    window.location.assign("/design-studio");
+  };
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -423,7 +434,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.08] text-white mb-6 text-balance"
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-extrabold leading-[1.05] tracking-tight text-white mb-6 text-balance"
               >
                 {"Powerful ".split("").map((char, i) => (
                   <motion.span
@@ -490,13 +501,16 @@ const Index = () => {
                     </Button>
                   </motion.div>
                 </Link>
-                <Link to="/design-studio">
-                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                    <Button variant="outline" size="lg" className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90">
-                      ✨ Free AI Creative Tools
-                    </Button>
-                  </motion.div>
-                </Link>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => setAiToolsOpen(true)}
+                    className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90"
+                  >
+                    ✨ Free AI Creative Tools
+                  </Button>
+                </motion.div>
               </motion.div>
             </div>
 
@@ -552,7 +566,7 @@ const Index = () => {
               The Challenge
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-white">
+              className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-white">
               Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -592,7 +606,7 @@ const Index = () => {
               Our Response
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
+              className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-foreground">
               We combine storytelling strategy with premium production.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -612,7 +626,7 @@ const Index = () => {
               Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
+              className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-foreground">
               What we offer organizations and institutions.
             </motion.h2>
           </div>
@@ -669,7 +683,7 @@ const Index = () => {
               Start Creating
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
+              className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-foreground">
               Order storytelling projects like you order anything else.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -733,7 +747,7 @@ const Index = () => {
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-5xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 text-white">How It Works</motion.h2>
+            className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-3 text-white">How It Works</motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
             className="text-white/70 mb-12 max-w-xl text-lg">
             Our simple process makes storytelling production easier for communication teams.
@@ -775,7 +789,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-                className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
+                className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
                 Who We Work With
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
@@ -805,7 +819,7 @@ const Index = () => {
       <section className="section-padding bg-background text-center">
         <div className="max-w-3xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-foreground">
+            className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 text-foreground">
             Let’s tell your story the right way
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
@@ -834,6 +848,7 @@ const Index = () => {
       </section>
 
       <WebsitePopupSystem />
+      <AIToolsLeadDialog open={aiToolsOpen} onClose={() => setAiToolsOpen(false)} onContinue={navigateToTools} />
       <Footer />
     </div>
   );
