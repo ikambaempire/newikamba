@@ -434,7 +434,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold leading-[1.08] text-white mb-6 text-balance"
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-extrabold leading-[1.05] tracking-tight text-white mb-6 text-balance"
               >
                 {"Powerful ".split("").map((char, i) => (
                   <motion.span
