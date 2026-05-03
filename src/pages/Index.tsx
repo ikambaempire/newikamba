@@ -848,6 +848,7 @@ const Index = () => {
       </section>
 
       <WebsitePopupSystem />
+      <AIToolsLeadDialog open={aiToolsOpen} onClose={() => setAiToolsOpen(false)} onContinue={navigateToTools} />
       <Footer />
     </div>
   );
