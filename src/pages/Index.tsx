@@ -30,6 +30,12 @@ import helloFloating3 from "@/assets/hello-floating-3.jpg";
 import helloFloating4 from "@/assets/hello-floating-4.jpg";
 import helloFloating5 from "@/assets/hello-floating-5.jpg";
 import helloFloating6 from "@/assets/hello-floating-6.jpg";
+import insight1 from "@/assets/insight-1.jpg";
+import insight2 from "@/assets/insight-2.jpg";
+import insight3 from "@/assets/insight-3.jpg";
+import insight4 from "@/assets/insight-4.jpg";
+import insight5 from "@/assets/insight-5.jpg";
+import insight6 from "@/assets/insight-6.jpg";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
