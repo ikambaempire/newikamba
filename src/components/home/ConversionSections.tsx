@@ -24,7 +24,7 @@ import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import helloFloating1 from "@/assets/hello-floating-1.webp";
 import helloFloating3 from "@/assets/hello-floating-3.jpg";
-import insight1 from "@/assets/insight-1.jpg";
+import popupStrategy from "@/assets/popup-strategy.jpg";
 
 type PopupSetting = {
   id: string;
