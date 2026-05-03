@@ -135,9 +135,9 @@ const featuredWork = [
 ];
 
 const fallbackInsights = [
-  { id: "1", title: "The Power of Documentary Storytelling for NGOs", slug: "documentary-storytelling-ngos", excerpt: "How documentary-style content helps non-profits communicate impact authentically and connect with donors on a deeper level.", category: "Strategy", cover_image_url: insight1, published_at: "2026-03-15" },
-  { id: "2", title: "5 Visual Strategies That Drive Donor Engagement", slug: "visual-strategies-donor-engagement", excerpt: "Proven approaches to creating compelling visual content that moves stakeholders from awareness to action.", category: "Impact", cover_image_url: insight2, published_at: "2026-02-28" },
-  { id: "3", title: "Behind the Lens: Ethical Storytelling in Development", slug: "ethical-storytelling-development", excerpt: "Balancing powerful narratives with dignity and respect when documenting communities and social impact work.", category: "Production", cover_image_url: insight3, published_at: "2026-01-20" },
+  { id: "1", title: "The Power of Documentary Storytelling for NGOs", slug: "documentary-storytelling-ngos", excerpt: "How documentary-style content helps non-profits communicate impact authentically and connect with donors on a deeper level.", category: "Strategy", cover_image_url: insight4, published_at: "2026-03-15" },
+  { id: "2", title: "5 Visual Strategies That Drive Donor Engagement", slug: "visual-strategies-donor-engagement", excerpt: "Proven approaches to creating compelling visual content that moves stakeholders from awareness to action.", category: "Impact", cover_image_url: insight5, published_at: "2026-02-28" },
+  { id: "3", title: "Behind the Lens: Ethical Storytelling in Development", slug: "ethical-storytelling-development", excerpt: "Balancing powerful narratives with dignity and respect when documenting communities and social impact work.", category: "Production", cover_image_url: insight6, published_at: "2026-01-20" },
 ];
 
 const FeaturedInsights = () => {
