@@ -142,6 +142,7 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
 
 const DeviceMockups = () => (
   <div className="relative min-h-[420px] lg:min-h-[520px]">
+    {/* Laptop mockup with autoplay video (landscape) */}
     <motion.div
       initial={{ opacity: 0, y: 32, rotate: -2 }}
       whileInView={{ opacity: 1, y: 0, rotate: -1 }}
@@ -154,16 +155,19 @@ const DeviceMockups = () => (
         <span className="h-2 w-2 rounded-full bg-accent" />
         <span className="h-2 w-2 rounded-full bg-success" />
       </div>
-      <div className="relative aspect-video overflow-hidden bg-muted">
-        <img src={helloFloating1} alt="Impact documentary preview on laptop" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-primary/25" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-16 w-16 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-lg">
-            <Play fill="currentColor" size={24} />
-          </div>
-        </div>
+      <div className="relative aspect-video overflow-hidden bg-black">
+        <video
+          src="/mockup-reel.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover"
+        />
       </div>
     </motion.div>
+    {/* Phone mockup with same autoplay video (portrait crop) */}
     <motion.div
       initial={{ opacity: 0, y: 40, rotate: 5 }}
       whileInView={{ opacity: 1, y: 0, rotate: 4 }}
@@ -171,12 +175,16 @@ const DeviceMockups = () => (
       transition={{ duration: 0.7, delay: 0.15 }}
       className="absolute right-0 bottom-0 w-[34%] min-w-[150px] rounded-[2rem] border-[9px] border-primary bg-primary shadow-2xl overflow-hidden"
     >
-      <div className="relative aspect-[9/16] overflow-hidden bg-muted">
-        <img src={helloFloating3} alt="Short-form story preview on phone" className="h-full w-full object-cover" />
-        <div className="absolute inset-x-4 bottom-5 rounded-lg bg-background/90 p-3 shadow-lg">
-          <p className="text-[10px] uppercase font-bold text-accent">Campaign Cutdown</p>
-          <p className="text-xs font-semibold text-foreground">30 sec impact story</p>
-        </div>
+      <div className="relative aspect-[9/16] overflow-hidden bg-black">
+        <video
+          src="/mockup-reel.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover"
+        />
       </div>
     </motion.div>
   </div>
