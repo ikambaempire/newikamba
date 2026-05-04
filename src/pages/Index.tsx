@@ -819,6 +819,18 @@ const Index = () => {
                   </motion.div>
                 ))}
               </div>
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={9} className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link to="/work">
+                  <Button variant="hero" size="lg">
+                    See Case Studies <ArrowRight className="ml-1" size={16} />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button variant="outline" size="lg" className="font-semibold border-white/30 text-white hover:bg-white/10">
+                    Become a Partner
+                  </Button>
+                </Link>
+              </motion.div>
             </div>
 
             {/* Normal image carousel */}
