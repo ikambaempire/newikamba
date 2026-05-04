@@ -150,7 +150,7 @@ const FeaturedInsights = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between mb-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-foreground">Latest Insights</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">Latest Insights</h2>
             <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from strategic storytelling.</p>
           </motion.div>
           <Link to="/insights" className="hidden sm:inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">View all <ArrowRight size={14} /></Link>
@@ -206,7 +206,7 @@ const FeaturedWorkCarousel = () => {
             Featured Work
           </motion.p>
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-foreground">
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
             Real stories from real organizations
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -566,7 +566,7 @@ const Index = () => {
               The Challenge
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-white">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white">
               Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -594,10 +594,17 @@ const Index = () => {
               </Card3D>
             ))}
           </div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={6}
+            className="mt-10 text-center">
+            <a href="#audit">
+              <Button variant="hero" size="lg">
+                Get a Free Story Audit <ArrowRight className="ml-1" size={16} />
+              </Button>
+            </a>
+          </motion.div>
         </div>
       </section>
-
-      {/* Our Response */}
       <section className="section-padding bg-background">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -606,13 +613,20 @@ const Index = () => {
               Our Response
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
               We combine storytelling strategy with premium production.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
               className="text-muted-foreground max-w-2xl mx-auto text-lg">
               Ikamba helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
             </motion.p>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} className="mt-8">
+              <Link to="/how-it-works">
+                <Button variant="hero" size="lg">
+                  Discover Our Approach <ArrowRight className="ml-1" size={16} />
+                </Button>
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -626,7 +640,7 @@ const Index = () => {
               Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
               What we offer organizations and institutions.
             </motion.h2>
           </div>
@@ -683,7 +697,7 @@ const Index = () => {
               Start Creating
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
               Order storytelling projects like you order anything else.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -747,7 +761,7 @@ const Index = () => {
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-5xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-3 text-white">How It Works</motion.h2>
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-3 text-white">How It Works</motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
             className="text-white/70 mb-12 max-w-xl text-lg">
             Our simple process makes storytelling production easier for communication teams.
@@ -789,7 +803,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-                className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4">
+                className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
                 Who We Work With
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
@@ -805,6 +819,18 @@ const Index = () => {
                   </motion.div>
                 ))}
               </div>
+              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={9} className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Link to="/work">
+                  <Button variant="hero" size="lg">
+                    See Case Studies <ArrowRight className="ml-1" size={16} />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button variant="outline" size="lg" className="font-semibold border-white/30 text-white hover:bg-white/10">
+                    Become a Partner
+                  </Button>
+                </Link>
+              </motion.div>
             </div>
 
             {/* Normal image carousel */}
@@ -819,7 +845,7 @@ const Index = () => {
       <section className="section-padding bg-background text-center">
         <div className="max-w-3xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 text-foreground">
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
             Let’s tell your story the right way
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}

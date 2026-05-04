@@ -9,9 +9,7 @@ import {
   Download,
   FileText,
   MessageCircle,
-  Play,
   Send,
-  Smartphone,
   Target,
   X,
 } from "lucide-react";
@@ -20,10 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
 import creativeJoy from "@/assets/creative-joy.jpg";
-import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
-import helloFloating1 from "@/assets/hello-floating-1.webp";
-import helloFloating3 from "@/assets/hello-floating-3.jpg";
 import popupStrategy from "@/assets/popup-strategy.jpg";
 
 type PopupSetting = {
@@ -140,8 +135,99 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
   );
 };
 
+/**
+ * Step-by-step lead form: email → name → phone → company.
+ * Used inside popups for higher conversion.
+ */
+const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; ctaLabel?: string }) => {
+  const steps = [
+    { key: "email", label: "What's your email?", placeholder: "you@organization.org", type: "email" },
+    { key: "name", label: "What's your name?", placeholder: "Full name", type: "text" },
+    { key: "whatsapp", label: "Your phone or WhatsApp?", placeholder: "+250 ...", type: "tel" },
+    { key: "organization", label: "What's your company name?", placeholder: "Organization / Company", type: "text" },
+  ] as const;
+
+  const [stepIndex, setStepIndex] = useState(0);
+  const [form, setForm] = useState({ email: "", name: "", whatsapp: "", organization: "" });
+  const [loading, setLoading] = useState(false);
+
+  const current = steps[stepIndex];
+  const isLast = stepIndex === steps.length - 1;
+
+  const validateStep = () => {
+    const value = form[current.key as keyof typeof form].trim();
+    if (current.key === "email") {
+      if (!value || !z.string().email().safeParse(value).success) {
+        toast.error("Please enter a valid email");
+        return false;
+      }
+    } else if (current.key === "name") {
+      if (value.length < 2) {
+        toast.error("Please enter your name");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleNext = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!validateStep()) return;
+    if (!isLast) {
+      setStepIndex((i) => i + 1);
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.from("impact_audit_leads").insert({
+      name: form.name,
+      email: form.email,
+      whatsapp: form.whatsapp || null,
+      organization: form.organization || null,
+      source,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not submit. Please try again.");
+      return;
+    }
+    toast.success("Thanks! We'll be in touch shortly.");
+    onSuccess?.();
+  };
+
+  return (
+    <form onSubmit={handleNext} className="space-y-4">
+      <div className="flex gap-1.5">
+        {steps.map((_, i) => (
+          <span key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= stepIndex ? "bg-accent" : "bg-muted"}`} />
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={current.key} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.25 }}>
+          <label className="text-sm font-semibold text-foreground mb-2 block">{current.label}</label>
+          <Input
+            autoFocus
+            type={current.type}
+            value={form[current.key as keyof typeof form]}
+            onChange={(e) => setForm({ ...form, [current.key]: e.target.value })}
+            placeholder={current.placeholder}
+          />
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex items-center justify-between gap-2">
+        {stepIndex > 0 ? (
+          <Button type="button" variant="ghost" size="sm" onClick={() => setStepIndex((i) => i - 1)}>Back</Button>
+        ) : <span />}
+        <Button type="submit" variant="hero" disabled={loading}>
+          {loading ? "Sending..." : isLast ? ctaLabel : "Next"} <ArrowRight size={16} />
+        </Button>
+      </div>
+    </form>
+  );
+};
+
 const DeviceMockups = () => (
   <div className="relative min-h-[420px] lg:min-h-[520px]">
+    {/* Laptop mockup with autoplay video (landscape) */}
     <motion.div
       initial={{ opacity: 0, y: 32, rotate: -2 }}
       whileInView={{ opacity: 1, y: 0, rotate: -1 }}
@@ -154,16 +240,19 @@ const DeviceMockups = () => (
         <span className="h-2 w-2 rounded-full bg-accent" />
         <span className="h-2 w-2 rounded-full bg-success" />
       </div>
-      <div className="relative aspect-video overflow-hidden bg-muted">
-        <img src={helloFloating1} alt="Impact documentary preview on laptop" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-primary/25" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-16 w-16 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-lg">
-            <Play fill="currentColor" size={24} />
-          </div>
-        </div>
+      <div className="relative aspect-video overflow-hidden bg-black">
+        <video
+          src="/mockup-reel.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover"
+        />
       </div>
     </motion.div>
+    {/* Phone mockup with same autoplay video (portrait crop) */}
     <motion.div
       initial={{ opacity: 0, y: 40, rotate: 5 }}
       whileInView={{ opacity: 1, y: 0, rotate: 4 }}
@@ -171,12 +260,16 @@ const DeviceMockups = () => (
       transition={{ duration: 0.7, delay: 0.15 }}
       className="absolute right-0 bottom-0 w-[34%] min-w-[150px] rounded-[2rem] border-[9px] border-primary bg-primary shadow-2xl overflow-hidden"
     >
-      <div className="relative aspect-[9/16] overflow-hidden bg-muted">
-        <img src={helloFloating3} alt="Short-form story preview on phone" className="h-full w-full object-cover" />
-        <div className="absolute inset-x-4 bottom-5 rounded-lg bg-background/90 p-3 shadow-lg">
-          <p className="text-[10px] uppercase font-bold text-accent">Campaign Cutdown</p>
-          <p className="text-xs font-semibold text-foreground">30 sec impact story</p>
-        </div>
+      <div className="relative aspect-[9/16] overflow-hidden bg-black">
+        <video
+          src="/mockup-reel.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover"
+        />
       </div>
     </motion.div>
   </div>
@@ -389,17 +482,17 @@ export const WebsitePopupSystem = () => {
       <AnimatePresence>
         {active && !dismissed && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/70 backdrop-blur-sm px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
-              <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground" aria-label="Close popup"><X size={18} /></button>
+            <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
+              <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                <div className="hidden sm:flex bg-primary items-center justify-center">
-                  <img src={popupStrategy} alt="iKAMBA strategy storytelling" className="w-full h-full object-contain" />
+                <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
+                  <img src={popupStrategy} alt="iKAMBA — Free 4r You" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
                 </div>
                 <div className="p-6">
                   <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
                   <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>
                   <p className="text-sm text-muted-foreground mb-5">{active.message}</p>
-                  <AuditForm compact onSuccess={close} />
+                  <StepAuditForm source="popup" onSuccess={close} ctaLabel={active.button_text || "Get My Free Audit"} />
                 </div>
               </div>
             </motion.div>
@@ -432,50 +525,24 @@ export const AIToolsLeadDialog = ({
   onClose: () => void;
   onContinue: () => void;
 }) => {
-  const [form, setForm] = useState({ name: "", email: "", whatsapp: "", organization: "" });
-  const [saving, setSaving] = useState(false);
-
-  const handleContinue = async (skip: boolean) => {
-    if (!skip && (form.name || form.email || form.whatsapp)) {
-      setSaving(true);
-      await supabase.from("impact_audit_leads").insert({
-        name: form.name || "AI Tools Visitor",
-        email: form.email || "unknown@ikamba.africa",
-        whatsapp: form.whatsapp || null,
-        organization: form.organization || null,
-        source: "ai_tools_gate",
-      });
-      setSaving(false);
-    }
-    onContinue();
-  };
-
   return (
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/70 backdrop-blur-sm px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
-            <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground" aria-label="Close"><X size={18} /></button>
+          <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
+            <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close"><X size={18} /></button>
             <div className="grid grid-cols-1 sm:grid-cols-2">
-              <div className="hidden sm:flex bg-primary items-center justify-center">
-                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-full object-contain" />
+              <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
+                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
               </div>
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free AI Creative Tools</p>
                 <h2 className="text-2xl font-extrabold text-foreground mb-2">Before you continue</h2>
-                <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you (optional) — we'll send tips and updates. You can skip and continue.</p>
-                <div className="space-y-3">
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name (optional)" />
-                  <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email (optional)" />
-                  <Input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} placeholder="Phone / WhatsApp (optional)" />
-                  <Input value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} placeholder="Organization (optional)" />
-                </div>
-                <div className="flex gap-2 mt-5">
-                  <Button variant="hero" className="flex-1" onClick={() => handleContinue(false)} disabled={saving}>
-                    {saving ? "Saving..." : "Continue"} <ArrowRight size={16} />
-                  </Button>
-                  <Button variant="ghost" onClick={() => handleContinue(true)}>Skip</Button>
-                </div>
+                <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you — all fields are optional. You can skip and continue any time.</p>
+                <StepAuditForm source="ai_tools_gate" onSuccess={onContinue} ctaLabel="Continue to Tools" />
+                <button type="button" onClick={onContinue} className="mt-3 text-xs text-muted-foreground hover:text-foreground underline">
+                  Skip and continue
+                </button>
               </div>
             </div>
           </motion.div>
