@@ -9,9 +9,7 @@ import {
   Download,
   FileText,
   MessageCircle,
-  Play,
   Send,
-  Smartphone,
   Target,
   X,
 } from "lucide-react";
@@ -22,8 +20,6 @@ import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
 import creativeJoy from "@/assets/creative-joy.jpg";
 import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
-import helloFloating1 from "@/assets/hello-floating-1.webp";
-import helloFloating3 from "@/assets/hello-floating-3.jpg";
 import popupStrategy from "@/assets/popup-strategy.jpg";
 
 type PopupSetting = {
