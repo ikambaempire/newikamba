@@ -530,50 +530,24 @@ export const AIToolsLeadDialog = ({
   onClose: () => void;
   onContinue: () => void;
 }) => {
-  const [form, setForm] = useState({ name: "", email: "", whatsapp: "", organization: "" });
-  const [saving, setSaving] = useState(false);
-
-  const handleContinue = async (skip: boolean) => {
-    if (!skip && (form.name || form.email || form.whatsapp)) {
-      setSaving(true);
-      await supabase.from("impact_audit_leads").insert({
-        name: form.name || "AI Tools Visitor",
-        email: form.email || "unknown@ikamba.africa",
-        whatsapp: form.whatsapp || null,
-        organization: form.organization || null,
-        source: "ai_tools_gate",
-      });
-      setSaving(false);
-    }
-    onContinue();
-  };
-
   return (
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-[60] flex items-center justify-center bg-primary/70 backdrop-blur-sm px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
-            <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground" aria-label="Close"><X size={18} /></button>
+          <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
+            <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close"><X size={18} /></button>
             <div className="grid grid-cols-1 sm:grid-cols-2">
-              <div className="hidden sm:flex bg-primary items-center justify-center">
-                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-full object-contain" />
+              <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
+                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
               </div>
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free AI Creative Tools</p>
                 <h2 className="text-2xl font-extrabold text-foreground mb-2">Before you continue</h2>
-                <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you (optional) — we'll send tips and updates. You can skip and continue.</p>
-                <div className="space-y-3">
-                  <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name (optional)" />
-                  <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email (optional)" />
-                  <Input value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} placeholder="Phone / WhatsApp (optional)" />
-                  <Input value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} placeholder="Organization (optional)" />
-                </div>
-                <div className="flex gap-2 mt-5">
-                  <Button variant="hero" className="flex-1" onClick={() => handleContinue(false)} disabled={saving}>
-                    {saving ? "Saving..." : "Continue"} <ArrowRight size={16} />
-                  </Button>
-                  <Button variant="ghost" onClick={() => handleContinue(true)}>Skip</Button>
-                </div>
+                <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you — all fields are optional. You can skip and continue any time.</p>
+                <StepAuditForm source="ai_tools_gate" onSuccess={onContinue} ctaLabel="Continue to Tools" />
+                <button type="button" onClick={onContinue} className="mt-3 text-xs text-muted-foreground hover:text-foreground underline">
+                  Skip and continue
+                </button>
               </div>
             </div>
           </motion.div>
