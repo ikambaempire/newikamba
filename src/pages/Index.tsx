@@ -594,10 +594,17 @@ const Index = () => {
               </Card3D>
             ))}
           </div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={6}
+            className="mt-10 text-center">
+            <a href="#audit">
+              <Button variant="hero" size="lg">
+                Get a Free Story Audit <ArrowRight className="ml-1" size={16} />
+              </Button>
+            </a>
+          </motion.div>
         </div>
       </section>
-
-      {/* Our Response */}
       <section className="section-padding bg-background">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
