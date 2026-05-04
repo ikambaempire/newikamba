@@ -487,17 +487,17 @@ export const WebsitePopupSystem = () => {
       <AnimatePresence>
         {active && !dismissed && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/70 backdrop-blur-sm px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
-              <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground" aria-label="Close popup"><X size={18} /></button>
+            <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
+              <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                <div className="hidden sm:flex bg-primary items-center justify-center">
-                  <img src={popupStrategy} alt="iKAMBA strategy storytelling" className="w-full h-full object-contain" />
+                <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
+                  <img src={popupStrategy} alt="iKAMBA — Free 4r You" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
                 </div>
                 <div className="p-6">
                   <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
                   <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>
                   <p className="text-sm text-muted-foreground mb-5">{active.message}</p>
-                  <AuditForm compact onSuccess={close} />
+                  <StepAuditForm source="popup" onSuccess={close} ctaLabel={active.button_text || "Get My Free Audit"} />
                 </div>
               </div>
             </motion.div>
