@@ -18,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
 import creativeJoy from "@/assets/creative-joy.jpg";
-import creativeMindmap from "@/assets/creative-mindmap.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import popupStrategy from "@/assets/popup-strategy.jpg";
 
