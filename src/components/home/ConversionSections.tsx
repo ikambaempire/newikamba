@@ -140,6 +140,96 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
   );
 };
 
+/**
+ * Step-by-step lead form: email → name → phone → company.
+ * Used inside popups for higher conversion.
+ */
+const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; ctaLabel?: string }) => {
+  const steps = [
+    { key: "email", label: "What's your email?", placeholder: "you@organization.org", type: "email" },
+    { key: "name", label: "What's your name?", placeholder: "Full name", type: "text" },
+    { key: "whatsapp", label: "Your phone or WhatsApp?", placeholder: "+250 ...", type: "tel" },
+    { key: "organization", label: "What's your company name?", placeholder: "Organization / Company", type: "text" },
+  ] as const;
+
+  const [stepIndex, setStepIndex] = useState(0);
+  const [form, setForm] = useState({ email: "", name: "", whatsapp: "", organization: "" });
+  const [loading, setLoading] = useState(false);
+
+  const current = steps[stepIndex];
+  const isLast = stepIndex === steps.length - 1;
+
+  const validateStep = () => {
+    const value = form[current.key as keyof typeof form].trim();
+    if (current.key === "email") {
+      if (!value || !z.string().email().safeParse(value).success) {
+        toast.error("Please enter a valid email");
+        return false;
+      }
+    } else if (current.key === "name") {
+      if (value.length < 2) {
+        toast.error("Please enter your name");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleNext = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!validateStep()) return;
+    if (!isLast) {
+      setStepIndex((i) => i + 1);
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.from("impact_audit_leads").insert({
+      name: form.name,
+      email: form.email,
+      whatsapp: form.whatsapp || null,
+      organization: form.organization || null,
+      source,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error("Could not submit. Please try again.");
+      return;
+    }
+    toast.success("Thanks! We'll be in touch shortly.");
+    onSuccess?.();
+  };
+
+  return (
+    <form onSubmit={handleNext} className="space-y-4">
+      <div className="flex gap-1.5">
+        {steps.map((_, i) => (
+          <span key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= stepIndex ? "bg-accent" : "bg-muted"}`} />
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div key={current.key} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.25 }}>
+          <label className="text-sm font-semibold text-foreground mb-2 block">{current.label}</label>
+          <Input
+            autoFocus
+            type={current.type}
+            value={form[current.key as keyof typeof form]}
+            onChange={(e) => setForm({ ...form, [current.key]: e.target.value })}
+            placeholder={current.placeholder}
+          />
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex items-center justify-between gap-2">
+        {stepIndex > 0 ? (
+          <Button type="button" variant="ghost" size="sm" onClick={() => setStepIndex((i) => i - 1)}>Back</Button>
+        ) : <span />}
+        <Button type="submit" variant="hero" disabled={loading}>
+          {loading ? "Sending..." : isLast ? ctaLabel : "Next"} <ArrowRight size={16} />
+        </Button>
+      </div>
+    </form>
+  );
+};
+
 const DeviceMockups = () => (
   <div className="relative min-h-[420px] lg:min-h-[520px]">
     {/* Laptop mockup with autoplay video (landscape) */}
