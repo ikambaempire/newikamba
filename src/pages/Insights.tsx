@@ -153,19 +153,19 @@ const Insights = () => {
           <p>No articles published yet. Check back soon.</p>
         </div>
       ) : (
-        <div className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="max-w-6xl mx-auto px-6 pb-20">
           {/* Featured post */}
           {featured && (
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
               <Link to={`/insights/${featured.slug}`} className="block group mb-12">
-                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-[0_4px_24px_hsl(var(--foreground)/0.06)] hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.12)] transition-all duration-500">
+                <article className="bg-card border border-border rounded-xl overflow-hidden shadow-[0_4px_24px_hsl(var(--foreground)/0.06)] hover:shadow-[0_16px_48px_hsl(var(--foreground)/0.12)] transition-all duration-500 md:grid md:grid-cols-[1.08fr_0.92fr]">
                   {featured.cover_image_url && (
-                    <div className="aspect-[2.2/1] overflow-hidden">
+                    <div className="aspect-[16/10] md:aspect-auto overflow-hidden bg-secondary">
                       <img src={featured.cover_image_url} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     </div>
                   )}
-                  <div className="p-8">
-                    <div className="flex items-center gap-3 mb-3">
+                  <div className="p-6 md:p-8 flex flex-col justify-center">
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
                       <span className="text-[10px] uppercase tracking-widest text-accent font-semibold">{featured.category}</span>
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                         <Calendar size={10} />
@@ -176,39 +176,39 @@ const Insights = () => {
                         {estimateReadTime(featured.content)} min read
                       </span>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold mb-3 group-hover:text-accent transition-colors">{featured.title}</h2>
-                    <p className="text-muted-foreground leading-relaxed mb-4">{featured.excerpt}</p>
+                    <h2 className="text-2xl md:text-3xl font-extrabold leading-tight mb-3 text-foreground group-hover:text-accent transition-colors">{featured.title}</h2>
+                    <p className="text-muted-foreground leading-7 mb-5">{featured.excerpt}</p>
                     <span className="inline-flex items-center gap-2 text-sm font-semibold text-accent group-hover:gap-3 transition-all">
                       Read Article <ArrowRight size={16} />
                     </span>
                   </div>
-                </div>
+                </article>
               </Link>
             </motion.div>
           )}
 
           {/* Rest of posts */}
-          <div className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {rest.map((post, i) => (
               <motion.div key={post.id} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i}>
-                <Link to={`/insights/${post.slug}`} className="block group">
-                  <div className="bg-card border border-border rounded-xl p-6 shadow-[0_2px_12px_hsl(var(--foreground)/0.04)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.1)] hover:border-accent/30 transition-all duration-300 flex gap-6">
+                <Link to={`/insights/${post.slug}`} className="block group h-full">
+                  <article className="bg-card border border-border rounded-xl overflow-hidden shadow-[0_2px_12px_hsl(var(--foreground)/0.04)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.1)] hover:border-accent/30 transition-all duration-300 h-full flex flex-col">
                     {post.cover_image_url && (
-                      <div className="hidden sm:block w-32 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                      <div className="aspect-[16/9] overflow-hidden bg-secondary">
                         <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       </div>
                     )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex flex-wrap items-center gap-3 mb-2">
                         <span className="text-[10px] uppercase tracking-widest text-accent font-semibold">{post.category}</span>
                         <span className="text-[10px] text-muted-foreground">{post.published_at ? new Date(post.published_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : ""}</span>
                         <span className="text-[10px] text-muted-foreground">{estimateReadTime(post.content)} min</span>
                       </div>
-                      <h3 className="text-lg font-bold mb-1 group-hover:text-accent transition-colors">{post.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{post.excerpt}</p>
+                      <h3 className="text-lg font-bold text-foreground leading-snug mb-2 group-hover:text-accent transition-colors">{post.title}</h3>
+                      <p className="text-sm text-muted-foreground leading-6 line-clamp-3 mb-4">{post.excerpt}</p>
+                      <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-accent">Read Article <ArrowRight size={15} /></span>
                     </div>
-                    <ArrowRight size={18} className="text-muted-foreground group-hover:text-accent transition-colors self-center flex-shrink-0 hidden md:block" />
-                  </div>
+                  </article>
                 </Link>
               </motion.div>
             ))}
