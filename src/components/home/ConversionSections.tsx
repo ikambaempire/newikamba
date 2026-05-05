@@ -280,6 +280,48 @@ const DeviceMockups = () => (
   </div>
 );
 
+const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
+  const [current, setCurrent] = useState(0);
+  const slides = showVideo
+    ? [
+      { type: "video" as const, src: "/mockup-reel.mp4", label: "iKAMBA story preview" },
+      { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
+      { type: "image" as const, src: popupStrategy, label: "iKAMBA free audit resource" },
+    ]
+    : [
+      { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
+      { type: "image" as const, src: popupStrategy, label: "iKAMBA free audit resource" },
+    ];
+
+  useEffect(() => {
+    setCurrent(0);
+  }, [showVideo]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 3800);
+    return () => window.clearInterval(timer);
+  }, [slides.length]);
+
+  return (
+    <div className="relative min-h-[260px] bg-secondary flex items-center justify-center overflow-hidden p-2 sm:p-0">
+      <AnimatePresence mode="wait">
+        <motion.div key={`${slides[current].type}-${current}`} initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.35 }} className="absolute inset-0 flex items-center justify-center">
+          {slides[current].type === "video" ? (
+            <video src={slides[current].src} autoPlay loop muted playsInline preload="auto" className="h-full w-full object-contain" aria-label={slides[current].label} />
+          ) : (
+            <img src={slides[current].src} alt={slides[current].label} className="h-full w-full object-contain" />
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+        {slides.map((_, i) => (
+          <button key={i} type="button" onClick={() => setCurrent(i)} aria-label={`Show popup media ${i + 1}`} className={`h-1.5 rounded-full transition-all ${i === current ? "w-6 bg-accent" : "w-1.5 bg-muted-foreground/40"}`} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const ConversionSections = () => {
   const [testimonial, setTestimonial] = useState(0);
 
