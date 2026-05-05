@@ -697,7 +697,7 @@ const Index = () => {
               Start Creating
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
               Order storytelling projects like you order anything else.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -761,7 +761,7 @@ const Index = () => {
       <section className="section-padding gradient-navy text-white">
         <div className="max-w-5xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-3 text-white">How It Works</motion.h2>
+            className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-3 text-white">How It Works</motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
             className="text-white/70 mb-12 max-w-xl text-lg">
             Our simple process makes storytelling production easier for communication teams.
@@ -803,7 +803,7 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-                className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
+                className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4">
                 Who We Work With
               </motion.h2>
               <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
@@ -845,7 +845,7 @@ const Index = () => {
       <section className="section-padding bg-background text-center">
         <div className="max-w-3xl mx-auto">
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={0}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+            className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
             Let’s tell your story the right way
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} custom={1}
