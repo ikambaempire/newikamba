@@ -28,23 +28,35 @@ const fallbackPosts: BlogPost[] = [
   { id: "5", title: "The Role of Photography in Humanitarian Communication", slug: "photography-humanitarian-communication", excerpt: "Why professional photography remains essential for humanitarian organizations in the age of video and social media.", category: "Strategy", author: "Ikamba Team", cover_image_url: "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80", published_at: "2025-11-05", content: "In an era dominated by video content and social media stories, photography remains a cornerstone of humanitarian communication. A single powerful image can capture attention, convey emotion, and inspire action in ways that other media cannot.\n\n## Why Photography Still Matters\n\nPhotographs are versatile, immediate, and universally understood. They work across every platform — from annual reports to social media, from exhibition walls to email campaigns.\n\n## Best Practices for Humanitarian Photography\n\n- Prioritize dignity and agency in every frame\n- Capture moments of strength, not just vulnerability\n- Document the full spectrum of community life\n- Build relationships before picking up the camera\n- Always obtain informed consent\n\nProfessional photography is an investment in your organization's credibility and impact communication." },
 ];
 
-const renderMarkdown = (md: string) => {
-  let html = md
-    .replace(/\[youtube:([a-zA-Z0-9_-]{11})\]/g, '<div class="my-6"><iframe width="100%" height="400" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen style="border-radius:12px"></iframe></div>')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-xl my-6 max-w-full" loading="lazy" />')
-    .replace(/^### (.+)$/gm, '<h3 class="text-xl font-bold mt-8 mb-3 text-foreground">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold mt-10 mb-4 text-foreground">$1</h2>')
-    .replace(/^\*\*(\d+)\. (.+?)\*\*$/gm, '<p class="font-bold mt-4 mb-1 text-foreground">$1. $2</p>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-accent underline hover:no-underline">$1</a>')
-    .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-muted-foreground">$1</li>')
-    .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4 list-decimal text-muted-foreground">$1. $2</li>')
-    .replace(/^---$/gm, '<hr class="my-8 border-border" />')
-    .replace(/\n\n/g, '</p><p class="text-muted-foreground leading-relaxed mb-4">')
-    ;
-  return `<p class="text-muted-foreground leading-relaxed mb-4">${html}</p>`;
-};
+const escapeHtml = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const renderInline = (value: string) => escapeHtml(value)
+  .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
+  .replace(/\*(.+?)\*/g, '<em>$1</em>')
+  .replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" class="text-accent underline hover:no-underline" target="_blank" rel="noreferrer">$1</a>');
+
+const renderMarkdown = (md: string) => md
+  .split(/\n{2,}/)
+  .map((block) => {
+    const text = block.trim();
+    if (!text) return "";
+    const youtube = text.match(/^\[youtube:([a-zA-Z0-9_-]{11})\]$/);
+    if (youtube) return `<div class="my-8"><iframe width="100%" height="400" src="https://www.youtube.com/embed/${youtube[1]}" frameborder="0" allowfullscreen class="rounded-xl"></iframe></div>`;
+    const image = text.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (image) return `<img src="${escapeHtml(image[2])}" alt="${escapeHtml(image[1])}" class="rounded-xl my-8 max-w-full" loading="lazy" />`;
+    if (text.startsWith("### ")) return `<h3 class="text-xl font-bold mt-10 mb-3 text-foreground">${renderInline(text.slice(4))}</h3>`;
+    if (text.startsWith("## ")) return `<h2 class="text-2xl font-extrabold mt-12 mb-4 text-foreground">${renderInline(text.slice(3))}</h2>`;
+    if (text === "---") return '<hr class="my-10 border-border" />';
+    const lines = text.split("\n");
+    if (lines.every((line) => line.startsWith("- "))) {
+      return `<ul class="my-6 space-y-2 pl-5 text-muted-foreground leading-7">${lines.map((line) => `<li class="list-disc">${renderInline(line.slice(2))}</li>`).join("")}</ul>`;
+    }
+    if (lines.every((line) => /^\d+\. /.test(line))) {
+      return `<ol class="my-6 space-y-2 pl-5 text-muted-foreground leading-7">${lines.map((line) => `<li class="list-decimal">${renderInline(line.replace(/^\d+\. /, ""))}</li>`).join("")}</ol>`;
+    }
+    return `<p class="text-muted-foreground leading-8 mb-5">${renderInline(text).replace(/\n/g, "<br />")}</p>`;
+  })
+  .join("\n");
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
