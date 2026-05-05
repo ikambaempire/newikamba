@@ -395,7 +395,7 @@ export const ConversionSections = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 items-center">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Understand → Strategy → Production</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-4">Understand → Strategy → Production</h2>
               <p className="text-muted-foreground text-lg">A simple production system that keeps the story clear before cameras roll.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -416,7 +416,7 @@ export const ConversionSections = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Case Studies</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">Proof that story changes perception</h2>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground">Proof that story changes perception</h2>
             </div>
             <Link to="/work" className="text-sm font-semibold text-accent inline-flex items-center gap-1">View work <ArrowRight size={14} /></Link>
           </div>
@@ -440,7 +440,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Free Tools</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Free tools to improve your storytelling</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-4">Free tools to improve your storytelling</h2>
             <p className="text-muted-foreground text-lg">Use these resources to clarify your next impact story before you invest in production.</p>
           </motion.div>
           <div className="grid grid-cols-1 gap-3">
@@ -464,7 +464,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Lead Capture</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Get Your Free Impact Story Audit</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Get Your Free Impact Story Audit</h2>
             <p className="text-primary-foreground/70 text-lg">Tell us who you are and we’ll help identify the clearest story your organization should be telling next.</p>
           </motion.div>
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="rounded-lg border border-primary-foreground/10 bg-primary-foreground p-6 text-foreground shadow-2xl">
