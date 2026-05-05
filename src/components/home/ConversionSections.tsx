@@ -20,6 +20,7 @@ import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
 import creativeJoy from "@/assets/creative-joy.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import popupStrategy from "@/assets/popup-strategy.jpg";
+import popupStoryClarity from "@/assets/popup-story-clarity.jpg";
 
 type PopupSetting = {
   id: string;
@@ -139,7 +140,7 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
  * Step-by-step lead form: email → name → phone → company.
  * Used inside popups for higher conversion.
  */
-const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; ctaLabel?: string }) => {
+const StepAuditForm = ({ source, onSuccess, onStepChange, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; onStepChange?: (step: number) => void; ctaLabel?: string }) => {
   const steps = [
     { key: "email", label: "What's your email?", placeholder: "you@organization.org", type: "email" },
     { key: "name", label: "What's your name?", placeholder: "Full name", type: "text" },
@@ -153,6 +154,10 @@ const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { 
 
   const current = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
+
+  useEffect(() => {
+    onStepChange?.(stepIndex);
+  }, [onStepChange, stepIndex]);
 
   const validateStep = () => {
     const value = form[current.key as keyof typeof form].trim();
