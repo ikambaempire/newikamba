@@ -336,7 +336,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Mockup Preview</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4">See how your story comes to life</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground mb-4">See how your story comes to life</h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
               From a single field interview to a full campaign system, your message becomes cinematic content for every platform your audience uses.
             </p>
@@ -357,7 +357,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mb-10">
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Problem</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Great work deserves better storytelling</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Great work deserves better storytelling</h2>
             <p className="text-primary-foreground/70 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -376,7 +376,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Solution</motion.p>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4">We don’t just create content. We design stories.</motion.h2>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground mb-4">We don’t just create content. We design stories.</motion.h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {solutionPillars.map((pillar, i) => (
