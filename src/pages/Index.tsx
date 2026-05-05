@@ -566,7 +566,7 @@ const Index = () => {
               The Challenge
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-white">
+              className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-white">
               Important work is often poorly communicated.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -613,7 +613,7 @@ const Index = () => {
               Our Response
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
               We combine storytelling strategy with premium production.
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -640,7 +640,7 @@ const Index = () => {
               Services
             </motion.p>
             <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+              className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
               What we offer organizations and institutions.
             </motion.h2>
           </div>
