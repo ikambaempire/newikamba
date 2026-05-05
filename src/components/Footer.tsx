@@ -79,7 +79,7 @@ const Footer = () => (
               </Button>
             </Link>
             <Link to="/contact">
-              <Button variant="outline" size="sm" className="w-full border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button variant="outline" size="sm" className="w-full bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                 Book Consultation
               </Button>
             </Link>

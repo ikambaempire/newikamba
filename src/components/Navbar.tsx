@@ -198,11 +198,11 @@ const Navbar = () => {
               )}
               {user ? (
                 <Link to="/auth-redirect" onClick={() => setOpen(false)}>
-                  <Button variant="outline" className="w-full mt-2 border-primary-foreground/20 text-primary-foreground">Dashboard</Button>
+                  <Button variant="outline" className="w-full mt-2 bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">Dashboard</Button>
                 </Link>
               ) : (
                 <Link to="/login" onClick={() => setOpen(false)}>
-                  <Button variant="outline" className="w-full mt-2 border-primary-foreground/20 text-primary-foreground">
+                  <Button variant="outline" className="w-full mt-2 bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
                     <LogIn size={14} className="mr-1" /> Login
                   </Button>
                 </Link>
@@ -211,7 +211,7 @@ const Navbar = () => {
                 <Button variant="hero" className="w-full mt-2">Start a Project</Button>
               </Link>
               <Link to="/contact" onClick={() => setOpen(false)}>
-                <Button variant="outline" className="w-full mt-1 border-primary-foreground/20 text-primary-foreground">Book Consultation</Button>
+                <Button variant="outline" className="w-full mt-1 bg-transparent border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">Book Consultation</Button>
               </Link>
             </div>
           </motion.div>

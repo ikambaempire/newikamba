@@ -20,6 +20,7 @@ import creativeAudiovisual from "@/assets/creative-audiovisual.webp";
 import creativeJoy from "@/assets/creative-joy.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import popupStrategy from "@/assets/popup-strategy.jpg";
+import popupStoryClarity from "@/assets/popup-story-clarity.jpg";
 
 type PopupSetting = {
   id: string;
@@ -139,7 +140,7 @@ const AuditForm = ({ compact = false, onSuccess }: { compact?: boolean; onSucces
  * Step-by-step lead form: email → name → phone → company.
  * Used inside popups for higher conversion.
  */
-const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; ctaLabel?: string }) => {
+const StepAuditForm = ({ source, onSuccess, onStepChange, ctaLabel = "Get My Free Audit" }: { source: string; onSuccess?: () => void; onStepChange?: (step: number) => void; ctaLabel?: string }) => {
   const steps = [
     { key: "email", label: "What's your email?", placeholder: "you@organization.org", type: "email" },
     { key: "name", label: "What's your name?", placeholder: "Full name", type: "text" },
@@ -153,6 +154,10 @@ const StepAuditForm = ({ source, onSuccess, ctaLabel = "Get My Free Audit" }: { 
 
   const current = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
+
+  useEffect(() => {
+    onStepChange?.(stepIndex);
+  }, [onStepChange, stepIndex]);
 
   const validateStep = () => {
     const value = form[current.key as keyof typeof form].trim();
@@ -275,6 +280,48 @@ const DeviceMockups = () => (
   </div>
 );
 
+const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
+  const [current, setCurrent] = useState(0);
+  const slides = showVideo
+    ? [
+      { type: "video" as const, src: "/mockup-reel.mp4", label: "iKAMBA story preview" },
+      { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
+      { type: "image" as const, src: popupStrategy, label: "iKAMBA free audit resource" },
+    ]
+    : [
+      { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
+      { type: "image" as const, src: popupStrategy, label: "iKAMBA free audit resource" },
+    ];
+
+  useEffect(() => {
+    setCurrent(0);
+  }, [showVideo]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 3800);
+    return () => window.clearInterval(timer);
+  }, [slides.length]);
+
+  return (
+    <div className="relative min-h-[260px] bg-secondary flex items-center justify-center overflow-hidden p-2 sm:p-0">
+      <AnimatePresence mode="wait">
+        <motion.div key={`${slides[current].type}-${current}`} initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.35 }} className="absolute inset-0 flex items-center justify-center">
+          {slides[current].type === "video" ? (
+            <video src={slides[current].src} autoPlay loop muted playsInline preload="auto" className="h-full w-full object-contain" aria-label={slides[current].label} />
+          ) : (
+            <img src={slides[current].src} alt={slides[current].label} className="h-full w-full object-contain" />
+          )}
+        </motion.div>
+      </AnimatePresence>
+      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+        {slides.map((_, i) => (
+          <button key={i} type="button" onClick={() => setCurrent(i)} aria-label={`Show popup media ${i + 1}`} className={`h-1.5 rounded-full transition-all ${i === current ? "w-6 bg-accent" : "w-1.5 bg-muted-foreground/40"}`} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export const ConversionSections = () => {
   const [testimonial, setTestimonial] = useState(0);
 
@@ -289,7 +336,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Mockup Preview</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4">See how your story comes to life</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground mb-4">See how your story comes to life</h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
               From a single field interview to a full campaign system, your message becomes cinematic content for every platform your audience uses.
             </p>
@@ -310,7 +357,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mb-10">
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Problem</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Great work deserves better storytelling</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Great work deserves better storytelling</h2>
             <p className="text-primary-foreground/70 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -329,7 +376,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Solution</motion.p>
-            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground mb-4">We don’t just create content. We design stories.</motion.h2>
+            <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground mb-4">We don’t just create content. We design stories.</motion.h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {solutionPillars.map((pillar, i) => (
@@ -348,7 +395,7 @@ export const ConversionSections = () => {
           <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-12 items-center">
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">How It Works</p>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Understand → Strategy → Production</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-4">Understand → Strategy → Production</h2>
               <p className="text-muted-foreground text-lg">A simple production system that keeps the story clear before cameras roll.</p>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -369,7 +416,7 @@ export const ConversionSections = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Case Studies</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground">Proof that story changes perception</h2>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-foreground">Proof that story changes perception</h2>
             </div>
             <Link to="/work" className="text-sm font-semibold text-accent inline-flex items-center gap-1">View work <ArrowRight size={14} /></Link>
           </div>
@@ -393,7 +440,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 items-start">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Free Tools</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">Free tools to improve your storytelling</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-4">Free tools to improve your storytelling</h2>
             <p className="text-muted-foreground text-lg">Use these resources to clarify your next impact story before you invest in production.</p>
           </motion.div>
           <div className="grid grid-cols-1 gap-3">
@@ -417,7 +464,7 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Lead Capture</p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Get Your Free Impact Story Audit</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Get Your Free Impact Story Audit</h2>
             <p className="text-primary-foreground/70 text-lg">Tell us who you are and we’ll help identify the clearest story your organization should be telling next.</p>
           </motion.div>
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="rounded-lg border border-primary-foreground/10 bg-primary-foreground p-6 text-foreground shadow-2xl">
@@ -447,6 +494,7 @@ export const WebsitePopupSystem = () => {
   const [settings, setSettings] = useState<PopupSetting[]>([]);
   const [active, setActive] = useState<PopupSetting | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  const [popupStep, setPopupStep] = useState(0);
 
   useEffect(() => {
     supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds").eq("enabled", true).then(({ data }) => {
@@ -475,6 +523,7 @@ export const WebsitePopupSystem = () => {
   const close = () => {
     setDismissed(true);
     setActive(null);
+    setPopupStep(0);
   };
 
   return (
@@ -485,14 +534,12 @@ export const WebsitePopupSystem = () => {
             <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
               <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
-                  <img src={popupStrategy} alt="iKAMBA — Free 4r You" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
-                </div>
+                <PopupMediaCarousel showVideo={popupStep >= 2} />
                 <div className="p-6">
                   <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
                   <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>
                   <p className="text-sm text-muted-foreground mb-5">{active.message}</p>
-                  <StepAuditForm source="popup" onSuccess={close} ctaLabel={active.button_text || "Get My Free Audit"} />
+                  <StepAuditForm source="popup" onStepChange={setPopupStep} onSuccess={close} ctaLabel={active.button_text || "Get My Free Audit"} />
                 </div>
               </div>
             </motion.div>
@@ -525,6 +572,12 @@ export const AIToolsLeadDialog = ({
   onClose: () => void;
   onContinue: () => void;
 }) => {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (open) setStep(0);
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -532,14 +585,12 @@ export const AIToolsLeadDialog = ({
           <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
             <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close"><X size={18} /></button>
             <div className="grid grid-cols-1 sm:grid-cols-2">
-              <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
-                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
-              </div>
+              <PopupMediaCarousel showVideo={step >= 2} />
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free AI Creative Tools</p>
                 <h2 className="text-2xl font-extrabold text-foreground mb-2">Before you continue</h2>
                 <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you — all fields are optional. You can skip and continue any time.</p>
-                <StepAuditForm source="ai_tools_gate" onSuccess={onContinue} ctaLabel="Continue to Tools" />
+                <StepAuditForm source="ai_tools_gate" onStepChange={setStep} onSuccess={onContinue} ctaLabel="Continue to Tools" />
                 <button type="button" onClick={onContinue} className="mt-3 text-xs text-muted-foreground hover:text-foreground underline">
                   Skip and continue
                 </button>
