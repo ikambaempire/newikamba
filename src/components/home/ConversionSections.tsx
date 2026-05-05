@@ -572,6 +572,12 @@ export const AIToolsLeadDialog = ({
   onClose: () => void;
   onContinue: () => void;
 }) => {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (open) setStep(0);
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -579,14 +585,12 @@ export const AIToolsLeadDialog = ({
           <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
             <button onClick={onClose} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close"><X size={18} /></button>
             <div className="grid grid-cols-1 sm:grid-cols-2">
-              <div className="bg-secondary flex items-center justify-center p-2 sm:p-0">
-                <img src={popupStrategy} alt="iKAMBA AI Tools" className="w-full h-auto sm:h-full object-contain max-h-[260px] sm:max-h-none" />
-              </div>
+              <PopupMediaCarousel showVideo={step >= 2} />
               <div className="p-6">
                 <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free AI Creative Tools</p>
                 <h2 className="text-2xl font-extrabold text-foreground mb-2">Before you continue</h2>
                 <p className="text-sm text-muted-foreground mb-4">Tell us a bit about you — all fields are optional. You can skip and continue any time.</p>
-                <StepAuditForm source="ai_tools_gate" onSuccess={onContinue} ctaLabel="Continue to Tools" />
+                <StepAuditForm source="ai_tools_gate" onStepChange={setStep} onSuccess={onContinue} ctaLabel="Continue to Tools" />
                 <button type="button" onClick={onContinue} className="mt-3 text-xs text-muted-foreground hover:text-foreground underline">
                   Skip and continue
                 </button>
