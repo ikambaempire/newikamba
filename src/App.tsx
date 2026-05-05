@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
@@ -30,6 +31,24 @@ import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const DashboardRedirect = () => {
+  const { user, loading, isInternal, isClient } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent" />
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+  if (isInternal) return <Navigate to="/admin" replace />;
+  if (isClient) return <Navigate to="/workspace" replace />;
+
+  return <UserDashboard />;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -63,11 +82,11 @@ const AnimatedRoutes = () => {
         <Route path="/auth-redirect" element={<AuthRedirect />} />
 
         {/* Client Workspace */}
-        <Route path="/workspace" element={<PageTransition><ProtectedRoute><ClientDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/workspace" element={<PageTransition><ProtectedRoute requireClient><ClientDashboard /></ProtectedRoute></PageTransition>} />
         <Route path="/workspace/new-brief" element={<PageTransition><ProtectedRoute><NewBrief /></ProtectedRoute></PageTransition>} />
 
         {/* User Dashboard */}
-        <Route path="/dashboard" element={<PageTransition><ProtectedRoute><UserDashboard /></ProtectedRoute></PageTransition>} />
+        <Route path="/dashboard" element={<PageTransition><DashboardRedirect /></PageTransition>} />
 
         {/* Shared */}
         <Route path="/project/:id" element={<PageTransition><ProtectedRoute><ProjectDetail /></ProtectedRoute></PageTransition>} />
