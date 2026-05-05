@@ -150,7 +150,7 @@ const FeaturedInsights = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-end justify-between mb-8">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={0}>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">Latest Insights</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">Latest Insights</h2>
             <p className="text-muted-foreground mt-1">Stories, strategies, and lessons from strategic storytelling.</p>
           </motion.div>
           <Link to="/insights" className="hidden sm:inline-flex items-center gap-1 text-sm text-accent hover:underline font-medium">View all <ArrowRight size={14} /></Link>
@@ -206,7 +206,7 @@ const FeaturedWorkCarousel = () => {
             Featured Work
           </motion.p>
           <motion.h2 variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+            className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 text-foreground">
             Real stories from real organizations
           </motion.h2>
           <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
@@ -434,7 +434,7 @@ const Index = () => {
                 initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-[5rem] font-extrabold leading-[1.05] tracking-tight text-white mb-6 text-balance"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight text-white mb-6 text-balance"
               >
                 {"Powerful ".split("").map((char, i) => (
                   <motion.span
