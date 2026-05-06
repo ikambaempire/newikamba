@@ -7,13 +7,24 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import ikambaIcon from "@/assets/ikamba-icon.png";
 
-const navLinks = [
+const navLinks: Array<{
+  label: string;
+  href: string;
+  dropdown?: Array<{ label: string; href: string; desc: string; external?: boolean }>;
+}> = [
   {
     label: "Solutions",
     href: "/solutions",
     dropdown: [
       { label: "For Corporates", href: "/solutions/corporates", desc: "Media production & storytelling for organizations" },
       { label: "For Talents", href: "/solutions/talents", desc: "Training, collaboration & growth for creatives" },
+    ],
+  },
+  {
+    label: "Products",
+    href: "#products",
+    dropdown: [
+      { label: "Resona", href: "https://resona.ikamba.africa/", desc: "The African podcast platform — create, distribute & grow", external: true },
     ],
   },
   { label: "Work", href: "/work" },
