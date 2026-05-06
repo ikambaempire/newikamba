@@ -115,7 +115,7 @@ const Footer = () => (
             </li>
             <li className="flex items-center gap-2">
               <Mail size={14} className="text-accent" />
-              <span>connect@ikambamedia.com</span>
+              <span>connect@ikamba.africa</span>
             </li>
           </ul>
         </div>

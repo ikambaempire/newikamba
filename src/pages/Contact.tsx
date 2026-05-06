@@ -68,7 +68,7 @@ const Contact = () => {
                 <Mail className="text-accent shrink-0 mt-0.5" size={18} />
                 <div>
                   <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold mb-1">Email</p>
-                  <p className="text-sm">connect@ikambamedia.com</p>
+                  <p className="text-sm">connect@ikamba.africa</p>
                 </div>
               </div>
 
