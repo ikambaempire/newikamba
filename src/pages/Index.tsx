@@ -36,6 +36,8 @@ import insight3 from "@/assets/insight-3.jpg";
 import insight4 from "@/assets/insight-4.jpg";
 import insight5 from "@/assets/insight-5.jpg";
 import insight6 from "@/assets/insight-6.jpg";
+import resonaLaptop from "@/assets/resona-laptop-mockup.png";
+import resonaPhone from "@/assets/resona-phone-mockup.png";
 
 // Real photos - African creative imagery
 const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
@@ -789,6 +791,60 @@ const Index = () => {
                 Learn More <ArrowRight className="ml-1" size={14} />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Resona Product Showcase */}
+      <section className="section-padding relative overflow-hidden" style={{ background: 'hsl(217, 72%, 14%)' }}>
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full" style={{ background: 'radial-gradient(circle, hsl(43 74% 49% / 0.4), transparent 70%)' }} />
+          <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full" style={{ background: 'radial-gradient(circle, hsl(43 74% 49% / 0.3), transparent 70%)' }} />
+        </div>
+        <div className="container-padding mx-auto max-w-7xl relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="text-white">
+              <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
+                <Podcast size={14} /> Our Product · Resona
+              </span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
+                The Home of <span className="text-accent">African Podcasts</span>
+              </h2>
+              <p className="text-base md:text-lg text-white/80 leading-relaxed mb-6 max-w-xl">
+                Resona is iKAMBA's streaming platform built to amplify African voices. Discover, listen, and share podcasts that tell our stories — anywhere, anytime, on any device.
+              </p>
+              <ul className="space-y-2 mb-8 text-white/85">
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Curated African podcasts across culture, business & impact</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Seamless mobile and web listening experience</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> A platform built by Africans, for the world</li>
+              </ul>
+              <a href="https://resona.ikamba.africa/" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+                  Visit Resona <ArrowRight size={18} className="ml-2" />
+                </Button>
+              </a>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative h-[420px] md:h-[500px]">
+              <img
+                src={resonaLaptop}
+                alt="Resona podcast platform on laptop"
+                loading="lazy"
+                width={1536}
+                height={1024}
+                className="absolute inset-0 w-full h-auto object-contain drop-shadow-2xl"
+              />
+              <motion.img
+                src={resonaPhone}
+                alt="Resona podcast app on phone"
+                loading="lazy"
+                width={1024}
+                height={1536}
+                className="absolute -bottom-6 -right-2 md:right-4 h-[260px] md:h-[340px] w-auto object-contain drop-shadow-2xl"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </motion.div>
           </div>
         </div>
       </section>
