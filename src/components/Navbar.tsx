@@ -196,14 +196,27 @@ const Navbar = () => {
                         <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
                           <div className="pl-4 space-y-1 pb-2">
                             {link.dropdown.map((item) => (
-                              <Link
-                                key={item.href}
-                                to={item.href}
-                                onClick={() => { setOpen(false); setMobileDropdown(null); }}
-                                className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
-                              >
-                                {item.label}
-                              </Link>
+                              item.external ? (
+                                <a
+                                  key={item.href}
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => { setOpen(false); setMobileDropdown(null); }}
+                                  className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
+                                >
+                                  {item.label}
+                                </a>
+                              ) : (
+                                <Link
+                                  key={item.href}
+                                  to={item.href}
+                                  onClick={() => { setOpen(false); setMobileDropdown(null); }}
+                                  className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
+                                >
+                                  {item.label}
+                                </Link>
+                              )
                             ))}
                           </div>
                         </motion.div>
