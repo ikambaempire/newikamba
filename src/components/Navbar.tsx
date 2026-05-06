@@ -91,15 +91,29 @@ const Navbar = () => {
                       className="absolute top-full left-0 mt-1 w-64 bg-card border border-border rounded-xl shadow-xl overflow-hidden z-50"
                     >
                       {link.dropdown.map((item) => (
-                        <Link
-                          key={item.href}
-                          to={item.href}
-                          onClick={() => setDropdownOpen(null)}
-                          className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
-                        >
-                          <span className="text-sm font-semibold text-foreground">{item.label}</span>
-                          <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-                        </Link>
+                        item.external ? (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setDropdownOpen(null)}
+                            className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
+                          >
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                          </a>
+                        ) : (
+                          <Link
+                            key={item.href}
+                            to={item.href}
+                            onClick={() => setDropdownOpen(null)}
+                            className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
+                          >
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                          </Link>
+                        )
                       ))}
                     </motion.div>
                   )}
