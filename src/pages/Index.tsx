@@ -808,15 +808,22 @@ const Index = () => {
                 <Podcast size={14} /> Our Product · Resona
               </span>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4">
-                The Home of <span className="text-accent">African Podcasts</span>
+                The African <span className="text-accent">Podcast Platform</span>
               </h2>
-              <p className="text-base md:text-lg text-white/80 leading-relaxed mb-6 max-w-xl">
-                Resona is iKAMBA's streaming platform built to amplify African voices. Discover, listen, and share podcasts that tell our stories — anywhere, anytime, on any device.
+              <p className="text-base md:text-lg text-white/80 leading-relaxed mb-4 max-w-xl">
+                Create, distribute and grow podcasts anywhere in Africa. Choose self-serve creation to launch instantly, or scale your show with our enterprise platform.
               </p>
+              <div className="grid grid-cols-3 gap-4 mb-6 max-w-md">
+                <div><div className="text-2xl font-extrabold text-accent">500+</div><div className="text-xs text-white/60 uppercase tracking-wide">Episodes Produced</div></div>
+                <div><div className="text-2xl font-extrabold text-accent">30+</div><div className="text-xs text-white/60 uppercase tracking-wide">African Countries</div></div>
+                <div><div className="text-2xl font-extrabold text-accent">200+</div><div className="text-xs text-white/60 uppercase tracking-wide">Creators</div></div>
+              </div>
               <ul className="space-y-2 mb-8 text-white/85">
-                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Curated African podcasts across culture, business & impact</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Seamless mobile and web listening experience</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> A platform built by Africans, for the world</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Self-serve creation — browse, order, match & launch like e-commerce</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Enterprise platform for brands producing podcasts at scale</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> AI Clips — turn one episode into viral shorts ready for social</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Distribute to Spotify, Apple Podcasts, YouTube, Audiomack & more</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> 200+ creators across 20+ African cities, mobilized in 48 hours</li>
               </ul>
               <a href="https://resona.ikamba.africa/" target="_blank" rel="noopener noreferrer">
                 <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">

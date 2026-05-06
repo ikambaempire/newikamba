@@ -7,13 +7,24 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import ikambaIcon from "@/assets/ikamba-icon.png";
 
-const navLinks = [
+const navLinks: Array<{
+  label: string;
+  href: string;
+  dropdown?: Array<{ label: string; href: string; desc: string; external?: boolean }>;
+}> = [
   {
     label: "Solutions",
     href: "/solutions",
     dropdown: [
       { label: "For Corporates", href: "/solutions/corporates", desc: "Media production & storytelling for organizations" },
       { label: "For Talents", href: "/solutions/talents", desc: "Training, collaboration & growth for creatives" },
+    ],
+  },
+  {
+    label: "Products",
+    href: "#products",
+    dropdown: [
+      { label: "Resona", href: "https://resona.ikamba.africa/", desc: "The African podcast platform — create, distribute & grow", external: true },
     ],
   },
   { label: "Work", href: "/work" },
@@ -80,15 +91,29 @@ const Navbar = () => {
                       className="absolute top-full left-0 mt-1 w-64 bg-card border border-border rounded-xl shadow-xl overflow-hidden z-50"
                     >
                       {link.dropdown.map((item) => (
-                        <Link
-                          key={item.href}
-                          to={item.href}
-                          onClick={() => setDropdownOpen(null)}
-                          className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
-                        >
-                          <span className="text-sm font-semibold text-foreground">{item.label}</span>
-                          <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
-                        </Link>
+                        item.external ? (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setDropdownOpen(null)}
+                            className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
+                          >
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                          </a>
+                        ) : (
+                          <Link
+                            key={item.href}
+                            to={item.href}
+                            onClick={() => setDropdownOpen(null)}
+                            className="block px-4 py-3 hover:bg-accent/10 transition-colors border-b border-border last:border-b-0"
+                          >
+                            <span className="text-sm font-semibold text-foreground">{item.label}</span>
+                            <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+                          </Link>
+                        )
                       ))}
                     </motion.div>
                   )}
@@ -171,14 +196,27 @@ const Navbar = () => {
                         <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden">
                           <div className="pl-4 space-y-1 pb-2">
                             {link.dropdown.map((item) => (
-                              <Link
-                                key={item.href}
-                                to={item.href}
-                                onClick={() => { setOpen(false); setMobileDropdown(null); }}
-                                className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
-                              >
-                                {item.label}
-                              </Link>
+                              item.external ? (
+                                <a
+                                  key={item.href}
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => { setOpen(false); setMobileDropdown(null); }}
+                                  className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
+                                >
+                                  {item.label}
+                                </a>
+                              ) : (
+                                <Link
+                                  key={item.href}
+                                  to={item.href}
+                                  onClick={() => { setOpen(false); setMobileDropdown(null); }}
+                                  className="block py-2 text-sm text-primary-foreground/60 hover:text-primary-foreground"
+                                >
+                                  {item.label}
+                                </Link>
+                              )
                             ))}
                           </div>
                         </motion.div>
