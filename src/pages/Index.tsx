@@ -485,7 +485,7 @@ const Index = () => {
                 transition={{ duration: 0.6, delay: 0.8 }}
                 className="text-base sm:text-lg text-white/75 max-w-lg leading-relaxed mb-8"
               >
-                Ikamba helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
+                iKAMBA helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
               </motion.p>
 
               <motion.div
@@ -508,7 +508,7 @@ const Index = () => {
                     onClick={() => setAiToolsOpen(true)}
                     className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90"
                   >
-                    ✨ Free AI Creative Tools
+                    Free AI Creative Tools
                   </Button>
                 </motion.div>
               </motion.div>
@@ -618,7 +618,7 @@ const Index = () => {
             </motion.h2>
             <motion.p variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}
               className="text-muted-foreground max-w-2xl mx-auto text-lg">
-              Ikamba helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
+              iKAMBA helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
             </motion.p>
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} className="mt-8">
               <Link to="/how-it-works">

@@ -122,7 +122,7 @@ const Footer = () => (
       </div>
 
       <div className="border-t border-primary-foreground/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-xs text-primary-foreground/40">© {new Date().getFullYear()} Ikamba. All rights reserved.</p>
+        <p className="text-xs text-primary-foreground/40">© {new Date().getFullYear()} iKAMBA. All rights reserved.</p>
         <p className="text-xs text-primary-foreground/40">Strategic Storytelling & Media Production.</p>
       </div>
     </div>
