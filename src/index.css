@@ -125,3 +125,34 @@
     background: linear-gradient(135deg, hsl(var(--gold)), hsl(38, 80%, 58%));
   }
 }
+
+/* ===== iKAMBA Media OS — scoped theme ===== */
+.os-theme {
+  font-family: 'Poppins', system-ui, sans-serif;
+  --os-navy: 210 71% 16%;        /* #0C2C47 */
+  --os-navy-deep: 211 75% 11%;
+  --os-navy-soft: 210 50% 22%;
+  --os-gold: 41 65% 53%;          /* #D4A739 */
+  --os-gold-soft: 41 70% 65%;
+  --os-bg: 211 60% 8%;
+  --os-surface: 210 55% 12%;
+  --os-surface-2: 210 45% 16%;
+  --os-border: 210 35% 22%;
+  --os-text: 210 25% 95%;
+  --os-text-muted: 210 15% 65%;
+  --os-success: 152 60% 45%;
+  --os-warn: 35 90% 55%;
+  --os-danger: 0 70% 55%;
+
+  background: hsl(var(--os-bg));
+  color: hsl(var(--os-text));
+}
+.os-theme .os-card { background: hsl(var(--os-surface)); border: 1px solid hsl(var(--os-border)); }
+.os-theme .os-card-2 { background: hsl(var(--os-surface-2)); border: 1px solid hsl(var(--os-border)); }
+.os-theme .text-os-muted { color: hsl(var(--os-text-muted)); }
+.os-theme .text-os-gold { color: hsl(var(--os-gold)); }
+.os-theme .bg-os-navy { background: hsl(var(--os-navy)); }
+.os-theme .bg-os-navy-deep { background: hsl(var(--os-navy-deep)); }
+.os-theme .bg-os-gold { background: hsl(var(--os-gold)); color: hsl(var(--os-navy-deep)); }
+.os-theme .border-os { border-color: hsl(var(--os-border)); }
+.os-theme .ring-os-gold { --tw-ring-color: hsl(var(--os-gold)); }
