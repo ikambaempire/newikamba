@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const AuthRedirect = () => {
-  const { user, isInternal, isClient, loading, roles } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,17 +13,10 @@ const AuthRedirect = () => {
       return;
     }
     const timer = setTimeout(() => {
-      if (isInternal) {
-        navigate("/os", { replace: true });
-      } else if (isClient) {
-        navigate("/workspace", { replace: true });
-      } else {
-        // Regular users (including Google sign-ups with no role yet)
-        navigate("/dashboard", { replace: true });
-      }
+      navigate("/os", { replace: true });
     }, 300);
     return () => clearTimeout(timer);
-  }, [user, isInternal, isClient, loading, roles, navigate]);
+  }, [user, loading, navigate]);
 
   return (
     <div className="min-h-screen gradient-navy flex items-center justify-center">
