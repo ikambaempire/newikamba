@@ -357,15 +357,15 @@ export const ConversionSections = () => {
         <div className="max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mb-10">
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Problem</p>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Great work deserves better storytelling</h2>
-            <p className="text-primary-foreground/70 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-primary-foreground mb-4">Great work deserves better storytelling</h2>
+            <p className="text-primary-foreground/80 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {["Unclear messaging", "Low visibility", "Weak storytelling"].map((problem, i) => (
               <motion.div key={problem} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1} className="rounded-lg border border-primary-foreground/10 bg-primary-foreground/5 p-6">
                 <span className="text-accent font-extrabold text-3xl">0{i + 1}</span>
-                <h3 className="text-xl font-bold mt-5 mb-2">{problem}</h3>
-                <p className="text-primary-foreground/65 text-sm leading-relaxed">The right audience cannot act when the value, proof, and emotional hook are hard to understand.</p>
+                <h3 className="text-xl font-bold text-primary-foreground mt-5 mb-2">{problem}</h3>
+                <p className="text-primary-foreground/75 text-sm leading-relaxed">The right audience cannot act when the value, proof, and emotional hook are hard to understand.</p>
               </motion.div>
             ))}
           </div>
@@ -460,14 +460,14 @@ export const ConversionSections = () => {
         </div>
       </section>
 
-      <section id="audit" className="section-padding gradient-navy text-primary-foreground">
+      <section id="audit" className="section-padding bg-accent text-accent-foreground">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Lead Capture</p>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4">Get Your Free Impact Story Audit</h2>
-            <p className="text-primary-foreground/70 text-lg">Tell us who you are and we’ll help identify the clearest story your organization should be telling next.</p>
+            <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent-foreground/70 mb-3">Lead Capture</p>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-accent-foreground mb-4">Get Your Free Impact Story Audit</h2>
+            <p className="text-accent-foreground/80 text-lg">Tell us who you are and we’ll help identify the clearest story your organization should be telling next.</p>
           </motion.div>
-          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="rounded-lg border border-primary-foreground/10 bg-primary-foreground p-6 text-foreground shadow-2xl">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1} className="rounded-lg border border-accent-foreground/10 bg-background p-6 text-foreground shadow-2xl">
             <AuditForm />
           </motion.div>
         </div>
