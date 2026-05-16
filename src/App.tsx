@@ -29,6 +29,17 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectDetail from "./pages/ProjectDetail";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
+import OSLayout from "@/os/OSLayout";
+import OSDashboard from "@/os/pages/Dashboard";
+import OSPipeline from "@/os/pages/Pipeline";
+import OSNewProject from "@/os/pages/NewProject";
+import OSProjectDetail from "@/os/pages/ProjectDetail";
+import OSCalendar from "@/os/pages/Calendar";
+import OSFinance from "@/os/pages/Finance";
+import OSQuotations from "@/os/pages/Quotations";
+import OSTeam from "@/os/pages/Team";
+import OSReports from "@/os/pages/Reports";
+import OSSettings from "@/os/pages/Settings";
 
 const queryClient = new QueryClient();
 
