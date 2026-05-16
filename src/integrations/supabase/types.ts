@@ -170,6 +170,93 @@ export type Database = {
         }
         Relationships: []
       }
+      os_todos: {
+        Row: {
+          assigned_by_name: string | null
+          by_admin: boolean
+          created_at: string
+          done: boolean
+          due: string | null
+          id: string
+          notes: string | null
+          priority: Database["public"]["Enums"]["os_priority"]
+          reminders_fired: number[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_by_name?: string | null
+          by_admin?: boolean
+          created_at?: string
+          done?: boolean
+          due?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["os_priority"]
+          reminders_fired?: number[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_by_name?: string | null
+          by_admin?: boolean
+          created_at?: string
+          done?: boolean
+          due?: string | null
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["os_priority"]
+          reminders_fired?: number[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      os_weekly_goals: {
+        Row: {
+          assigned_by_name: string | null
+          by_admin: boolean
+          created_at: string
+          done: boolean
+          id: string
+          notes: string | null
+          priority: Database["public"]["Enums"]["os_priority"]
+          title: string
+          updated_at: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          assigned_by_name?: string | null
+          by_admin?: boolean
+          created_at?: string
+          done?: boolean
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["os_priority"]
+          title: string
+          updated_at?: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          assigned_by_name?: string | null
+          by_admin?: boolean
+          created_at?: string
+          done?: boolean
+          id?: string
+          notes?: string | null
+          priority?: Database["public"]["Enums"]["os_priority"]
+          title?: string
+          updated_at?: string
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       popup_settings: {
         Row: {
           button_link: string
@@ -414,6 +501,7 @@ export type Database = {
         | "editor"
         | "client"
         | "user"
+      os_priority: "low" | "medium" | "high"
       priority_level: "low" | "medium" | "high" | "urgent"
       project_status:
         | "brief_received"
@@ -559,6 +647,7 @@ export const Constants = {
         "client",
         "user",
       ],
+      os_priority: ["low", "medium", "high"],
       priority_level: ["low", "medium", "high", "urgent"],
       project_status: [
         "brief_received",

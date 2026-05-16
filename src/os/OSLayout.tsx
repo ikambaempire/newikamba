@@ -1,12 +1,15 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
-import { ADMIN_TOOLS, getProfile, pickAvatarColor, upsertProfile, type OSProfile, type OSToolKey } from "@/os/access";
+import {
+  ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange,
+  type OSProfile, type OSToolKey,
+} from "@/os/access";
 
 const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -23,16 +26,26 @@ const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os/settings", icon: Settings, label: "Settings" },
 ];
 
+// Map any /os/* pathname to its base tool key for guard checks.
+const matchToolKey = (pathname: string): OSToolKey | null => {
+  if (pathname === "/os" || pathname === "/os/") return "/os";
+  if (pathname.startsWith("/os/projects/new")) return "/os/projects/new";
+  if (pathname.startsWith("/os/projects/")) return "/os/pipeline"; // detail belongs to pipeline
+  const seg = "/" + pathname.split("/").slice(1, 3).join("/");
+  return (ALL_NAV.find((n) => n.to === seg)?.to as OSToolKey) || null;
+};
+
 const OSLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { signOut, profile, user, roles } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const isSuperAdmin = roles.includes("super_admin");
 
   const [osProfile, setOsProfile] = useState<OSProfile | null>(null);
   const [showWizard, setShowWizard] = useState(false);
+  const [, setTick] = useState(0);
 
-  // Bootstrap profile from localStorage. Auto-create complete profile for admins.
   useEffect(() => {
     if (!user) return;
     const existing = getProfile(user.id);
@@ -42,16 +55,12 @@ const OSLayout = () => {
     } else if (isSuperAdmin) {
       const now = new Date().toISOString();
       const adminProfile: OSProfile = {
-        userId: user.id,
-        email: user.email || "",
+        userId: user.id, email: user.email || "",
         fullName: profile?.full_name || user.email?.split("@")[0] || "Admin",
-        role: "Founder",
-        department: "Leadership",
+        role: "Founder", department: "Leadership",
         avatarColor: pickAvatarColor(user.id),
-        setupComplete: true,
-        allowedTools: ADMIN_TOOLS,
-        createdAt: now,
-        updatedAt: now,
+        setupComplete: true, allowedTools: ADMIN_TOOLS,
+        createdAt: now, updatedAt: now,
       };
       upsertProfile(adminProfile);
       setOsProfile(adminProfile);
@@ -60,6 +69,15 @@ const OSLayout = () => {
     }
   }, [user, isSuperAdmin, profile?.full_name]);
 
+  // React immediately to admin permission changes (same tab + cross-tab).
+  useEffect(() => {
+    if (!user) return;
+    return onAccessChange(() => {
+      setOsProfile(getProfile(user.id));
+      setTick((t) => t + 1);
+    });
+  }, [user]);
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
@@ -67,16 +85,21 @@ const OSLayout = () => {
 
   const allowed = useMemo(() => {
     if (isSuperAdmin) return new Set<OSToolKey>(ALL_NAV.map((n) => n.to));
-    const tools = osProfile?.allowedTools || ["/os", "/os/todos"];
-    // always include core
-    const set = new Set<OSToolKey>([...tools, "/os", "/os/todos", "/os/profile", "/os/settings"]);
-    set.delete("/os/access"); // non-admins never see it
+    const tools = osProfile?.allowedTools || [];
+    const set = new Set<OSToolKey>([...tools, ...LOCKED_TOOLS]);
+    set.delete("/os/access");
     return set;
   }, [isSuperAdmin, osProfile?.allowedTools]);
 
   const visibleNav = ALL_NAV.filter((n) => allowed.has(n.to));
+
+  // ── Hard permission enforcement: block routes the user no longer has access to.
+  const currentKey = matchToolKey(location.pathname);
+  const blocked = !!osProfile && !!currentKey && !allowed.has(currentKey);
+
   const initial = (osProfile?.fullName || profile?.full_name || user?.email || "?").charAt(0).toUpperCase();
   const avatarColor = osProfile?.avatarColor || pickAvatarColor(user?.id || "guest");
+  const avatarUrl = osProfile?.avatarUrl;
 
   const SideContent = (
     <>
@@ -111,18 +134,19 @@ const OSLayout = () => {
       </nav>
       <div className="p-3 border-t border-os">
         <div className="flex items-center gap-2 px-2 pb-3">
-          <div className="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style={{ background: avatarColor }}>
-            {initial}
-          </div>
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="avatar" className="h-8 w-8 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style={{ background: avatarColor }}>
+              {initial}
+            </div>
+          )}
           <div className="min-w-0">
             <div className="text-xs text-white font-medium truncate">{osProfile?.fullName || profile?.full_name || user?.email}</div>
             <div className="text-[10px] text-os-muted truncate">{osProfile?.role || user?.email}</div>
           </div>
         </div>
-        <button
-          onClick={handleSignOut}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-os-muted hover:text-white hover:bg-white/5"
-        >
+        <button onClick={handleSignOut} className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-os-muted hover:text-white hover:bg-white/5">
           <LogOut size={16} /> Sign out
         </button>
       </div>
@@ -167,9 +191,27 @@ const OSLayout = () => {
           <div className="w-6" />
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          <Outlet />
+          {blocked ? (
+            <BlockedView />
+          ) : (
+            <Outlet />
+          )}
         </main>
       </div>
+    </div>
+  );
+};
+
+const BlockedView = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="os-card rounded-2xl p-10 text-center max-w-md mx-auto mt-12">
+      <Lock className="mx-auto text-os-muted mb-3" size={32} />
+      <h2 className="text-white font-bold text-lg mb-1">Access restricted</h2>
+      <p className="text-os-muted text-sm mb-5">You no longer have access to this tool. Ask an admin to enable it for you.</p>
+      <button onClick={() => navigate("/os", { replace: true })} className="px-4 py-2 rounded-lg bg-os-gold text-[hsl(var(--os-navy-deep))] font-semibold text-sm">
+        Back to Dashboard
+      </button>
     </div>
   );
 };
