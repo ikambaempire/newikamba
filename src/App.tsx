@@ -29,6 +29,17 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectDetail from "./pages/ProjectDetail";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
+import OSLayout from "@/os/OSLayout";
+import OSDashboard from "@/os/pages/Dashboard";
+import OSPipeline from "@/os/pages/Pipeline";
+import OSNewProject from "@/os/pages/NewProject";
+import OSProjectDetail from "@/os/pages/ProjectDetail";
+import OSCalendar from "@/os/pages/Calendar";
+import OSFinance from "@/os/pages/Finance";
+import OSQuotations from "@/os/pages/Quotations";
+import OSTeam from "@/os/pages/Team";
+import OSReports from "@/os/pages/Reports";
+import OSSettings from "@/os/pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +104,20 @@ const AnimatedRoutes = () => {
 
         {/* Admin */}
         <Route path="/admin" element={<PageTransition><ProtectedRoute requireInternal><AdminDashboard /></ProtectedRoute></PageTransition>} />
+
+        {/* iKAMBA Media OS — internal operations app */}
+        <Route path="/os" element={<ProtectedRoute><OSLayout /></ProtectedRoute>}>
+          <Route index element={<OSDashboard />} />
+          <Route path="pipeline" element={<OSPipeline />} />
+          <Route path="projects/new" element={<OSNewProject />} />
+          <Route path="projects/:id" element={<OSProjectDetail />} />
+          <Route path="calendar" element={<OSCalendar />} />
+          <Route path="finance" element={<OSFinance />} />
+          <Route path="quotations" element={<OSQuotations />} />
+          <Route path="team" element={<OSTeam />} />
+          <Route path="reports" element={<OSReports />} />
+          <Route path="settings" element={<OSSettings />} />
+        </Route>
 
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>

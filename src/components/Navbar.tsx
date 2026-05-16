@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogIn, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import ikambaIcon from "@/assets/ikamba-icon.png";
 
@@ -134,7 +133,6 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
-          <ThemeToggle />
           {user ? (
             <Link to="/auth-redirect">
               <Button variant="nav" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground border border-primary-foreground/20">
@@ -160,7 +158,6 @@ const Navbar = () => {
 
         {/* Mobile toggle */}
         <div className="md:hidden flex items-center gap-1">
-          <ThemeToggle />
           <button
             className="p-2 text-primary-foreground"
             onClick={() => setOpen(!open)}
