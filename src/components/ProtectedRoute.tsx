@@ -21,13 +21,11 @@ const ProtectedRoute = ({ children, requireInternal, requireClient }: Props) => 
   if (!user) return <Navigate to="/login" replace />;
 
   if (requireInternal && !isInternal) {
-    if (isClient) return <Navigate to="/workspace" replace />;
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/os" replace />;
   }
 
   if (requireClient && !isClient) {
-    if (isInternal) return <Navigate to="/os" replace />;
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/os" replace />;
   }
 
   return <>{children}</>;
