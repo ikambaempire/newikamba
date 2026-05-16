@@ -40,6 +40,7 @@ import OSQuotations from "@/os/pages/Quotations";
 import OSTeam from "@/os/pages/Team";
 import OSReports from "@/os/pages/Reports";
 import OSSettings from "@/os/pages/Settings";
+import OSTodos from "@/os/pages/Todos";
 
 const queryClient = new QueryClient();
 
@@ -55,7 +56,7 @@ const DashboardRedirect = () => {
   }
 
   if (!user) return <Navigate to="/login" replace />;
-  if (isInternal) return <Navigate to="/admin" replace />;
+  if (isInternal) return <Navigate to="/os" replace />;
   if (isClient) return <Navigate to="/workspace" replace />;
 
   return <UserDashboard />;
@@ -108,6 +109,7 @@ const AnimatedRoutes = () => {
         {/* iKAMBA Media OS — internal operations app */}
         <Route path="/os" element={<ProtectedRoute><OSLayout /></ProtectedRoute>}>
           <Route index element={<OSDashboard />} />
+          <Route path="todos" element={<OSTodos />} />
           <Route path="pipeline" element={<OSPipeline />} />
           <Route path="projects/new" element={<OSNewProject />} />
           <Route path="projects/:id" element={<OSProjectDetail />} />

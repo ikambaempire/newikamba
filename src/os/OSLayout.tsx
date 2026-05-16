@@ -2,12 +2,13 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const nav = [
   { to: "/os", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { to: "/os/todos", icon: CheckSquare, label: "My To-Dos" },
   { to: "/os/pipeline", icon: Kanban, label: "Pipeline" },
   { to: "/os/projects/new", icon: FilePlus2, label: "New Project" },
   { to: "/os/calendar", icon: Calendar, label: "Calendar" },
