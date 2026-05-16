@@ -202,13 +202,18 @@ const OSLayout = () => {
   );
 };
 
-const BlockedView = () => (
-  <div className="os-card rounded-2xl p-10 text-center max-w-md mx-auto mt-12">
-    <Lock className="mx-auto text-os-muted mb-3" size={32} />
-    <h2 className="text-white font-bold text-lg mb-1">Access restricted</h2>
-    <p className="text-os-muted text-sm mb-5">You no longer have access to this tool. Ask an admin to enable it for you.</p>
-    <Navigate to="/os" replace />
-  </div>
-);
+const BlockedView = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="os-card rounded-2xl p-10 text-center max-w-md mx-auto mt-12">
+      <Lock className="mx-auto text-os-muted mb-3" size={32} />
+      <h2 className="text-white font-bold text-lg mb-1">Access restricted</h2>
+      <p className="text-os-muted text-sm mb-5">You no longer have access to this tool. Ask an admin to enable it for you.</p>
+      <button onClick={() => navigate("/os", { replace: true })} className="px-4 py-2 rounded-lg bg-os-gold text-[hsl(var(--os-navy-deep))] font-semibold text-sm">
+        Back to Dashboard
+      </button>
+    </div>
+  );
+};
 
 export default OSLayout;
