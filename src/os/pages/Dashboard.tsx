@@ -1,32 +1,44 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
+import { useAuth } from "@/hooks/useAuth";
+import { getProfile } from "@/os/access";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton } from "@/os/components/ui";
 import { fmtRWF } from "@/os/mock/data";
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare } from "lucide-react";
 
 const Dashboard = () => {
-  const { projects, payments, costs, quotations, schedule } = useOSStore();
+  const { projects, payments, costs, schedule } = useOSStore();
+  const { user, profile: authProfile } = useAuth();
+  const osProfile = user ? getProfile(user.id) : null;
+  const greetingName = osProfile?.fullName || authProfile?.full_name || user?.email?.split("@")[0] || "there";
+  const firstName = greetingName.split(" ")[0];
 
   const kpis = useMemo(() => {
     const active = projects.filter((p) => !["Paid", "Closed"].includes(p.stage));
     const pipelineValue = active.reduce((s, p) => s + p.value, 0);
-    const confirmedRevenue = projects.filter((p) => !["New Request", "Discovery / Meeting", "Quotation Sent"].includes(p.stage)).reduce((s, p) => s + p.value, 0);
     const cashCollected = payments.reduce((s, p) => s + p.amount, 0);
     const outstanding = projects.reduce((s, p) => s + Math.max(0, p.value - p.paid), 0);
     const expenses = costs.reduce((s, c) => s + c.amount, 0);
+    const confirmedRevenue = projects
+      .filter((p) => !["New Request", "Discovery / Meeting", "Quotation Sent"].includes(p.stage))
+      .reduce((s, p) => s + p.value, 0);
     const profit = confirmedRevenue - expenses;
-    const overdue = projects.filter((p) => p.deadline && new Date(p.deadline) < new Date() && !["Paid", "Closed", "Delivered"].includes(p.stage));
-    const upcomingShoots = schedule.filter((e) => e.type === "Shoot day" && new Date(e.date) >= new Date()).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5);
+    const upcomingShoots = schedule
+      .filter((e) => e.type === "Shoot day" && new Date(e.date) >= new Date())
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 4);
     const pendingInvoices = projects.filter((p) => ["Invoice Sent", "Payment Pending"].includes(p.stage));
-    return { active, pipelineValue, confirmedRevenue, cashCollected, outstanding, expenses, profit, overdue, upcomingShoots, pendingInvoices };
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    return { active, pipelineValue, cashCollected, outstanding, profit, upcomingShoots, pendingInvoices, greet };
   }, [projects, payments, costs, schedule]);
 
   return (
     <div>
       <PageHeader
-        title="Dashboard"
-        subtitle="Every iKAMBA project — requested, scheduled, delivered, paid."
+        title={`${kpis.greet}, ${firstName}`}
+        subtitle="Here's a quick look at your workspace today."
         actions={
           <Link to="/os/projects/new">
             <OSButton variant="primary"><Plus size={16} /> Create Project</OSButton>
@@ -34,17 +46,32 @@ const Dashboard = () => {
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        <KPICard label="Active Projects" value={kpis.active.length} />
+      {/* 4 focused KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard label="Active Projects" value={kpis.active.length} hint={`${kpis.pendingInvoices.length} pending invoices`} />
         <KPICard label="Pipeline Value" value={fmtRWF(kpis.pipelineValue)} accent />
-        <KPICard label="Confirmed Revenue" value={fmtRWF(kpis.confirmedRevenue)} />
-        <KPICard label="Cash Collected" value={fmtRWF(kpis.cashCollected)} />
-        <KPICard label="Outstanding" value={fmtRWF(kpis.outstanding)} hint={`${kpis.pendingInvoices.length} invoices`} />
-        <KPICard label="Total Expenses" value={fmtRWF(kpis.expenses)} />
+        <KPICard label="Cash Collected" value={fmtRWF(kpis.cashCollected)} hint={`Outstanding ${fmtRWF(kpis.outstanding)}`} />
         <KPICard label="Estimated Profit" value={fmtRWF(kpis.profit)} accent />
-        <KPICard label="Overdue Projects" value={kpis.overdue.length} />
-        <KPICard label="Upcoming Shoots" value={kpis.upcomingShoots.length} />
-        <KPICard label="Pending Invoices" value={kpis.pendingInvoices.length} />
+      </div>
+
+      {/* Quick actions row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+        <Link to="/os/todos" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+          <CheckSquare size={20} className="text-os-gold" />
+          <span className="text-sm font-semibold text-white">My To-Dos</span>
+        </Link>
+        <Link to="/os/calendar" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+          <CalendarIcon size={20} className="text-os-gold" />
+          <span className="text-sm font-semibold text-white">Calendar</span>
+        </Link>
+        <Link to="/os/finance" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+          <Wallet size={20} className="text-os-gold" />
+          <span className="text-sm font-semibold text-white">Finance</span>
+        </Link>
+        <Link to="/os/pipeline" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+          <ArrowRight size={20} className="text-os-gold" />
+          <span className="text-sm font-semibold text-white">Pipeline</span>
+        </Link>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mt-8">
@@ -59,11 +86,11 @@ const Dashboard = () => {
               const project = projects.find((p) => p.id === s.project_id);
               return (
                 <div key={s.id} className="flex items-center justify-between os-card-2 rounded-lg p-3">
-                  <div>
-                    <div className="text-white text-sm font-semibold">{s.title}</div>
-                    <div className="text-xs text-os-muted">{project?.client} · {s.location || "TBD"}</div>
+                  <div className="min-w-0">
+                    <div className="text-white text-sm font-semibold truncate">{s.title}</div>
+                    <div className="text-xs text-os-muted truncate">{project?.client} · {s.location || "TBD"}</div>
                   </div>
-                  <div className="text-xs text-os-gold font-semibold">{s.date}{s.time ? ` · ${s.time}` : ""}</div>
+                  <div className="text-xs text-os-gold font-semibold shrink-0 ml-3">{s.date}{s.time ? ` · ${s.time}` : ""}</div>
                 </div>
               );
             })}
@@ -77,13 +104,13 @@ const Dashboard = () => {
           </div>
           <div className="space-y-2">
             {kpis.pendingInvoices.length === 0 && <p className="text-os-muted text-sm">All caught up.</p>}
-            {kpis.pendingInvoices.map((p) => (
+            {kpis.pendingInvoices.slice(0, 4).map((p) => (
               <Link to={`/os/projects/${p.id}`} key={p.id} className="flex items-center justify-between os-card-2 rounded-lg p-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
-                <div>
-                  <div className="text-white text-sm font-semibold">{p.name}</div>
-                  <div className="text-xs text-os-muted">{p.client}</div>
+                <div className="min-w-0">
+                  <div className="text-white text-sm font-semibold truncate">{p.name}</div>
+                  <div className="text-xs text-os-muted truncate">{p.client}</div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0 ml-3">
                   <PaymentBadge status={p.payment_status} />
                   <span className="text-xs text-white font-semibold">{fmtRWF(p.value - p.paid)}</span>
                 </div>
@@ -111,7 +138,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {kpis.active.map((p) => (
+              {kpis.active.slice(0, 8).map((p) => (
                 <tr key={p.id} className="border-b border-os/50 hover:bg-white/5 cursor-pointer">
                   <td className="py-2.5 pr-3"><Link to={`/os/projects/${p.id}`} className="text-white font-semibold">{p.name}</Link></td>
                   <td className="py-2.5 pr-3 text-os-muted">{p.client}</td>
