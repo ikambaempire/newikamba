@@ -1,12 +1,14 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import SetupWizard from "@/os/SetupWizard";
+import { ADMIN_TOOLS, getProfile, pickAvatarColor, upsertProfile, type OSProfile, type OSToolKey } from "@/os/access";
 
-const nav = [
+const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os", icon: LayoutDashboard, label: "Dashboard", end: true },
   { to: "/os/todos", icon: CheckSquare, label: "My To-Dos" },
   { to: "/os/pipeline", icon: Kanban, label: "Pipeline" },
@@ -16,18 +18,64 @@ const nav = [
   { to: "/os/quotations", icon: FileText, label: "Quotations" },
   { to: "/os/team", icon: Users, label: "Team" },
   { to: "/os/reports", icon: BarChart3, label: "Reports" },
+  { to: "/os/access", icon: Shield, label: "User Access" },
   { to: "/os/settings", icon: Settings, label: "Settings" },
 ];
 
 const OSLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { signOut, profile, user } = useAuth();
+  const { signOut, profile, user, roles } = useAuth();
   const navigate = useNavigate();
+  const isSuperAdmin = roles.includes("super_admin");
+
+  const [osProfile, setOsProfile] = useState<OSProfile | null>(null);
+  const [showWizard, setShowWizard] = useState(false);
+
+  // Bootstrap profile from localStorage. Auto-create complete profile for admins.
+  useEffect(() => {
+    if (!user) return;
+    const existing = getProfile(user.id);
+    if (existing) {
+      setOsProfile(existing);
+      setShowWizard(!existing.setupComplete);
+    } else if (isSuperAdmin) {
+      const now = new Date().toISOString();
+      const adminProfile: OSProfile = {
+        userId: user.id,
+        email: user.email || "",
+        fullName: profile?.full_name || user.email?.split("@")[0] || "Admin",
+        role: "Founder",
+        department: "Leadership",
+        avatarColor: pickAvatarColor(user.id),
+        setupComplete: true,
+        allowedTools: ADMIN_TOOLS,
+        createdAt: now,
+        updatedAt: now,
+      };
+      upsertProfile(adminProfile);
+      setOsProfile(adminProfile);
+    } else {
+      setShowWizard(true);
+    }
+  }, [user, isSuperAdmin, profile?.full_name]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
   };
+
+  const allowed = useMemo(() => {
+    if (isSuperAdmin) return new Set<OSToolKey>(ALL_NAV.map((n) => n.to));
+    const tools = osProfile?.allowedTools || ["/os", "/os/todos"];
+    // always include core
+    const set = new Set<OSToolKey>([...tools, "/os", "/os/todos", "/os/settings"]);
+    set.delete("/os/access"); // non-admins never see it
+    return set;
+  }, [isSuperAdmin, osProfile?.allowedTools]);
+
+  const visibleNav = ALL_NAV.filter((n) => allowed.has(n.to));
+  const initial = (osProfile?.fullName || profile?.full_name || user?.email || "?").charAt(0).toUpperCase();
+  const avatarColor = osProfile?.avatarColor || pickAvatarColor(user?.id || "guest");
 
   const SideContent = (
     <>
@@ -41,7 +89,7 @@ const OSLayout = () => {
         </div>
       </div>
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-        {nav.map((item) => (
+        {visibleNav.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -61,9 +109,14 @@ const OSLayout = () => {
         ))}
       </nav>
       <div className="p-3 border-t border-os">
-        <div className="px-2 pb-2">
-          <div className="text-xs text-white font-medium truncate">{profile?.full_name || user?.email}</div>
-          <div className="text-[10px] text-os-muted truncate">{user?.email}</div>
+        <div className="flex items-center gap-2 px-2 pb-3">
+          <div className="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style={{ background: avatarColor }}>
+            {initial}
+          </div>
+          <div className="min-w-0">
+            <div className="text-xs text-white font-medium truncate">{osProfile?.fullName || profile?.full_name || user?.email}</div>
+            <div className="text-[10px] text-os-muted truncate">{osProfile?.role || user?.email}</div>
+          </div>
         </div>
         <button
           onClick={handleSignOut}
@@ -77,12 +130,21 @@ const OSLayout = () => {
 
   return (
     <div className="os-theme min-h-screen flex">
-      {/* Desktop sidebar */}
+      {showWizard && user && (
+        <SetupWizard
+          userId={user.id}
+          email={user.email || ""}
+          isAdmin={isSuperAdmin}
+          initialName={profile?.full_name || undefined}
+          onComplete={() => {
+            setOsProfile(getProfile(user.id));
+            setShowWizard(false);
+          }}
+        />
+      )}
       <aside className="hidden lg:flex w-60 flex-col bg-os-navy-deep border-r border-os shrink-0">
         {SideContent}
       </aside>
-
-      {/* Mobile sidebar */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 flex">
           <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
