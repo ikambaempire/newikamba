@@ -105,6 +105,20 @@ const AnimatedRoutes = () => {
         {/* Admin */}
         <Route path="/admin" element={<PageTransition><ProtectedRoute requireInternal><AdminDashboard /></ProtectedRoute></PageTransition>} />
 
+        {/* iKAMBA Media OS — internal operations app */}
+        <Route path="/os" element={<ProtectedRoute><OSLayout /></ProtectedRoute>}>
+          <Route index element={<OSDashboard />} />
+          <Route path="pipeline" element={<OSPipeline />} />
+          <Route path="projects/new" element={<OSNewProject />} />
+          <Route path="projects/:id" element={<OSProjectDetail />} />
+          <Route path="calendar" element={<OSCalendar />} />
+          <Route path="finance" element={<OSFinance />} />
+          <Route path="quotations" element={<OSQuotations />} />
+          <Route path="team" element={<OSTeam />} />
+          <Route path="reports" element={<OSReports />} />
+          <Route path="settings" element={<OSSettings />} />
+        </Route>
+
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
