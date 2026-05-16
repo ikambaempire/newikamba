@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 import { PageHeader, OSButton, Field, Input, Select, Textarea, Badge } from "@/os/components/ui";
 import { Plus, Trash2, Check, Bell, BellOff, Clock, Target, ArrowDown, Crown } from "lucide-react";
 import {
@@ -86,11 +87,18 @@ const Todos = () => {
   };
 
   const addTodo = async () => {
-    if (!title.trim() || !due) return;
-    await addTodoFor(userId, { title: title.trim(), notes: notes.trim() || undefined, due, priority });
-    setTitle(""); setNotes(""); setDue(""); setPriority("medium");
-    reload();
-    if (typeof Notification !== "undefined" && Notification.permission === "default") requestPermission();
+    if (!title.trim()) { toast({ title: "Title required", description: "Give your task a name." }); return; }
+    if (!due) { toast({ title: "Deliver-by required", description: "Pick a date and time for your task." }); return; }
+    if (!userId) { toast({ title: "Not signed in", description: "Please log in again." }); return; }
+    try {
+      await addTodoFor(userId, { title: title.trim(), notes: notes.trim() || undefined, due, priority });
+      setTitle(""); setNotes(""); setDue(""); setPriority("medium");
+      toast({ title: "Task added" });
+      reload();
+      if (typeof Notification !== "undefined" && Notification.permission === "default") requestPermission();
+    } catch (e: any) {
+      toast({ title: "Could not save task", description: e?.message || "Please try again.", variant: "destructive" });
+    }
   };
   const toggleDone = async (id: string, current: boolean) => {
     setTodos((p) => p.map((t) => (t.id === id ? { ...t, done: !current } : t)));
@@ -102,10 +110,16 @@ const Todos = () => {
   };
 
   const addGoal = async () => {
-    if (!goalTitle.trim()) return;
-    await addGoalFor(userId, { title: goalTitle.trim(), notes: goalNotes.trim() || undefined, weekStart, priority: goalPriority });
-    setGoalTitle(""); setGoalNotes(""); setGoalPriority("medium");
-    reload();
+    if (!goalTitle.trim()) { toast({ title: "Goal required", description: "Name your weekly goal." }); return; }
+    if (!userId) { toast({ title: "Not signed in" }); return; }
+    try {
+      await addGoalFor(userId, { title: goalTitle.trim(), notes: goalNotes.trim() || undefined, weekStart, priority: goalPriority });
+      setGoalTitle(""); setGoalNotes(""); setGoalPriority("medium");
+      toast({ title: "Goal added" });
+      reload();
+    } catch (e: any) {
+      toast({ title: "Could not save goal", description: e?.message || "Please try again.", variant: "destructive" });
+    }
   };
   const toggleGoal = async (id: string, current: boolean) => {
     setGoals((p) => p.map((g) => (g.id === id ? { ...g, done: !current } : g)));
