@@ -1,57 +1,18 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { PageHeader, OSButton, Field, Input, Select, Textarea, Badge } from "@/os/components/ui";
-import { Plus, Trash2, Check, Bell, BellOff, Clock, Target, ArrowDown } from "lucide-react";
+import { Plus, Trash2, Check, Bell, BellOff, Clock, Target, ArrowDown, Crown } from "lucide-react";
+import {
+  type Todo, type WeeklyGoal, type Priority,
+  getTodos, setTodos as saveTodos, getGoals, setGoals as saveGoals,
+  uid, mondayOf, ymd, addDays, fmtDue, minutesUntil, todayDueISO,
+} from "@/os/todoStore";
 
-type Priority = "low" | "medium" | "high";
-type Todo = {
-  id: string;
-  title: string;
-  notes?: string;
-  due: string;
-  priority: Priority;
-  done: boolean;
-  remindersFired: number[];
-  createdAt: string;
-};
-type WeeklyGoal = {
-  id: string;
-  title: string;
-  notes?: string;
-  weekStart: string; // YYYY-MM-DD (Monday)
-  priority: Priority;
-  done: boolean;
-  createdAt: string;
-};
-
-const STORAGE_PREFIX = "ikamba.todos.v1.";
-const GOALS_PREFIX = "ikamba.weeklygoals.v1.";
 const REMINDER_OFFSETS = [60, 15, 0];
-const uid = () => Math.random().toString(36).slice(2, 10);
-
-const mondayOf = (d: Date) => {
-  const x = new Date(d);
-  const day = (x.getDay() + 6) % 7; // 0=Mon
-  x.setDate(x.getDate() - day);
-  x.setHours(0, 0, 0, 0);
-  return x;
-};
-const ymd = (d: Date) => d.toISOString().slice(0, 10);
-const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
-
-const loadJSON = <T,>(key: string, fallback: T): T => {
-  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch { return fallback; }
-};
-const fmtDue = (iso: string) => {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-};
-const minutesUntil = (iso: string) => Math.round((new Date(iso).getTime() - Date.now()) / 60000);
 
 const Todos = () => {
   const { user } = useAuth();
-  const todoKey = useMemo(() => STORAGE_PREFIX + (user?.id || "guest"), [user?.id]);
-  const goalKey = useMemo(() => GOALS_PREFIX + (user?.id || "guest"), [user?.id]);
+  const userId = user?.id || "guest";
 
   const [todos, setTodos] = useState<Todo[]>([]);
   const [goals, setGoals] = useState<WeeklyGoal[]>([]);
@@ -71,10 +32,26 @@ const Todos = () => {
   const [goalNotes, setGoalNotes] = useState("");
   const [goalPriority, setGoalPriority] = useState<Priority>("medium");
 
-  useEffect(() => { setTodos(loadJSON<Todo[]>(todoKey, [])); }, [todoKey]);
-  useEffect(() => { localStorage.setItem(todoKey, JSON.stringify(todos)); }, [todoKey, todos]);
-  useEffect(() => { setGoals(loadJSON<WeeklyGoal[]>(goalKey, [])); }, [goalKey]);
-  useEffect(() => { localStorage.setItem(goalKey, JSON.stringify(goals)); }, [goalKey, goals]);
+  // Initial load + react to external changes (e.g. admin assigns from Team page).
+  useEffect(() => { setTodos(getTodos(userId)); setGoals(getGoals(userId)); }, [userId]);
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === `ikamba.todos.v1.${userId}`) setTodos(getTodos(userId));
+      if (e.key === `ikamba.weeklygoals.v1.${userId}`) setGoals(getGoals(userId));
+    };
+    window.addEventListener("storage", onStorage);
+    const iv = window.setInterval(() => {
+      // pick up admin assignments made within same tab
+      const fresh = getTodos(userId);
+      if (fresh.length !== todos.length) setTodos(fresh);
+      const fg = getGoals(userId);
+      if (fg.length !== goals.length) setGoals(fg);
+    }, 4000);
+    return () => { window.removeEventListener("storage", onStorage); window.clearInterval(iv); };
+  }, [userId, todos.length, goals.length]);
+
+  useEffect(() => { saveTodos(userId, todos); }, [userId, todos]);
+  useEffect(() => { saveGoals(userId, goals); }, [userId, goals]);
 
   useEffect(() => {
     const check = () => {
@@ -140,19 +117,19 @@ const Todos = () => {
   const toggleGoal = (id: string) => setGoals((p) => p.map((g) => (g.id === id ? { ...g, done: !g.done } : g)));
   const removeGoal = (id: string) => setGoals((p) => p.filter((g) => g.id !== id));
 
-  // Pull a weekly goal into today's todos
+  // One-click pull goal into today's todos
   const pullToToday = (g: WeeklyGoal) => {
-    const today = new Date(); today.setHours(17, 0, 0, 0);
-    const iso = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     setTodos((p) => [{
       id: uid(),
       title: g.title,
       notes: g.notes ? `From weekly goal: ${g.notes}` : "From weekly goal",
-      due: iso,
+      due: todayDueISO(),
       priority: g.priority,
       done: false,
       remindersFired: [],
       createdAt: new Date().toISOString(),
+      byAdmin: g.byAdmin,
+      assignedByName: g.assignedByName,
     }, ...p]);
   };
 
@@ -160,7 +137,6 @@ const Todos = () => {
   const done = todos.filter((t) => t.done);
   const overdue = open.filter((t) => t.due && new Date(t.due) < new Date());
 
-  // Week navigation
   const weekDate = new Date(weekStart);
   const weekEnd = addDays(weekDate, 6);
   const weeklyForThis = goals.filter((g) => g.weekStart === weekStart);
@@ -197,6 +173,19 @@ const Todos = () => {
           </div>
         </div>
 
+        {pastGoals.length > 0 && (
+          <div className="mb-5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+            <h3 className="text-amber-300 text-xs uppercase tracking-wider font-semibold mb-2 flex items-center gap-1.5">
+              <Clock size={12} /> {pastGoals.length} unfinished from previous weeks
+            </h3>
+            <div className="space-y-2">
+              {pastGoals.slice(0, 6).map((g) => (
+                <GoalItem key={g.id} g={g} onToggle={toggleGoal} onRemove={removeGoal} onPull={pullToToday} showWeek />
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-[1fr_1.4fr] gap-5">
           <div className="space-y-3">
             <Field label="New weekly goal" required>
@@ -219,17 +208,6 @@ const Todos = () => {
             ))}
           </div>
         </div>
-
-        {pastGoals.length > 0 && (
-          <div className="mt-5 pt-5 border-t border-os">
-            <h3 className="text-os-muted text-xs uppercase tracking-wider font-semibold mb-2">Unfinished from previous weeks ({pastGoals.length})</h3>
-            <div className="space-y-2">
-              {pastGoals.slice(0, 6).map((g) => (
-                <GoalItem key={g.id} g={g} onToggle={toggleGoal} onRemove={removeGoal} onPull={pullToToday} showWeek />
-              ))}
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Daily todos */}
@@ -287,7 +265,7 @@ const GoalItem = ({
 }) => {
   const tone: "gold" | "green" | "red" = g.priority === "high" ? "red" : g.priority === "medium" ? "gold" : "green";
   return (
-    <div className={`os-card-2 rounded-lg p-3 flex items-start gap-3 ${g.done ? "opacity-60" : ""}`}>
+    <div className={`rounded-lg p-3 flex items-start gap-3 ${g.done ? "opacity-60" : ""} ${g.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2"}`}>
       <button
         onClick={() => onToggle(g.id)}
         className={`mt-0.5 h-5 w-5 rounded border flex items-center justify-center shrink-0 ${g.done ? "bg-os-gold border-transparent" : "border-os hover:border-[hsl(var(--os-gold))]"}`}
@@ -296,10 +274,15 @@ const GoalItem = ({
         {g.done && <Check size={12} className="text-[hsl(var(--os-navy-deep))]" />}
       </button>
       <div className="flex-1 min-w-0">
-        <div className={`text-sm font-semibold text-white ${g.done ? "line-through" : ""}`}>{g.title}</div>
+        <div className={`text-sm font-semibold ${g.byAdmin ? "text-os-gold" : "text-white"} ${g.done ? "line-through" : ""}`}>{g.title}</div>
         {g.notes && <div className="text-xs text-os-muted mt-0.5">{g.notes}</div>}
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <Badge tone={tone}>{g.priority}</Badge>
+          {g.byAdmin && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-os-gold">
+              <Crown size={10} /> From admin{g.assignedByName ? ` · ${g.assignedByName}` : ""}
+            </span>
+          )}
           {showWeek && <span className="text-[11px] text-os-muted">Week of {g.weekStart}</span>}
         </div>
       </div>
@@ -330,8 +313,9 @@ const TodoList = ({
     {items.map((t) => {
       const mins = t.due ? minutesUntil(t.due) : null;
       const tone: "gold" | "green" | "red" = t.priority === "high" ? "red" : t.priority === "medium" ? "gold" : "green";
+      const adminCls = t.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2";
       return (
-        <li key={t.id} className={`os-card-2 rounded-lg p-3 flex items-start gap-3 ${accent === "red" ? "border-rose-500/30" : ""} ${muted ? "opacity-60" : ""}`}>
+        <li key={t.id} className={`rounded-lg p-3 flex items-start gap-3 ${adminCls} ${accent === "red" ? "ring-1 ring-rose-500/30" : ""} ${muted ? "opacity-60" : ""}`}>
           <button
             onClick={() => onToggle(t.id)}
             className={`mt-0.5 h-5 w-5 rounded border flex items-center justify-center shrink-0 transition-colors ${t.done ? "bg-os-gold border-transparent" : "border-os hover:border-[hsl(var(--os-gold))]"}`}
@@ -340,10 +324,15 @@ const TodoList = ({
             {t.done && <Check size={12} className="text-[hsl(var(--os-navy-deep))]" />}
           </button>
           <div className="flex-1 min-w-0">
-            <div className={`text-sm font-semibold text-white ${t.done ? "line-through" : ""}`}>{t.title}</div>
+            <div className={`text-sm font-semibold ${t.byAdmin ? "text-os-gold" : "text-white"} ${t.done ? "line-through" : ""}`}>{t.title}</div>
             {t.notes && <div className="text-xs text-os-muted mt-0.5">{t.notes}</div>}
             <div className="flex flex-wrap items-center gap-2 mt-1.5">
               <Badge tone={tone}>{t.priority}</Badge>
+              {t.byAdmin && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-os-gold">
+                  <Crown size={10} /> Assigned by admin{t.assignedByName ? ` · ${t.assignedByName}` : ""}
+                </span>
+              )}
               <span className={`text-[11px] font-medium ${mins !== null && mins < 0 && !t.done ? "text-rose-300" : "text-os-gold"}`}>
                 {fmtDue(t.due)}
                 {mins !== null && !t.done && (<> · {mins < 0 ? `${Math.abs(mins)} min overdue` : mins < 60 ? `in ${mins} min` : `in ${Math.round(mins / 60)} h`}</>)}
