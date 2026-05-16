@@ -1,5 +1,5 @@
-// Mock per-user profile + tool-access store (localStorage-backed).
-// TODO: replace with Supabase tables: os_profiles, os_user_access.
+// Per-user profile + tool-access store (localStorage-backed).
+// Profiles stay client-side; permissions changes broadcast to listeners.
 
 export type OSToolKey =
   | "/os"
@@ -30,18 +30,22 @@ export const ALL_TOOLS: { key: OSToolKey; label: string }[] = [
   { key: "/os/settings", label: "Settings" },
 ];
 
-export const DEFAULT_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/os/calendar", "/os/pipeline"];
+// Always-on tools every user keeps (even after permission changes).
+export const LOCKED_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/os/settings"];
+
+export const DEFAULT_TOOLS: OSToolKey[] = [...LOCKED_TOOLS, "/os/calendar", "/os/pipeline"];
 export const ADMIN_TOOLS: OSToolKey[] = ALL_TOOLS.map((t) => t.key);
 
 export type OSProfile = {
   userId: string;
   email: string;
   fullName: string;
-  role: string;        // job role/title chosen in wizard
+  role: string;
   department: string;
   phone?: string;
   bio?: string;
-  avatarColor: string; // hex
+  avatarColor: string;
+  avatarUrl?: string;
   setupComplete: boolean;
   allowedTools: OSToolKey[];
   createdAt: string;
@@ -49,16 +53,19 @@ export type OSProfile = {
 };
 
 const KEY = "ikamba.os.users.v1";
+const CHANGE_EVT = "ikamba:access-changed";
 
 type Store = Record<string, OSProfile>;
 
 const read = (): Store => {
   try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { return {}; }
 };
-const write = (s: Store) => localStorage.setItem(KEY, JSON.stringify(s));
+const write = (s: Store) => {
+  localStorage.setItem(KEY, JSON.stringify(s));
+  try { window.dispatchEvent(new CustomEvent(CHANGE_EVT)); } catch {}
+};
 
 export const getProfile = (userId: string): OSProfile | null => read()[userId] || null;
-
 export const listProfiles = (): OSProfile[] =>
   Object.values(read()).sort((a, b) => a.fullName.localeCompare(b.fullName));
 
@@ -67,18 +74,27 @@ export const upsertProfile = (p: OSProfile) => {
   s[p.userId] = { ...p, updatedAt: new Date().toISOString() };
   write(s);
 };
-
 export const setAllowedTools = (userId: string, tools: OSToolKey[]) => {
   const s = read();
   if (!s[userId]) return;
   s[userId] = { ...s[userId], allowedTools: tools, updatedAt: new Date().toISOString() };
   write(s);
 };
-
 export const deleteProfile = (userId: string) => {
   const s = read();
   delete s[userId];
   write(s);
+};
+
+// Subscribe to permission/profile changes (same tab + cross-tab).
+export const onAccessChange = (cb: () => void) => {
+  const h = () => cb();
+  window.addEventListener(CHANGE_EVT, h);
+  window.addEventListener("storage", h);
+  return () => {
+    window.removeEventListener(CHANGE_EVT, h);
+    window.removeEventListener("storage", h);
+  };
 };
 
 const COLORS = ["#D4A739", "#5b8def", "#22c55e", "#ef4444", "#a855f7", "#06b6d4", "#f97316", "#ec4899"];
