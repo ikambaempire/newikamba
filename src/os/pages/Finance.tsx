@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { PageHeader, KPICard, Badge, PaymentBadge } from "@/os/components/ui";
 import { fmtRWF } from "@/os/mock/data";
+import {
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  PieChart, Pie, Cell, LineChart, Line,
+} from "recharts";
 
 const tabs = ["Overview","Revenue","Expenses","Receivables","Payables","Profitability"] as const;
 
