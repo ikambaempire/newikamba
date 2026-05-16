@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
@@ -19,6 +19,7 @@ const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os/team", icon: Users, label: "Team" },
   { to: "/os/reports", icon: BarChart3, label: "Reports" },
   { to: "/os/access", icon: Shield, label: "User Access" },
+  { to: "/os/profile", icon: UserCircle2, label: "My Profile" },
   { to: "/os/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -68,7 +69,7 @@ const OSLayout = () => {
     if (isSuperAdmin) return new Set<OSToolKey>(ALL_NAV.map((n) => n.to));
     const tools = osProfile?.allowedTools || ["/os", "/os/todos"];
     // always include core
-    const set = new Set<OSToolKey>([...tools, "/os", "/os/todos", "/os/settings"]);
+    const set = new Set<OSToolKey>([...tools, "/os", "/os/todos", "/os/profile", "/os/settings"]);
     set.delete("/os/access"); // non-admins never see it
     return set;
   }, [isSuperAdmin, osProfile?.allowedTools]);
