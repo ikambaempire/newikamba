@@ -170,6 +170,57 @@ export type Database = {
         }
         Relationships: []
       }
+      os_expense_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          category: string
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          description: string
+          id: string
+          needed_by: string | null
+          receipt_url: string | null
+          requester_name: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          category: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          description: string
+          id?: string
+          needed_by?: string | null
+          receipt_url?: string | null
+          requester_name: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          category?: string
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          description?: string
+          id?: string
+          needed_by?: string | null
+          receipt_url?: string | null
+          requester_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       os_todos: {
         Row: {
           assigned_by_name: string | null
