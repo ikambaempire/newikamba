@@ -156,3 +156,15 @@
 .os-theme .bg-os-gold { background: hsl(var(--os-gold)); color: hsl(var(--os-navy-deep)); }
 .os-theme .border-os { border-color: hsl(var(--os-border)); }
 .os-theme .ring-os-gold { --tw-ring-color: hsl(var(--os-gold)); }
+
+/* Safety: ensure no dark text leaks into the dark OS theme */
+.os-theme input,
+.os-theme textarea,
+.os-theme select { color: #fff; }
+.os-theme select option,
+.os-theme select optgroup { color: #111; background: #fff; }
+.os-theme ::placeholder { color: hsl(var(--os-text-muted)); }
+.os-theme p, .os-theme li, .os-theme span, .os-theme label, .os-theme div, .os-theme td, .os-theme th {
+  color: inherit;
+}
+.os-theme { color: hsl(var(--os-text)); }

@@ -55,7 +55,7 @@ const DashboardRedirect = () => {
   }
 
   if (!user) return <Navigate to="/login" replace />;
-  if (isInternal) return <Navigate to="/admin" replace />;
+  if (isInternal) return <Navigate to="/os" replace />;
   if (isClient) return <Navigate to="/workspace" replace />;
 
   return <UserDashboard />;

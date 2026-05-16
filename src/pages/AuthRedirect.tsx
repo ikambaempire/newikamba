@@ -14,7 +14,7 @@ const AuthRedirect = () => {
     }
     const timer = setTimeout(() => {
       if (isInternal) {
-        navigate("/admin", { replace: true });
+        navigate("/os", { replace: true });
       } else if (isClient) {
         navigate("/workspace", { replace: true });
       } else {
