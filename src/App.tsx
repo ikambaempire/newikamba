@@ -45,7 +45,7 @@ import OSTodos from "@/os/pages/Todos";
 const queryClient = new QueryClient();
 
 const DashboardRedirect = () => {
-  const { user, loading, isInternal, isClient } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -56,10 +56,7 @@ const DashboardRedirect = () => {
   }
 
   if (!user) return <Navigate to="/login" replace />;
-  if (isInternal) return <Navigate to="/os" replace />;
-  if (isClient) return <Navigate to="/workspace" replace />;
-
-  return <UserDashboard />;
+  return <Navigate to="/os" replace />;
 };
 
 const AnimatedRoutes = () => {
