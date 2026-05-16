@@ -21,6 +21,7 @@ import creativeJoy from "@/assets/creative-joy.jpg";
 import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import popupStrategy from "@/assets/popup-strategy.jpg";
 import popupStoryClarity from "@/assets/popup-story-clarity.jpg";
+import problemBg from "@/assets/problem-bg.jpg";
 
 type PopupSetting = {
   id: string;
@@ -353,19 +354,23 @@ export const ConversionSections = () => {
         </div>
       </section>
 
-      <section className="section-padding gradient-navy text-primary-foreground">
-        <div className="max-w-6xl mx-auto">
+      <section
+        className="section-padding relative text-primary-foreground bg-primary"
+        style={{ backgroundImage: `url(${problemBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      >
+        <div className="absolute inset-0 bg-primary/75" aria-hidden />
+        <div className="relative max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mb-10">
             <p className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-3">Problem</p>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-primary-foreground mb-4">Great work deserves better storytelling</h2>
-            <p className="text-primary-foreground/80 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
+            <p className="text-primary-foreground/90 text-lg">Organizations often do meaningful work, but the message is not always clear enough to earn attention, trust, or action.</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {["Unclear messaging", "Low visibility", "Weak storytelling"].map((problem, i) => (
-              <motion.div key={problem} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1} className="rounded-lg border border-primary-foreground/10 bg-primary-foreground/5 p-6">
+              <motion.div key={problem} variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i + 1} className="rounded-lg border border-primary-foreground/15 bg-primary/60 backdrop-blur-sm p-6">
                 <span className="text-accent font-extrabold text-3xl">0{i + 1}</span>
                 <h3 className="text-xl font-bold text-primary-foreground mt-5 mb-2">{problem}</h3>
-                <p className="text-primary-foreground/75 text-sm leading-relaxed">The right audience cannot act when the value, proof, and emotional hook are hard to understand.</p>
+                <p className="text-primary-foreground/85 text-sm leading-relaxed">The right audience cannot act when the value, proof, and emotional hook are hard to understand.</p>
               </motion.div>
             ))}
           </div>
