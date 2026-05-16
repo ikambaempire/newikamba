@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import {
   ALL_TOOLS, listProfiles, setAllowedTools, type OSProfile, type OSToolKey, getProfile,
+  DEFAULT_TOOLS, pickAvatarColor,
 } from "@/os/access";
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
@@ -20,7 +22,40 @@ const Team = () => {
   const [query, setQuery] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
 
-  useEffect(() => { setProfiles(listProfiles()); }, [tick]);
+  // Load: real signed-up users from DB + overlay any localStorage OS profile data.
+  useEffect(() => {
+    (async () => {
+      const local = listProfiles();
+      const localById = new Map(local.map((p) => [p.userId, p]));
+      const { data } = await supabase
+        .from("profiles")
+        .select("user_id, full_name, created_at, updated_at")
+        .order("created_at", { ascending: true });
+      const dbRows = data || [];
+      const dbIds = new Set(dbRows.map((r: any) => r.user_id));
+      const merged: OSProfile[] = dbRows.map((r: any) => {
+        const lp = localById.get(r.user_id);
+        if (lp) return { ...lp, fullName: lp.fullName || r.full_name || "Team member" };
+        return {
+          userId: r.user_id,
+          email: "",
+          fullName: r.full_name || "Team member",
+          role: "Member",
+          department: "Unassigned",
+          avatarColor: pickAvatarColor(r.user_id),
+          setupComplete: false,
+          allowedTools: DEFAULT_TOOLS,
+          createdAt: r.created_at,
+          updatedAt: r.updated_at,
+        };
+      });
+      // Include any localStorage profiles whose user_id is missing from DB (e.g. setup-wizard placeholder).
+      local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
+      merged.sort((a, b) => a.fullName.localeCompare(b.fullName));
+      setProfiles(merged);
+    })();
+  }, [tick]);
+
 
   const adminName = useMemo(() => {
     if (!user) return "Admin";
