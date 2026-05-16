@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
@@ -19,6 +19,7 @@ const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os/calendar", icon: Calendar, label: "Calendar" },
   { to: "/os/finance", icon: Wallet, label: "Finance" },
   { to: "/os/quotations", icon: FileText, label: "Quotations" },
+  { to: "/os/expenses", icon: Receipt, label: "Expense Requests" },
   { to: "/os/team", icon: Users, label: "Team" },
   { to: "/os/reports", icon: BarChart3, label: "Reports" },
   { to: "/os/access", icon: Shield, label: "User Access" },
