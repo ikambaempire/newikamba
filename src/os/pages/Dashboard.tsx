@@ -9,7 +9,8 @@ import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare } from 
 
 const Dashboard = () => {
   const { projects, payments, costs, schedule } = useOSStore();
-  const { user, profile: authProfile } = useAuth();
+  const { user, profile: authProfile, roles } = useAuth();
+  const isAdmin = roles.includes("super_admin");
   const osProfile = user ? getProfile(user.id) : null;
   const greetingName = osProfile?.fullName || authProfile?.full_name || user?.email?.split("@")[0] || "there";
   const firstName = greetingName.split(" ")[0];
@@ -38,11 +39,14 @@ const Dashboard = () => {
     <div>
       <PageHeader
         title={`${kpis.greet}, ${firstName}`}
-        subtitle="Here's a quick look at your workspace today."
+        subtitle={isAdmin ? "Admin Dashboard — full view of the iKAMBA workspace." : "Here's a quick look at your workspace today."}
         actions={
-          <Link to="/os/projects/new">
-            <OSButton variant="primary"><Plus size={16} /> Create Project</OSButton>
-          </Link>
+          <>
+            {isAdmin && <Badge tone="gold"><CheckSquare size={10} className="inline mr-1" /> Admin Dashboard</Badge>}
+            <Link to="/os/projects/new">
+              <OSButton variant="primary"><Plus size={16} /> Create Project</OSButton>
+            </Link>
+          </>
         }
       />
 

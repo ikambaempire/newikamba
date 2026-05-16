@@ -40,6 +40,7 @@ import OSSettings from "@/os/pages/Settings";
 import OSTodos from "@/os/pages/Todos";
 import OSUserAccess from "@/os/pages/UserAccess";
 import OSProfile from "@/os/pages/Profile";
+import OSExpenses from "@/os/pages/Expenses";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const AnimatedRoutes = () => {
           <Route path="calendar" element={<OSCalendar />} />
           <Route path="finance" element={<OSFinance />} />
           <Route path="quotations" element={<OSQuotations />} />
+          <Route path="expenses" element={<OSExpenses />} />
           <Route path="team" element={<OSTeam />} />
           <Route path="reports" element={<OSReports />} />
           <Route path="access" element={<OSUserAccess />} />
