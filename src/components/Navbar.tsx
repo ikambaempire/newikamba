@@ -133,7 +133,6 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
-          <ThemeToggle />
           {user ? (
             <Link to="/auth-redirect">
               <Button variant="nav" size="sm" className="text-primary-foreground/70 hover:text-primary-foreground border border-primary-foreground/20">
