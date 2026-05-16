@@ -12,6 +12,7 @@ export type OSToolKey =
   | "/os/team"
   | "/os/reports"
   | "/os/access"
+  | "/os/profile"
   | "/os/settings";
 
 export const ALL_TOOLS: { key: OSToolKey; label: string }[] = [
@@ -25,10 +26,11 @@ export const ALL_TOOLS: { key: OSToolKey; label: string }[] = [
   { key: "/os/team", label: "Team" },
   { key: "/os/reports", label: "Reports" },
   { key: "/os/access", label: "User Access (admin)" },
+  { key: "/os/profile", label: "My Profile" },
   { key: "/os/settings", label: "Settings" },
 ];
 
-export const DEFAULT_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/calendar", "/os/pipeline"];
+export const DEFAULT_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/os/calendar", "/os/pipeline"];
 export const ADMIN_TOOLS: OSToolKey[] = ALL_TOOLS.map((t) => t.key);
 
 export type OSProfile = {
