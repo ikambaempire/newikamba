@@ -22,9 +22,6 @@ import DesignStudio from "./pages/DesignStudio";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AuthRedirect from "./pages/AuthRedirect";
-import ClientDashboard from "./pages/workspace/ClientDashboard";
-import UserDashboard from "./pages/workspace/UserDashboard";
-import NewBrief from "./pages/workspace/NewBrief";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProjectDetail from "./pages/ProjectDetail";
 import BlogPost from "./pages/BlogPost";
@@ -45,7 +42,7 @@ import OSTodos from "@/os/pages/Todos";
 const queryClient = new QueryClient();
 
 const DashboardRedirect = () => {
-  const { user, loading, isInternal, isClient } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -56,10 +53,7 @@ const DashboardRedirect = () => {
   }
 
   if (!user) return <Navigate to="/login" replace />;
-  if (isInternal) return <Navigate to="/os" replace />;
-  if (isClient) return <Navigate to="/workspace" replace />;
-
-  return <UserDashboard />;
+  return <Navigate to="/os" replace />;
 };
 
 const AnimatedRoutes = () => {
@@ -94,8 +88,8 @@ const AnimatedRoutes = () => {
         <Route path="/auth-redirect" element={<AuthRedirect />} />
 
         {/* Client Workspace */}
-        <Route path="/workspace" element={<PageTransition><ProtectedRoute requireClient><ClientDashboard /></ProtectedRoute></PageTransition>} />
-        <Route path="/workspace/new-brief" element={<PageTransition><ProtectedRoute><NewBrief /></ProtectedRoute></PageTransition>} />
+        <Route path="/workspace" element={<Navigate to="/os" replace />} />
+        <Route path="/workspace/new-brief" element={<Navigate to="/os/projects/new" replace />} />
 
         {/* User Dashboard */}
         <Route path="/dashboard" element={<PageTransition><DashboardRedirect /></PageTransition>} />
