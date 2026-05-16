@@ -101,14 +101,14 @@ export const addTodoFor = async (userId: string, t: Omit<Todo, "id" | "createdAt
     user_id: userId, title: t.title, notes: t.notes ?? null, due: t.due || null,
     priority: t.priority, by_admin: !!t.byAdmin, assigned_by_name: t.assignedByName ?? null,
   });
-  if (error) console.error(error);
+  if (error) { console.error("addTodo failed", error); throw error; }
 };
 export const addGoalFor = async (userId: string, g: Omit<WeeklyGoal, "id" | "createdAt" | "done">) => {
   const { error } = await supabase.from("os_weekly_goals").insert({
     user_id: userId, title: g.title, notes: g.notes ?? null, week_start: g.weekStart,
     priority: g.priority, by_admin: !!g.byAdmin, assigned_by_name: g.assignedByName ?? null,
   });
-  if (error) console.error(error);
+  if (error) { console.error("addGoal failed", error); throw error; }
 };
 export const removeTodoFor = async (_userId: string, id: string) => {
   const { error } = await supabase.from("os_todos").delete().eq("id", id);
