@@ -38,6 +38,7 @@ import OSTeam from "@/os/pages/Team";
 import OSReports from "@/os/pages/Reports";
 import OSSettings from "@/os/pages/Settings";
 import OSTodos from "@/os/pages/Todos";
+import OSUserAccess from "@/os/pages/UserAccess";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const AnimatedRoutes = () => {
           <Route path="quotations" element={<OSQuotations />} />
           <Route path="team" element={<OSTeam />} />
           <Route path="reports" element={<OSReports />} />
+          <Route path="access" element={<OSUserAccess />} />
           <Route path="settings" element={<OSSettings />} />
         </Route>
 
