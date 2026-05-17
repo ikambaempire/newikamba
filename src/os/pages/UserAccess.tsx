@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton } from "@/os/components/ui";
-import { ALL_TOOLS, DEFAULT_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, fetchAllowedTools, pickAvatarColor, type OSProfile, type OSToolKey } from "@/os/access";
+import { ALL_TOOLS, DEFAULT_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, pickAvatarColor, hasAdminRole, type OSProfile, type OSToolKey } from "@/os/access";
 import { Shield, Users, Check } from "lucide-react";
 import { Navigate } from "react-router-dom";
 
 const UserAccess = () => {
   const { roles, user } = useAuth();
-  const isSuperAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
   const [profiles, setProfiles] = useState<OSProfile[]>([]);
   const [tick, setTick] = useState(0);
 
@@ -21,7 +21,7 @@ const UserAccess = () => {
         if (error) throw error;
         const rows = await Promise.all((data?.users || []).map(async (u: any) => {
           const lp = localById.get(u.id);
-          const tools = await fetchAllowedTools(u.id);
+          const tools = u.tools?.length ? u.tools : null;
           return lp ? { ...lp, email: lp.email || u.email, fullName: lp.fullName || u.full_name || "Team member", allowedTools: u.roles?.includes("super_admin") ? ALL_TOOLS.map((t) => t.key) : tools || lp.allowedTools }
             : { userId: u.id, email: u.email || "", fullName: u.full_name || "Team member", role: u.roles?.includes("super_admin") ? "Super Admin" : u.roles?.includes("org_admin") ? "Admin" : "Member", department: "Unassigned", avatarColor: pickAvatarColor(u.id), setupComplete: false, allowedTools: u.roles?.includes("super_admin") ? ALL_TOOLS.map((t) => t.key) : tools || DEFAULT_TOOLS, createdAt: u.created_at, updatedAt: u.created_at } as OSProfile;
         }));
@@ -32,7 +32,7 @@ const UserAccess = () => {
     })();
   }, [tick]);
 
-  if (!isSuperAdmin) return <Navigate to="/os" replace />;
+  if (!isAdmin) return <Navigate to="/os" replace />;
 
   const toggle = async (userId: string, key: OSToolKey, current: OSToolKey[]) => {
     const next = current.includes(key) ? current.filter((k) => k !== key) : [...current, key];
