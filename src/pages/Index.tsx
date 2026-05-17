@@ -485,26 +485,15 @@ const Index = () => {
               </motion.div>
             </div>
 
-            {/* Right side - 5-tile video collage (1 tall left + 2x2 right) */}
+            {/* Right side - 5-tile image collage (1 tall left + 2x2 right) */}
             <div className="hidden lg:block">
               {(() => {
-                const videos = [
-                  { id: "MZ8Li9JBTPM", type: "yt" as const },
-                  { id: "DDPsG9gtIuy", type: "ig" as const },
-                  { id: "DVNiU-BCBwY", type: "ig" as const },
-                  { id: "DXM5w40CCE1", type: "ig" as const },
-                  { id: "DVY5Qi9CENT", type: "ig" as const },
-                ];
-                const srcFor = (v: typeof videos[number]) =>
-                  v.type === "yt"
-                    ? `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&mute=1&loop=1&playlist=${v.id}&controls=0&modestbranding=1&playsinline=1&rel=0`
-                    : `https://www.instagram.com/reel/${v.id}/embed/?autoplay=1&muted=1`;
-                const tileClass = [
-                  "col-span-1 row-span-2",       // tall left
-                  "col-span-1 row-span-1",       // top-right 1
-                  "col-span-1 row-span-1",       // top-right 2
-                  "col-span-1 row-span-1",       // bottom-right 1
-                  "col-span-1 row-span-1",       // bottom-right 2
+                const tiles = [
+                  { image: helloFloating1, className: "col-span-1 row-span-2" },
+                  { image: helloFloating2, className: "col-span-1 row-span-1" },
+                  { image: helloFloating3, className: "col-span-1 row-span-1" },
+                  { image: helloFloating4, className: "col-span-1 row-span-1" },
+                  { image: helloFloating5, className: "col-span-1 row-span-1" },
                 ];
                 return (
                   <motion.div
@@ -513,22 +502,16 @@ const Index = () => {
                     transition={{ duration: 0.7, delay: 0.3 }}
                     className="grid grid-cols-3 grid-rows-2 gap-3 h-[460px]"
                   >
-                    {videos.map((v, i) => (
-                      <div
-                        key={v.id}
-                        className={`relative rounded-xl overflow-hidden shadow-2xl bg-black ${tileClass[i]}`}
+                    {tiles.map((t, i) => (
+                      <motion.div
+                        key={i}
+                        className={`relative rounded-xl overflow-hidden shadow-2xl bg-black ${t.className}`}
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
                       >
-                        <iframe
-                          src={srcFor(v)}
-                          title={`Showreel ${i + 1}`}
-                          loading="lazy"
-                          allow="autoplay; encrypted-media; picture-in-picture"
-                          allowFullScreen
-                          className="absolute inset-0 w-full h-full border-0 pointer-events-none"
-                          scrolling="no"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-                      </div>
+                        <img src={t.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+                      </motion.div>
                     ))}
                   </motion.div>
                 );
