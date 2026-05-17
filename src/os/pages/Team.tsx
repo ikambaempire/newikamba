@@ -232,9 +232,9 @@ const MemberCard = ({ p }: { p: OSProfile }) => (
 
 /* ─── Detail modal ─── */
 const MemberDetailModal = ({
-  member, adminName, onClose, onAnyChange,
+  member, adminName, canManageRoles, onClose, onAnyChange, onDeleted,
 }: {
-  member: OSProfile; adminName: string; onClose: () => void; onAnyChange: () => void;
+  member: OSProfile; adminName: string; canManageRoles: boolean; onClose: () => void; onAnyChange: () => void; onDeleted: () => void;
 }) => {
   const { user } = useAuth();
   const [tab, setTab] = useState<"info" | "todos" | "goals" | "tools">("info");
@@ -289,7 +289,18 @@ const MemberDetailModal = ({
   const setAdminRole = async (makeAdmin: boolean) => {
     const role = makeAdmin ? "org_admin" : "user";
     const { error } = await supabase.functions.invoke("manage-admins", { body: { action: "update_role", user_id: member.userId, new_role: role } });
-    if (!error) onAnyChange();
+    if (error) return toast.error("Could not update role", { description: error.message });
+    toast.success(makeAdmin ? "Admin access granted" : "Admin access removed");
+    onAnyChange();
+  };
+
+  const deleteUser = async () => {
+    if (!confirm(`Delete ${member.fullName}'s account? This removes their access and team records.`)) return;
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "delete_user", user_id: member.userId } });
+    if (error || data?.error) return toast.error("Could not delete user", { description: data?.error || error?.message });
+    clearUserAccessCache(member.userId);
+    toast.success("User account deleted");
+    onDeleted();
   };
 
   const openTodos = todos.filter((t) => !t.done);
@@ -344,10 +355,15 @@ const MemberDetailModal = ({
           <div className="pt-4 border-t border-os flex flex-wrap gap-2">
             {member.role === "Super Admin" ? (
               <Badge tone="gold"><Crown size={10} className="inline mr-1" /> Permanent super admin</Badge>
+            ) : !canManageRoles ? (
+              <Badge>Only super admin can change roles</Badge>
             ) : member.role === "Admin" ? (
               <OSButton variant="outline" onClick={() => setAdminRole(false)}><Shield size={14} /> Remove admin</OSButton>
             ) : (
               <OSButton variant="primary" onClick={() => setAdminRole(true)}><Shield size={14} /> Make admin</OSButton>
+            )}
+            {member.role !== "Super Admin" && (
+              <OSButton variant="ghost" onClick={deleteUser} className="text-rose-300 hover:text-rose-200"><Trash2 size={14} /> Delete account</OSButton>
             )}
           </div>
         </div>
