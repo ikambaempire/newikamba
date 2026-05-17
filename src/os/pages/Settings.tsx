@@ -103,11 +103,12 @@ const SettingsBlock = ({
 };
 
 const Settings = () => {
-  const { roles } = useAuth();
+  const { roles, user } = useAuth();
   const canEdit = roles.includes("super_admin");
   const [state, setState] = useState<SettingsState>(() => readStore());
 
   useEffect(() => {
+    readRemoteSettings().then(setState);
     const h = () => setState(readStore());
     window.addEventListener("ikamba:settings-changed", h);
     window.addEventListener("storage", h);
@@ -117,16 +118,19 @@ const Settings = () => {
     };
   }, []);
 
-  const update = (key: keyof SettingsState, items: string[]) => {
+  const update = async (key: keyof SettingsState, items: string[]) => {
     const next = { ...state, [key]: items };
-    setState(next); writeStore(next);
+    setState(next);
+    try { await writeRemoteSettings(next, user?.id); toast.success("Settings saved"); }
+    catch (e: any) { toast.error(e?.message || "Could not save settings"); }
   };
   const add = (key: keyof SettingsState) => (v: string) => update(key, [...state[key], v]);
   const remove = (key: keyof SettingsState) => (v: string) => update(key, state[key].filter((x) => x !== v));
 
   const reset = () => {
     if (!confirm("Reset all configuration to defaults?")) return;
-    writeStore(DEFAULTS); setState(DEFAULTS); toast.success("Settings reset to defaults");
+    setState(DEFAULTS);
+    writeRemoteSettings(DEFAULTS, user?.id).then(() => toast.success("Settings reset to defaults")).catch((e) => toast.error(e?.message || "Could not reset settings"));
   };
 
   const blocks = useMemo(() => ([
