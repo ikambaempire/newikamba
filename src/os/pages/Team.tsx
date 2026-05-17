@@ -23,38 +23,59 @@ const Team = () => {
   const [deptFilter, setDeptFilter] = useState("All");
 
   // Load: real signed-up users from DB + overlay any localStorage OS profile data.
+  // Admins use the edge function to get full user list with emails.
   useEffect(() => {
     (async () => {
       const local = listProfiles();
       const localById = new Map(local.map((p) => [p.userId, p]));
-      const { data } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, created_at, updated_at")
-        .order("created_at", { ascending: true });
-      const dbRows = data || [];
-      const dbIds = new Set(dbRows.map((r: any) => r.user_id));
-      const merged: OSProfile[] = dbRows.map((r: any) => {
+
+      type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string };
+      let dbRows: Row[] = [];
+
+      if (isSuperAdmin) {
+        try {
+          const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
+          if (error) throw error;
+          dbRows = (data?.users || []).map((u: any) => ({
+            user_id: u.id, full_name: u.full_name, email: u.email,
+            created_at: u.created_at, updated_at: u.created_at,
+          }));
+        } catch {
+          // fallback to profiles table
+          const { data } = await supabase.from("profiles").select("user_id, full_name, created_at, updated_at");
+          dbRows = (data as Row[]) || [];
+        }
+      } else {
+        const { data } = await supabase.from("profiles").select("user_id, full_name, created_at, updated_at");
+        dbRows = (data as Row[]) || [];
+      }
+
+      const dbIds = new Set(dbRows.map((r) => r.user_id));
+      const merged: OSProfile[] = dbRows.map((r) => {
         const lp = localById.get(r.user_id);
-        if (lp) return { ...lp, fullName: lp.fullName || r.full_name || "Team member" };
+        if (lp) return {
+          ...lp,
+          fullName: lp.fullName || r.full_name || "Team member",
+          email: lp.email || r.email || "",
+        };
         return {
           userId: r.user_id,
-          email: "",
+          email: r.email || "",
           fullName: r.full_name || "Team member",
           role: "Member",
           department: "Unassigned",
           avatarColor: pickAvatarColor(r.user_id),
           setupComplete: false,
           allowedTools: DEFAULT_TOOLS,
-          createdAt: r.created_at,
-          updatedAt: r.updated_at,
+          createdAt: r.created_at || new Date().toISOString(),
+          updatedAt: r.updated_at || new Date().toISOString(),
         };
       });
-      // Include any localStorage profiles whose user_id is missing from DB (e.g. setup-wizard placeholder).
       local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
       merged.sort((a, b) => a.fullName.localeCompare(b.fullName));
       setProfiles(merged);
     })();
-  }, [tick]);
+  }, [tick, isSuperAdmin]);
 
 
   const adminName = useMemo(() => {
