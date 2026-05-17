@@ -11,7 +11,7 @@ import {
   toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
   type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
-import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search } from "lucide-react";
+import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
 
 const Team = () => {
   const { roles, user, profile } = useAuth();
@@ -338,6 +338,15 @@ const MemberDetailModal = ({
           {member.bio && <div className="pt-2 text-os-muted italic">"{member.bio}"</div>}
           <div className="pt-2 text-[11px] text-os-muted">
             Joined {new Date(member.createdAt).toLocaleDateString()} · Last updated {new Date(member.updatedAt).toLocaleDateString()}
+          </div>
+          <div className="pt-4 border-t border-os flex flex-wrap gap-2">
+            {member.role === "Super Admin" ? (
+              <Badge tone="gold"><Crown size={10} className="inline mr-1" /> Permanent super admin</Badge>
+            ) : member.role === "Admin" ? (
+              <OSButton variant="outline" onClick={() => setAdminRole(false)}><Shield size={14} /> Remove admin</OSButton>
+            ) : (
+              <OSButton variant="primary" onClick={() => setAdminRole(true)}><Shield size={14} /> Make admin</OSButton>
+            )}
           </div>
         </div>
       )}
