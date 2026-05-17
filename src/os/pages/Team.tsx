@@ -374,6 +374,7 @@ const MemberDetailModal = ({
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
                 onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
+                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
                 onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
               />
             ))}
@@ -383,6 +384,7 @@ const MemberDetailModal = ({
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
                   onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
+                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
                   onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
                 />
               ))}
@@ -414,6 +416,7 @@ const MemberDetailModal = ({
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
                   onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
+                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
                   onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
                 />
               ))}
@@ -423,6 +426,7 @@ const MemberDetailModal = ({
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
                 onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
+                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
                 onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
               />
             ))}
