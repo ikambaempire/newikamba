@@ -85,7 +85,7 @@ export const setAllowedTools = (userId: string, tools: OSToolKey[]) => {
 };
 
 export const fetchAllowedTools = async (userId: string): Promise<OSToolKey[] | null> => {
-  const { data, error } = await supabase.from("os_tool_access").select("tool_key").eq("user_id", userId);
+  const { data, error } = await (supabase as any).from("os_tool_access").select("tool_key").eq("user_id", userId);
   if (error) { console.error("fetchAllowedTools failed", error); return null; }
   if (!data || data.length === 0) return null;
   return data.map((r: any) => r.tool_key as OSToolKey).filter(Boolean);
@@ -93,10 +93,10 @@ export const fetchAllowedTools = async (userId: string): Promise<OSToolKey[] | n
 
 export const saveAllowedTools = async (userId: string, tools: OSToolKey[], grantedBy?: string) => {
   const unique = Array.from(new Set([...tools, ...LOCKED_TOOLS]));
-  const { error: deleteError } = await supabase.from("os_tool_access").delete().eq("user_id", userId);
+  const { error: deleteError } = await (supabase as any).from("os_tool_access").delete().eq("user_id", userId);
   if (deleteError) { console.error("delete tool access failed", deleteError); throw deleteError; }
   if (unique.length === 0) return;
-  const { error } = await supabase.from("os_tool_access").insert(unique.map((tool_key) => ({ user_id: userId, tool_key, granted_by: grantedBy ?? null })));
+  const { error } = await (supabase as any).from("os_tool_access").insert(unique.map((tool_key) => ({ user_id: userId, tool_key, granted_by: grantedBy ?? null })));
   if (error) { console.error("save tool access failed", error); throw error; }
   const s = read();
   if (s[userId]) {
