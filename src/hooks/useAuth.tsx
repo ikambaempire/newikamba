@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session, AuthResponse } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const loadedFor = useRef<string | null>(null);
 
   const fetchUserData = async (authUser: User) => {
     await supabase.rpc("ensure_current_user_profile", {
@@ -57,8 +58,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        if (loadedFor.current === session.user.id) { setLoading(false); return; }
+        loadedFor.current = session.user.id;
         setTimeout(() => fetchUserData(session.user).finally(() => setLoading(false)), 0);
       } else {
+        loadedFor.current = null;
         setRoles([]);
         setProfile(null);
         setLoading(false);
@@ -69,6 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
+        if (loadedFor.current === session.user.id) { setLoading(false); return; }
+        loadedFor.current = session.user.id;
         fetchUserData(session.user).finally(() => setLoading(false));
       } else {
         setLoading(false);
