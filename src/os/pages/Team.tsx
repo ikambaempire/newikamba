@@ -7,8 +7,7 @@ import {
   DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor, hasAdminRole, hasSuperAdminRole, clearUserAccessCache,
 } from "@/os/access";
 import {
-  fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
-  toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
+  fetchTodos, fetchGoals,
   toTodo, toGoal, type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
@@ -406,9 +405,9 @@ const MemberDetailModal = ({
           <ListSection title={`Open (${openTodos.length})`} empty="No open tasks.">
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
-                onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
-                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
-                onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
+                onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
+                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
+                onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
               />
             ))}
           </ListSection>
@@ -416,9 +415,9 @@ const MemberDetailModal = ({
             <ListSection title={`Completed (${doneTodos.length})`} empty="">
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
-                  onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
-                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
-                  onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
+                  onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
+                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
+                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
                 />
               ))}
             </ListSection>
