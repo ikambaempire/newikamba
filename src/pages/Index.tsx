@@ -370,7 +370,7 @@ const Index = () => {
       <Navbar />
 
       {/* Hero - 90seconds inspired split layout with video background */}
-      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden min-h-[100svh] lg:h-[100svh] flex items-center">
         <HeroBackgroundVideo />
 
         {/* Creative floating icons - like footer */}
@@ -412,80 +412,49 @@ const Index = () => {
           </motion.div>
         ))}
 
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 lg:px-20 relative z-10 py-28 sm:py-32 md:py-40">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 lg:px-20 relative z-10 py-20 sm:py-24 lg:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             {/* Left side - Text */}
             <div>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex items-center gap-2 mb-6"
-              >
-                <motion.div
-                  className="w-2 h-2 rounded-full bg-accent"
-                  animate={{ scale: [1, 1.4, 1], opacity: [1, 0.6, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                <p className="text-xs uppercase tracking-[0.2em] font-semibold text-white/70">
-                  Strategic Storytelling & Media Production
-                </p>
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 30, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ duration: 0.7, delay: 0.15 }}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.08] tracking-tight text-white mb-6 text-balance"
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.05] tracking-tight text-white mb-5 text-balance"
               >
-                {"Powerful ".split("").map((char, i) => (
-                  <motion.span
-                    key={`p-${i}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.04, duration: 0.3 }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-                <motion.span
-                  className="inline-block"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.7, duration: 0.5 }}
-                >
-                  {typewriterWords.map((word, wi) => (
-                    <motion.span
-                      key={word}
-                      className="absolute text-accent"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{
-                        opacity: [0, 1, 1, 0],
-                        y: [20, 0, 0, -20],
-                      }}
-                      transition={{
-                        duration: 3,
-                        delay: 0.8 + wi * 3,
-                        repeat: Infinity,
-                        repeatDelay: (typewriterWords.length - 1) * 3,
-                        ease: "easeInOut",
-                        times: [0, 0.1, 0.9, 1],
-                      }}
-                    >
-                      {word}
-                    </motion.span>
-                  ))}
-                  <span className="invisible">{typewriterWords[0]}</span>
-                </motion.span>
-                <br />
-                <span>for Organizations That Create Impact.</span>
+                <span className="block">
+                  Powerful{" "}
+                  <span className="relative inline-block align-baseline">
+                    {typewriterWords.map((word, wi) => (
+                      <motion.span
+                        key={word}
+                        className="absolute left-0 top-0 text-accent whitespace-nowrap"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: [0, 1, 1, 0], y: [20, 0, 0, -20] }}
+                        transition={{
+                          duration: 3,
+                          delay: 0.8 + wi * 3,
+                          repeat: Infinity,
+                          repeatDelay: (typewriterWords.length - 1) * 3,
+                          ease: "easeInOut",
+                          times: [0, 0.1, 0.9, 1],
+                        }}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
+                    <span className="invisible">{typewriterWords[0]}</span>
+                  </span>
+                </span>
+                <span className="block">for Organizations</span>
+                <span className="block">That Create Impact.</span>
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className="text-base sm:text-lg text-white/75 max-w-lg leading-relaxed mb-8"
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="text-sm sm:text-base text-white/75 max-w-lg leading-relaxed mb-6"
               >
                 iKAMBA helps NGOs, development organizations, and corporate teams produce powerful storytelling through documentary production, video, and photography.
               </motion.p>
@@ -493,7 +462,7 @@ const Index = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
                 className="flex flex-col sm:flex-row gap-3"
               >
                 <Link to="/start-a-project">
@@ -516,39 +485,54 @@ const Index = () => {
               </motion.div>
             </div>
 
-            {/* Right side - Floating image cards grid (transparent bg, like 90seconds) */}
-            <div className="hidden lg:block relative h-[500px]">
-              <div className="relative w-full h-full">
-                {/* Card grid - 3 columns, 2 rows of floating cards */}
-                {[
-                  { image: helloFloating1, className: "top-0 left-0 w-[180px] h-[220px] rotate-[-4deg]", delay: 0.2 },
-                  { image: helloFloating2, className: "top-[-10px] left-[200px] w-[160px] h-[200px] rotate-[3deg]", delay: 0.4 },
-                  { image: helloFloating3, className: "top-[10px] right-0 w-[150px] h-[190px] rotate-[-2deg]", delay: 0.6 },
-                  { image: helloFloating4, className: "bottom-[60px] left-[30px] w-[170px] h-[200px] rotate-[2deg]", delay: 0.8 },
-                  { image: helloFloating5, className: "bottom-[40px] left-[220px] w-[160px] h-[210px] rotate-[-3deg]", delay: 1.0 },
-                  { image: helloFloating6, className: "bottom-[70px] right-[10px] w-[140px] h-[180px] rotate-[4deg]", delay: 0.5 },
-                ].map((card, i) => (
+            {/* Right side - 5-tile video collage (1 tall left + 2x2 right) */}
+            <div className="hidden lg:block">
+              {(() => {
+                const videos = [
+                  { id: "MZ8Li9JBTPM", type: "yt" as const },
+                  { id: "DDPsG9gtIuy", type: "ig" as const },
+                  { id: "DVNiU-BCBwY", type: "ig" as const },
+                  { id: "DXM5w40CCE1", type: "ig" as const },
+                  { id: "DVY5Qi9CENT", type: "ig" as const },
+                ];
+                const srcFor = (v: typeof videos[number]) =>
+                  v.type === "yt"
+                    ? `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&mute=1&loop=1&playlist=${v.id}&controls=0&modestbranding=1&playsinline=1&rel=0`
+                    : `https://www.instagram.com/reel/${v.id}/embed/?autoplay=1&muted=1`;
+                const tileClass = [
+                  "col-span-1 row-span-2",       // tall left
+                  "col-span-1 row-span-1",       // top-right 1
+                  "col-span-1 row-span-1",       // top-right 2
+                  "col-span-1 row-span-1",       // bottom-right 1
+                  "col-span-1 row-span-1",       // bottom-right 2
+                ];
+                return (
                   <motion.div
-                    key={i}
-                    className={`absolute rounded-xl overflow-hidden shadow-2xl ${card.className}`}
-                    initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                    animate={{ 
-                      opacity: 1, 
-                      y: [0, -12, 0, 8, 0], 
-                      scale: 1,
-                    }}
-                    transition={{ 
-                      opacity: { duration: 0.7, delay: card.delay },
-                      scale: { duration: 0.7, delay: card.delay },
-                      y: { duration: 4 + i * 0.5, delay: card.delay + 0.7, repeat: Infinity, ease: "easeInOut" },
-                    }}
-                    whileHover={{ scale: 1.08, zIndex: 20, rotate: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.3 }}
+                    className="grid grid-cols-3 grid-rows-2 gap-3 h-[460px]"
                   >
-                    <img src={card.image} alt="" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    {videos.map((v, i) => (
+                      <div
+                        key={v.id}
+                        className={`relative rounded-xl overflow-hidden shadow-2xl bg-black ${tileClass[i]}`}
+                      >
+                        <iframe
+                          src={srcFor(v)}
+                          title={`Showreel ${i + 1}`}
+                          loading="lazy"
+                          allow="autoplay; encrypted-media; picture-in-picture"
+                          allowFullScreen
+                          className="absolute inset-0 w-full h-full border-0 pointer-events-none"
+                          scrolling="no"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+                      </div>
+                    ))}
                   </motion.div>
-                ))}
-              </div>
+                );
+              })()}
             </div>
           </div>
         </div>
