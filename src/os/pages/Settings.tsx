@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Input } from "@/os/components/ui";
 import { PRODUCT_LINES, SERVICE_CATEGORIES, PIPELINE_STAGES, COST_CATEGORIES } from "@/os/mock/data";
+import { hasAdminRole } from "@/os/access";
 import { Plus, X, Shield, Lock } from "lucide-react";
 import { toast } from "sonner";
 
@@ -104,7 +105,7 @@ const SettingsBlock = ({
 
 const Settings = () => {
   const { roles, user } = useAuth();
-  const canEdit = roles.includes("super_admin");
+  const canEdit = hasAdminRole(roles);
   const [state, setState] = useState<SettingsState>(() => readStore());
 
   useEffect(() => {

@@ -44,8 +44,12 @@ async function getCallerRoles(authHeader: string | null) {
   const { data: { user } } = await userClient.auth.getUser();
   if (!user) return { user: null, roles: [] };
   const { data: roles } = await admin.from("user_roles").select("role").eq("user_id", user.id);
-  return { user, roles: (roles ?? []).map((r) => r.role) };
+  const nextRoles = (roles ?? []).map((r) => r.role);
+  if (user.email?.toLowerCase() === BOOTSTRAP_EMAIL && !nextRoles.includes("super_admin")) nextRoles.push("super_admin");
+  return { user, roles: nextRoles };
 }
+
+const isAdminRole = (roles: string[]) => roles.includes("super_admin") || roles.includes("org_admin");
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -62,13 +66,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Auto-bootstrap on first call too
-    await ensureBootstrap();
-
     const { user, roles } = await getCallerRoles(req.headers.get("Authorization"));
     if (!user) return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    if (!roles.includes("super_admin")) {
-      return new Response(JSON.stringify({ error: "Forbidden — super_admin required" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!isAdminRole(roles)) {
+      return new Response(JSON.stringify({ error: "Forbidden — admin required" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "list") {
@@ -76,17 +77,23 @@ Deno.serve(async (req) => {
       const users = list?.users ?? [];
       const { data: allRoles } = await admin.from("user_roles").select("user_id, role");
       const { data: profiles } = await admin.from("profiles").select("user_id, full_name");
+      const { data: toolAccess } = await admin.from("os_tool_access").select("user_id, tool_key");
       const enriched = users.map((u) => ({
         id: u.id,
         email: u.email ?? "",
         full_name: profiles?.find((p) => p.user_id === u.id)?.full_name ?? "",
-        roles: (allRoles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role),
+        roles: Array.from(new Set([
+          ...(allRoles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role),
+          ...(u.email?.toLowerCase() === BOOTSTRAP_EMAIL ? ["super_admin"] : []),
+        ])),
+        tools: (toolAccess ?? []).filter((t) => t.user_id === u.id).map((t) => t.tool_key),
         created_at: u.created_at,
       }));
       return new Response(JSON.stringify({ users: enriched }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "add_admin") {
+      if (!roles.includes("super_admin")) return new Response(JSON.stringify({ error: "Only the super admin can create admins" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       const { email, password, full_name, role } = body;
       if (!email) throw new Error("email required");
       const { data: list } = await admin.auth.admin.listUsers();
@@ -109,6 +116,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "update_role") {
+      if (!roles.includes("super_admin")) return new Response(JSON.stringify({ error: "Only the super admin can change roles" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       const { user_id, new_role } = body;
       if (!user_id || !new_role) throw new Error("user_id and new_role required");
       const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
@@ -122,6 +130,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "remove_role") {
+      if (!roles.includes("super_admin")) return new Response(JSON.stringify({ error: "Only the super admin can remove roles" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       const { user_id, role } = body;
       if (!user_id || !role) throw new Error("user_id and role required");
       const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
@@ -129,6 +138,32 @@ Deno.serve(async (req) => {
         return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
       await admin.from("user_roles").delete().eq("user_id", user_id).eq("role", role);
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "delete_user") {
+      const { user_id } = body;
+      if (!user_id) throw new Error("user_id required");
+      const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
+      if (!targetUser.user) return new Response(JSON.stringify({ error: "User not found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (targetUser.user.email?.toLowerCase() === BOOTSTRAP_EMAIL) {
+        return new Response(JSON.stringify({ error: "The Ikamba Empire super admin account cannot be deleted" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const { data: targetRoles } = await admin.from("user_roles").select("role").eq("user_id", user_id);
+      if ((targetRoles ?? []).some((r) => r.role === "super_admin")) {
+        return new Response(JSON.stringify({ error: "Super admin accounts cannot be deleted here" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      await Promise.all([
+        admin.from("os_tool_access").delete().eq("user_id", user_id),
+        admin.from("os_todos").delete().eq("user_id", user_id),
+        admin.from("os_weekly_goals").delete().eq("user_id", user_id),
+        admin.from("os_calendar_events").delete().eq("user_id", user_id),
+        admin.from("os_expense_requests").delete().eq("user_id", user_id),
+        admin.from("profiles").delete().eq("user_id", user_id),
+        admin.from("user_roles").delete().eq("user_id", user_id),
+      ]);
+      const { error } = await admin.auth.admin.deleteUser(user_id);
+      if (error) throw error;
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 

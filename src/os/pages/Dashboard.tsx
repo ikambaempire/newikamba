@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { useAuth } from "@/hooks/useAuth";
-import { getProfile } from "@/os/access";
+import { ALL_TOOLS, getProfile, hasAdminRole } from "@/os/access";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton } from "@/os/components/ui";
 import { fmtRWF } from "@/os/mock/data";
 import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare } from "lucide-react";
@@ -10,8 +10,9 @@ import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare } from 
 const Dashboard = () => {
   const { projects, payments, costs, schedule } = useOSStore();
   const { user, profile: authProfile, roles } = useAuth();
-  const isAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
   const osProfile = user ? getProfile(user.id) : null;
+  const allowed = useMemo(() => new Set(isAdmin ? ALL_TOOLS.map((t) => t.key) : osProfile?.allowedTools || []), [isAdmin, osProfile?.allowedTools]);
   const greetingName = osProfile?.fullName || authProfile?.full_name || user?.email?.split("@")[0] || "there";
   const firstName = greetingName.split(" ")[0];
 
@@ -43,9 +44,9 @@ const Dashboard = () => {
         actions={
           <>
             {isAdmin && <Badge tone="gold"><CheckSquare size={10} className="inline mr-1" /> Admin Dashboard</Badge>}
-            <Link to="/os/projects/new">
+        {allowed.has("/os/projects/new") && <Link to="/os/projects/new">
               <OSButton variant="primary"><Plus size={16} /> Create Project</OSButton>
-            </Link>
+        </Link>}
           </>
         }
       />
@@ -60,22 +61,22 @@ const Dashboard = () => {
 
       {/* Quick actions row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
-        <Link to="/os/todos" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+        {allowed.has("/os/todos") && <Link to="/os/todos" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
           <CheckSquare size={20} className="text-os-gold" />
           <span className="text-sm font-semibold text-white">My To-Dos</span>
-        </Link>
-        <Link to="/os/calendar" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+        </Link>}
+        {allowed.has("/os/calendar") && <Link to="/os/calendar" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
           <CalendarIcon size={20} className="text-os-gold" />
           <span className="text-sm font-semibold text-white">Calendar</span>
-        </Link>
-        <Link to="/os/finance" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+        </Link>}
+        {allowed.has("/os/finance") && <Link to="/os/finance" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
           <Wallet size={20} className="text-os-gold" />
           <span className="text-sm font-semibold text-white">Finance</span>
-        </Link>
-        <Link to="/os/pipeline" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+        </Link>}
+        {allowed.has("/os/pipeline") && <Link to="/os/pipeline" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
           <ArrowRight size={20} className="text-os-gold" />
           <span className="text-sm font-semibold text-white">Pipeline</span>
-        </Link>
+        </Link>}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mt-8">

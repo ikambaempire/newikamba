@@ -3,8 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import {
-  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, fetchAllowedTools, type OSProfile, type OSToolKey, getProfile,
-  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor,
+  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, type OSProfile, type OSToolKey, getProfile,
+  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor, hasAdminRole, hasSuperAdminRole, clearUserAccessCache,
 } from "@/os/access";
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
@@ -12,10 +12,12 @@ import {
   type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 const Team = () => {
   const { roles, user, profile } = useAuth();
-  const isSuperAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
+  const isSuperAdmin = hasSuperAdminRole(roles);
   const [profiles, setProfiles] = useState<OSProfile[]>([]);
   const [selected, setSelected] = useState<OSProfile | null>(null);
   const [tick, setTick] = useState(0);
@@ -32,16 +34,14 @@ const Team = () => {
       type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string; roles?: string[]; tools?: OSToolKey[] | null };
       let dbRows: Row[] = [];
 
-      if (isSuperAdmin) {
+      if (isAdmin) {
         try {
           const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
           if (error) throw error;
           const users = data?.users || [];
-          const toolRows = await Promise.all(users.map(async (u: any) => ({ id: u.id, tools: await fetchAllowedTools(u.id) })));
-          const toolMap = new Map(toolRows.map((r) => [r.id, r.tools]));
           dbRows = users.map((u: any) => ({
             user_id: u.id, full_name: u.full_name, email: u.email,
-            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: toolMap.get(u.id) || null,
+            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: u.tools?.length ? u.tools : null,
           }));
         } catch {
           // fallback to profiles table
@@ -77,11 +77,11 @@ const Team = () => {
           updatedAt: r.updated_at || new Date().toISOString(),
         };
       });
-      local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
+      if (!isAdmin) local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
       merged.sort((a, b) => a.fullName.localeCompare(b.fullName));
       setProfiles(merged);
     })();
-  }, [tick, isSuperAdmin]);
+  }, [tick, isAdmin]);
 
 
   const adminName = useMemo(() => {
@@ -120,7 +120,7 @@ const Team = () => {
     </div>
   );
 
-  if (!isSuperAdmin) {
+  if (!isAdmin) {
     return (
       <div>
         <PageHeader title="Team" subtitle="The people you work with on iKAMBA Media OS." />
@@ -183,8 +183,10 @@ const Team = () => {
           key={selected.userId + tick}
           member={selected}
           adminName={adminName}
+          canManageRoles={isSuperAdmin}
           onClose={() => setSelected(null)}
           onAnyChange={refresh}
+          onDeleted={() => { setSelected(null); refresh(); }}
         />
       )}
     </div>
@@ -230,9 +232,9 @@ const MemberCard = ({ p }: { p: OSProfile }) => (
 
 /* ─── Detail modal ─── */
 const MemberDetailModal = ({
-  member, adminName, onClose, onAnyChange,
+  member, adminName, canManageRoles, onClose, onAnyChange, onDeleted,
 }: {
-  member: OSProfile; adminName: string; onClose: () => void; onAnyChange: () => void;
+  member: OSProfile; adminName: string; canManageRoles: boolean; onClose: () => void; onAnyChange: () => void; onDeleted: () => void;
 }) => {
   const { user } = useAuth();
   const [tab, setTab] = useState<"info" | "todos" | "goals" | "tools">("info");
@@ -287,7 +289,18 @@ const MemberDetailModal = ({
   const setAdminRole = async (makeAdmin: boolean) => {
     const role = makeAdmin ? "org_admin" : "user";
     const { error } = await supabase.functions.invoke("manage-admins", { body: { action: "update_role", user_id: member.userId, new_role: role } });
-    if (!error) onAnyChange();
+    if (error) return toast.error("Could not update role", { description: error.message });
+    toast.success(makeAdmin ? "Admin access granted" : "Admin access removed");
+    onAnyChange();
+  };
+
+  const deleteUser = async () => {
+    if (!confirm(`Delete ${member.fullName}'s account? This removes their access and team records.`)) return;
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "delete_user", user_id: member.userId } });
+    if (error || data?.error) return toast.error("Could not delete user", { description: data?.error || error?.message });
+    clearUserAccessCache(member.userId);
+    toast.success("User account deleted");
+    onDeleted();
   };
 
   const openTodos = todos.filter((t) => !t.done);
@@ -342,10 +355,15 @@ const MemberDetailModal = ({
           <div className="pt-4 border-t border-os flex flex-wrap gap-2">
             {member.role === "Super Admin" ? (
               <Badge tone="gold"><Crown size={10} className="inline mr-1" /> Permanent super admin</Badge>
+            ) : !canManageRoles ? (
+              <Badge>Only super admin can change roles</Badge>
             ) : member.role === "Admin" ? (
               <OSButton variant="outline" onClick={() => setAdminRole(false)}><Shield size={14} /> Remove admin</OSButton>
             ) : (
               <OSButton variant="primary" onClick={() => setAdminRole(true)}><Shield size={14} /> Make admin</OSButton>
+            )}
+            {member.role !== "Super Admin" && (
+              <OSButton variant="ghost" onClick={deleteUser} className="text-rose-300 hover:text-rose-200"><Trash2 size={14} /> Delete account</OSButton>
             )}
           </div>
         </div>
