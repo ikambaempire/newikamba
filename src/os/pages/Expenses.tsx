@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { getProfile } from "@/os/access";
+import { getProfile, hasAdminRole } from "@/os/access";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import { fmtRWF } from "@/os/mock/data";
 import { Plus, Receipt, Check, X, Trash2, Shield } from "lucide-react";
@@ -43,7 +43,7 @@ const statusTone: Record<Status, "amber" | "green" | "red"> = {
 
 const Expenses = () => {
   const { user, roles, profile } = useAuth();
-  const isAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
   const [rows, setRows] = useState<ExpenseRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNew, setShowNew] = useState(false);
