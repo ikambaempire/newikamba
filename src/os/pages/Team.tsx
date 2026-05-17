@@ -7,9 +7,8 @@ import {
   DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor, hasAdminRole, hasSuperAdminRole, clearUserAccessCache,
 } from "@/os/access";
 import {
-  fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
-  toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
-  type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
+  fetchTodos, fetchGoals,
+  toTodo, toGoal, type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
 import { toast } from "sonner";
@@ -242,9 +241,22 @@ const MemberDetailModal = ({
   const [goals, setLocalGoals] = useState<WeeklyGoal[]>([]);
   const [allowed, setAllowed] = useState<OSToolKey[]>(member.allowedTools);
 
+  const invokeMemberWork = async (body: Record<string, unknown>) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body });
+    if (error || data?.error) throw new Error(data?.error || error?.message || "Admin action failed");
+    return data;
+  };
+
   const reload = async () => {
-    const [t, g] = await Promise.all([fetchTodos(member.userId), fetchGoals(member.userId)]);
-    setLocalTodos(t); setLocalGoals(g);
+    try {
+      const data = await invokeMemberWork({ action: "member_work", user_id: member.userId });
+      setLocalTodos((data?.todos || []).map(toTodo));
+      setLocalGoals((data?.goals || []).map(toGoal));
+    } catch (error: any) {
+      toast.error("Could not load member tasks", { description: error?.message });
+      const [t, g] = await Promise.all([fetchTodos(member.userId), fetchGoals(member.userId)]);
+      setLocalTodos(t); setLocalGoals(g);
+    }
   };
   useEffect(() => { reload(); /* eslint-disable-next-line */ }, [member.userId]);
 
@@ -255,12 +267,13 @@ const MemberDetailModal = ({
 
   const assignTodo = async () => {
     if (!tTitle.trim() || !tDue) return;
-    await addTodoFor(member.userId, {
-      title: tTitle.trim(), notes: tNotes.trim() || undefined, due: tDue, priority: tPri,
-      byAdmin: true, assignedByName: adminName,
+    await invokeMemberWork({
+      action: "add_member_todo", user_id: member.userId, title: tTitle.trim(),
+      notes: tNotes.trim(), due: tDue, priority: tPri, assigned_by_name: adminName,
     });
     setTTitle(""); setTNotes(""); setTDue(""); setTPri("high");
     reload();
+    toast.success("Task assigned");
   };
 
   const [gTitle, setGTitle] = useState("");
@@ -270,12 +283,13 @@ const MemberDetailModal = ({
 
   const assignGoal = async () => {
     if (!gTitle.trim()) return;
-    await addGoalFor(member.userId, {
-      title: gTitle.trim(), notes: gNotes.trim() || undefined, priority: gPri, weekStart: gWeek,
-      byAdmin: true, assignedByName: adminName,
+    await invokeMemberWork({
+      action: "add_member_goal", user_id: member.userId, title: gTitle.trim(),
+      notes: gNotes.trim(), priority: gPri, week_start: gWeek, assigned_by_name: adminName,
     });
     setGTitle(""); setGNotes(""); setGPri("high");
     reload();
+    toast.success("Goal assigned");
   };
 
   const toggleTool = async (k: OSToolKey) => {
@@ -391,9 +405,9 @@ const MemberDetailModal = ({
           <ListSection title={`Open (${openTodos.length})`} empty="No open tasks.">
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
-                onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
-                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
-                onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
+                onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
+                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
+                onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
               />
             ))}
           </ListSection>
@@ -401,9 +415,9 @@ const MemberDetailModal = ({
             <ListSection title={`Completed (${doneTodos.length})`} empty="">
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
-                  onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
-                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
-                  onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
+                  onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
+                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
+                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
                 />
               ))}
             </ListSection>
@@ -433,9 +447,9 @@ const MemberDetailModal = ({
             <ListSection title={`Unfinished from past weeks (${pastGoals.length})`} empty="">
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
-                  onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
-                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
-                  onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
+                  onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
+                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
+                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
                 />
               ))}
             </ListSection>
@@ -443,9 +457,9 @@ const MemberDetailModal = ({
           <ListSection title={`This week (${weeklyForThis.length})`} empty="No goals for this week.">
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
-                onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
-                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
-                onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
+                onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
+                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
+                onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
               />
             ))}
           </ListSection>

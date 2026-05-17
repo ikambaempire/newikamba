@@ -51,6 +51,26 @@ async function getCallerRoles(authHeader: string | null) {
 
 const isAdminRole = (roles: string[]) => roles.includes("super_admin") || roles.includes("org_admin");
 
+const todoPatch = (patch: Record<string, unknown>) => {
+  const next: Record<string, unknown> = {};
+  if (typeof patch.title === "string") next.title = patch.title.trim();
+  if ("notes" in patch) next.notes = typeof patch.notes === "string" && patch.notes.trim() ? patch.notes.trim() : null;
+  if ("due" in patch) next.due = typeof patch.due === "string" && patch.due ? patch.due : null;
+  if (["low", "medium", "high"].includes(String(patch.priority))) next.priority = patch.priority;
+  if (typeof patch.done === "boolean") next.done = patch.done;
+  return next;
+};
+
+const goalPatch = (patch: Record<string, unknown>) => {
+  const next: Record<string, unknown> = {};
+  if (typeof patch.title === "string") next.title = patch.title.trim();
+  if ("notes" in patch) next.notes = typeof patch.notes === "string" && patch.notes.trim() ? patch.notes.trim() : null;
+  if (typeof patch.week_start === "string" && patch.week_start) next.week_start = patch.week_start;
+  if (["low", "medium", "high"].includes(String(patch.priority))) next.priority = patch.priority;
+  if (typeof patch.done === "boolean") next.done = patch.done;
+  return next;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -163,6 +183,74 @@ Deno.serve(async (req) => {
         admin.from("user_roles").delete().eq("user_id", user_id),
       ]);
       const { error } = await admin.auth.admin.deleteUser(user_id);
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "member_work") {
+      const { user_id } = body;
+      if (!user_id) throw new Error("user_id required");
+      const [{ data: todos, error: todosError }, { data: goals, error: goalsError }] = await Promise.all([
+        admin.from("os_todos").select("*").eq("user_id", user_id).order("created_at", { ascending: false }),
+        admin.from("os_weekly_goals").select("*").eq("user_id", user_id).order("created_at", { ascending: false }),
+      ]);
+      if (todosError) throw todosError;
+      if (goalsError) throw goalsError;
+      return new Response(JSON.stringify({ todos: todos ?? [], goals: goals ?? [] }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "add_member_todo") {
+      const { user_id, title, notes, due, priority, assigned_by_name } = body;
+      if (!user_id || !title || !due) throw new Error("user_id, title and due required");
+      const { data, error } = await admin.from("os_todos").insert({
+        user_id, title: String(title).trim(), notes: notes ? String(notes).trim() : null,
+        due, priority: ["low", "medium", "high"].includes(priority) ? priority : "high",
+        by_admin: true, assigned_by_name: assigned_by_name ?? user.email ?? "Admin",
+      }).select("*").single();
+      if (error) throw error;
+      return new Response(JSON.stringify({ todo: data }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "add_member_goal") {
+      const { user_id, title, notes, week_start, priority, assigned_by_name } = body;
+      if (!user_id || !title || !week_start) throw new Error("user_id, title and week_start required");
+      const { data, error } = await admin.from("os_weekly_goals").insert({
+        user_id, title: String(title).trim(), notes: notes ? String(notes).trim() : null,
+        week_start, priority: ["low", "medium", "high"].includes(priority) ? priority : "high",
+        by_admin: true, assigned_by_name: assigned_by_name ?? user.email ?? "Admin",
+      }).select("*").single();
+      if (error) throw error;
+      return new Response(JSON.stringify({ goal: data }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "update_member_todo") {
+      const { todo_id, patch } = body;
+      if (!todo_id) throw new Error("todo_id required");
+      const { error } = await admin.from("os_todos").update(todoPatch(patch ?? {})).eq("id", todo_id);
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "update_member_goal") {
+      const { goal_id, patch } = body;
+      if (!goal_id) throw new Error("goal_id required");
+      const { error } = await admin.from("os_weekly_goals").update(goalPatch(patch ?? {})).eq("id", goal_id);
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "delete_member_todo") {
+      const { todo_id } = body;
+      if (!todo_id) throw new Error("todo_id required");
+      const { error } = await admin.from("os_todos").delete().eq("id", todo_id);
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "delete_member_goal") {
+      const { goal_id } = body;
+      if (!goal_id) throw new Error("goal_id required");
+      const { error } = await admin.from("os_weekly_goals").delete().eq("id", goal_id);
       if (error) throw error;
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

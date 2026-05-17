@@ -54,22 +54,22 @@ export const todayDueISO = () => {
 };
 
 // ───── mappers
-type TodoRow = {
+export type TodoRow = {
   id: string; user_id: string; title: string; notes: string | null; due: string | null;
   priority: Priority; done: boolean; reminders_fired: number[]; by_admin: boolean;
   assigned_by_name: string | null; created_at: string;
 };
-type GoalRow = {
+export type GoalRow = {
   id: string; user_id: string; title: string; notes: string | null; week_start: string;
   priority: Priority; done: boolean; by_admin: boolean; assigned_by_name: string | null; created_at: string;
 };
 
-const toTodo = (r: TodoRow): Todo => ({
+export const toTodo = (r: TodoRow): Todo => ({
   id: r.id, title: r.title, notes: r.notes ?? undefined, due: r.due || "",
   priority: r.priority, done: r.done, remindersFired: r.reminders_fired || [],
   byAdmin: r.by_admin, assignedByName: r.assigned_by_name, createdAt: r.created_at,
 });
-const toGoal = (r: GoalRow): WeeklyGoal => ({
+export const toGoal = (r: GoalRow): WeeklyGoal => ({
   id: r.id, title: r.title, notes: r.notes ?? undefined, weekStart: r.week_start,
   priority: r.priority, done: r.done, byAdmin: r.by_admin,
   assignedByName: r.assigned_by_name, createdAt: r.created_at,
