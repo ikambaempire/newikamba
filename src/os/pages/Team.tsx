@@ -242,9 +242,22 @@ const MemberDetailModal = ({
   const [goals, setLocalGoals] = useState<WeeklyGoal[]>([]);
   const [allowed, setAllowed] = useState<OSToolKey[]>(member.allowedTools);
 
+  const invokeMemberWork = async (body: Record<string, unknown>) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body });
+    if (error || data?.error) throw new Error(data?.error || error?.message || "Admin action failed");
+    return data;
+  };
+
   const reload = async () => {
-    const [t, g] = await Promise.all([fetchTodos(member.userId), fetchGoals(member.userId)]);
-    setLocalTodos(t); setLocalGoals(g);
+    try {
+      const data = await invokeMemberWork({ action: "member_work", user_id: member.userId });
+      setLocalTodos((data?.todos || []).map(toTodo));
+      setLocalGoals((data?.goals || []).map(toGoal));
+    } catch (error: any) {
+      toast.error("Could not load member tasks", { description: error?.message });
+      const [t, g] = await Promise.all([fetchTodos(member.userId), fetchGoals(member.userId)]);
+      setLocalTodos(t); setLocalGoals(g);
+    }
   };
   useEffect(() => { reload(); /* eslint-disable-next-line */ }, [member.userId]);
 
@@ -255,12 +268,13 @@ const MemberDetailModal = ({
 
   const assignTodo = async () => {
     if (!tTitle.trim() || !tDue) return;
-    await addTodoFor(member.userId, {
-      title: tTitle.trim(), notes: tNotes.trim() || undefined, due: tDue, priority: tPri,
-      byAdmin: true, assignedByName: adminName,
+    await invokeMemberWork({
+      action: "add_member_todo", user_id: member.userId, title: tTitle.trim(),
+      notes: tNotes.trim(), due: tDue, priority: tPri, assigned_by_name: adminName,
     });
     setTTitle(""); setTNotes(""); setTDue(""); setTPri("high");
     reload();
+    toast.success("Task assigned");
   };
 
   const [gTitle, setGTitle] = useState("");
@@ -268,20 +282,15 @@ const MemberDetailModal = ({
   const [gPri, setGPri] = useState<Priority>("high");
   const [gWeek, setGWeek] = useState(ymd(mondayOf(new Date())));
 
-  const invokeMemberWork = async (body: Record<string, unknown>) => {
-    const { data, error } = await supabase.functions.invoke("manage-admins", { body });
-    if (error || data?.error) throw new Error(data?.error || error?.message || "Admin action failed");
-    return data;
-  };
-
   const assignGoal = async () => {
     if (!gTitle.trim()) return;
-    await addGoalFor(member.userId, {
-      title: gTitle.trim(), notes: gNotes.trim() || undefined, priority: gPri, weekStart: gWeek,
-      byAdmin: true, assignedByName: adminName,
+    await invokeMemberWork({
+      action: "add_member_goal", user_id: member.userId, title: gTitle.trim(),
+      notes: gNotes.trim(), priority: gPri, week_start: gWeek, assigned_by_name: adminName,
     });
     setGTitle(""); setGNotes(""); setGPri("high");
     reload();
+    toast.success("Goal assigned");
   };
 
   const toggleTool = async (k: OSToolKey) => {
