@@ -39,6 +39,9 @@ export const LOCKED_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/o
 export const DEFAULT_TOOLS: OSToolKey[] = [...LOCKED_TOOLS, "/os/calendar", "/os/pipeline"];
 export const ADMIN_TOOLS: OSToolKey[] = ALL_TOOLS.map((t) => t.key);
 
+export const hasSuperAdminRole = (roles: string[]) => roles.includes("super_admin");
+export const hasAdminRole = (roles: string[]) => roles.includes("super_admin") || roles.includes("org_admin");
+
 export type OSProfile = {
   userId: string;
   email: string;
@@ -105,6 +108,12 @@ export const saveAllowedTools = async (userId: string, tools: OSToolKey[], grant
   }
 };
 export const deleteProfile = (userId: string) => {
+  const s = read();
+  delete s[userId];
+  write(s);
+};
+
+export const clearUserAccessCache = (userId: string) => {
   const s = read();
   delete s[userId];
   write(s);
