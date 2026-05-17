@@ -1,5 +1,6 @@
 // Per-user profile + tool-access store (localStorage-backed).
 // Profiles stay client-side; permissions changes broadcast to listeners.
+import { supabase } from "@/integrations/supabase/client";
 
 export type OSToolKey =
   | "/os"
@@ -81,6 +82,27 @@ export const setAllowedTools = (userId: string, tools: OSToolKey[]) => {
   if (!s[userId]) return;
   s[userId] = { ...s[userId], allowedTools: tools, updatedAt: new Date().toISOString() };
   write(s);
+};
+
+export const fetchAllowedTools = async (userId: string): Promise<OSToolKey[] | null> => {
+  const { data, error } = await supabase.from("os_tool_access").select("tool_key").eq("user_id", userId);
+  if (error) { console.error("fetchAllowedTools failed", error); return null; }
+  if (!data || data.length === 0) return null;
+  return data.map((r: any) => r.tool_key as OSToolKey).filter(Boolean);
+};
+
+export const saveAllowedTools = async (userId: string, tools: OSToolKey[], grantedBy?: string) => {
+  const unique = Array.from(new Set([...tools, ...LOCKED_TOOLS]));
+  const { error: deleteError } = await supabase.from("os_tool_access").delete().eq("user_id", userId);
+  if (deleteError) { console.error("delete tool access failed", deleteError); throw deleteError; }
+  if (unique.length === 0) return;
+  const { error } = await supabase.from("os_tool_access").insert(unique.map((tool_key) => ({ user_id: userId, tool_key, granted_by: grantedBy ?? null })));
+  if (error) { console.error("save tool access failed", error); throw error; }
+  const s = read();
+  if (s[userId]) {
+    s[userId] = { ...s[userId], allowedTools: unique, updatedAt: new Date().toISOString() };
+    write(s);
+  }
 };
 export const deleteProfile = (userId: string) => {
   const s = read();
