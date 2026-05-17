@@ -9,7 +9,7 @@ import {
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
   toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
-  type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
+  toTodo, toGoal, type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
 import { toast } from "sonner";
@@ -267,6 +267,12 @@ const MemberDetailModal = ({
   const [gNotes, setGNotes] = useState("");
   const [gPri, setGPri] = useState<Priority>("high");
   const [gWeek, setGWeek] = useState(ymd(mondayOf(new Date())));
+
+  const invokeMemberWork = async (body: Record<string, unknown>) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body });
+    if (error || data?.error) throw new Error(data?.error || error?.message || "Admin action failed");
+    return data;
+  };
 
   const assignGoal = async () => {
     if (!gTitle.trim()) return;
