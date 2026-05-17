@@ -3,12 +3,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import {
-  ALL_TOOLS, listProfiles, setAllowedTools, type OSProfile, type OSToolKey, getProfile,
-  DEFAULT_TOOLS, pickAvatarColor,
+  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, fetchAllowedTools, type OSProfile, type OSToolKey, getProfile,
+  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor,
 } from "@/os/access";
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
-  toggleTodoFor, toggleGoalFor,
+  toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
   type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search } from "lucide-react";
