@@ -3,15 +3,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import {
-  ALL_TOOLS, listProfiles, setAllowedTools, type OSProfile, type OSToolKey, getProfile,
-  DEFAULT_TOOLS, pickAvatarColor,
+  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, fetchAllowedTools, type OSProfile, type OSToolKey, getProfile,
+  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor,
 } from "@/os/access";
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
-  toggleTodoFor, toggleGoalFor,
+  toggleTodoFor, toggleGoalFor, updateTodoFor, updateGoalFor,
   type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
-import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search } from "lucide-react";
+import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
 
 const Team = () => {
   const { roles, user, profile } = useAuth();
@@ -29,16 +29,19 @@ const Team = () => {
       const local = listProfiles();
       const localById = new Map(local.map((p) => [p.userId, p]));
 
-      type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string };
+      type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string; roles?: string[]; tools?: OSToolKey[] | null };
       let dbRows: Row[] = [];
 
       if (isSuperAdmin) {
         try {
           const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
           if (error) throw error;
-          dbRows = (data?.users || []).map((u: any) => ({
+          const users = data?.users || [];
+          const toolRows = await Promise.all(users.map(async (u: any) => ({ id: u.id, tools: await fetchAllowedTools(u.id) })));
+          const toolMap = new Map(toolRows.map((r) => [r.id, r.tools]));
+          dbRows = users.map((u: any) => ({
             user_id: u.id, full_name: u.full_name, email: u.email,
-            created_at: u.created_at, updated_at: u.created_at,
+            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: toolMap.get(u.id) || null,
           }));
         } catch {
           // fallback to profiles table
@@ -57,16 +60,19 @@ const Team = () => {
           ...lp,
           fullName: lp.fullName || r.full_name || "Team member",
           email: lp.email || r.email || "",
+          role: r.roles?.includes("super_admin") ? "Super Admin" : r.roles?.includes("org_admin") ? "Admin" : lp.role,
+          allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || lp.allowedTools,
         };
+        const isAdmin = r.roles?.includes("super_admin") || r.roles?.includes("org_admin");
         return {
           userId: r.user_id,
           email: r.email || "",
           fullName: r.full_name || "Team member",
-          role: "Member",
+          role: r.roles?.includes("super_admin") ? "Super Admin" : isAdmin ? "Admin" : "Member",
           department: "Unassigned",
           avatarColor: pickAvatarColor(r.user_id),
           setupComplete: false,
-          allowedTools: DEFAULT_TOOLS,
+          allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || DEFAULT_TOOLS,
           createdAt: r.created_at || new Date().toISOString(),
           updatedAt: r.updated_at || new Date().toISOString(),
         };
@@ -228,6 +234,7 @@ const MemberDetailModal = ({
 }: {
   member: OSProfile; adminName: string; onClose: () => void; onAnyChange: () => void;
 }) => {
+  const { user } = useAuth();
   const [tab, setTab] = useState<"info" | "todos" | "goals" | "tools">("info");
   const [todos, setLocalTodos] = useState<Todo[]>([]);
   const [goals, setLocalGoals] = useState<WeeklyGoal[]>([]);
@@ -269,11 +276,18 @@ const MemberDetailModal = ({
     reload();
   };
 
-  const toggleTool = (k: OSToolKey) => {
+  const toggleTool = async (k: OSToolKey) => {
     const next = allowed.includes(k) ? allowed.filter((x) => x !== k) : [...allowed, k];
     setAllowed(next);
     setAllowedTools(member.userId, next);
+    await saveAllowedTools(member.userId, next, user?.id);
     onAnyChange();
+  };
+
+  const setAdminRole = async (makeAdmin: boolean) => {
+    const role = makeAdmin ? "org_admin" : "user";
+    const { error } = await supabase.functions.invoke("manage-admins", { body: { action: "update_role", user_id: member.userId, new_role: role } });
+    if (!error) onAnyChange();
   };
 
   const openTodos = todos.filter((t) => !t.done);
@@ -325,6 +339,15 @@ const MemberDetailModal = ({
           <div className="pt-2 text-[11px] text-os-muted">
             Joined {new Date(member.createdAt).toLocaleDateString()} · Last updated {new Date(member.updatedAt).toLocaleDateString()}
           </div>
+          <div className="pt-4 border-t border-os flex flex-wrap gap-2">
+            {member.role === "Super Admin" ? (
+              <Badge tone="gold"><Crown size={10} className="inline mr-1" /> Permanent super admin</Badge>
+            ) : member.role === "Admin" ? (
+              <OSButton variant="outline" onClick={() => setAdminRole(false)}><Shield size={14} /> Remove admin</OSButton>
+            ) : (
+              <OSButton variant="primary" onClick={() => setAdminRole(true)}><Shield size={14} /> Make admin</OSButton>
+            )}
+          </div>
         </div>
       )}
 
@@ -351,6 +374,7 @@ const MemberDetailModal = ({
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
                 onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
+                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
                 onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
               />
             ))}
@@ -360,6 +384,7 @@ const MemberDetailModal = ({
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
                   onToggle={async () => { await toggleTodoFor(member.userId, t.id, !t.done); reload(); }}
+                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await updateTodoFor(member.userId, t.id, { title: title.trim() }); reload(); } }}
                   onDelete={async () => { await removeTodoFor(member.userId, t.id); reload(); }}
                 />
               ))}
@@ -391,6 +416,7 @@ const MemberDetailModal = ({
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
                   onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
+                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
                   onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
                 />
               ))}
@@ -400,6 +426,7 @@ const MemberDetailModal = ({
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
                 onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
+                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
                 onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
               />
             ))}
@@ -451,7 +478,7 @@ const ListSection = ({ title, empty, children }: { title: string; empty: string;
   );
 };
 
-const AdminTodoRow = ({ t, onToggle, onDelete, muted }: { t: Todo; onToggle: () => void; onDelete: () => void; muted?: boolean }) => {
+const AdminTodoRow = ({ t, onToggle, onEdit, onDelete, muted }: { t: Todo; onToggle: () => void; onEdit: () => void; onDelete: () => void; muted?: boolean }) => {
   const cls = t.done ? "border border-emerald-500/50 bg-emerald-500/10" : t.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2";
   return (
     <div className={`rounded-lg p-2.5 flex items-start gap-2 ${cls} ${muted ? "opacity-70" : ""}`}>
@@ -467,12 +494,13 @@ const AdminTodoRow = ({ t, onToggle, onDelete, muted }: { t: Todo; onToggle: () 
           {t.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>
+      <button onClick={onEdit} className="text-os-muted hover:text-os-gold p-1"><Pencil size={13} /></button>
       <button onClick={onDelete} className="text-os-muted hover:text-rose-300 p-1"><Trash2 size={13} /></button>
     </div>
   );
 };
 
-const AdminGoalRow = ({ g, onToggle, onDelete }: { g: WeeklyGoal; onToggle: () => void; onDelete: () => void }) => {
+const AdminGoalRow = ({ g, onToggle, onEdit, onDelete }: { g: WeeklyGoal; onToggle: () => void; onEdit: () => void; onDelete: () => void }) => {
   const cls = g.done ? "border border-emerald-500/50 bg-emerald-500/10" : g.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2";
   return (
     <div className={`rounded-lg p-2.5 flex items-start gap-2 ${cls}`}>
@@ -488,6 +516,7 @@ const AdminGoalRow = ({ g, onToggle, onDelete }: { g: WeeklyGoal; onToggle: () =
           {g.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>
+      <button onClick={onEdit} className="text-os-muted hover:text-os-gold p-1"><Pencil size={13} /></button>
       <button onClick={onDelete} className="text-os-muted hover:text-rose-300 p-1"><Trash2 size={13} /></button>
     </div>
   );

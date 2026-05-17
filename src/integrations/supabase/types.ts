@@ -221,6 +221,27 @@ export type Database = {
         }
         Relationships: []
       }
+      os_platform_settings: {
+        Row: {
+          items: string[]
+          setting_key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          items?: string[]
+          setting_key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          items?: string[]
+          setting_key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       os_todos: {
         Row: {
           assigned_by_name: string | null
@@ -262,6 +283,27 @@ export type Database = {
           reminders_fired?: number[]
           title?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      os_tool_access: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          tool_key: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          tool_key: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          tool_key?: string
           user_id?: string
         }
         Relationships: []
@@ -540,6 +582,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_bootstrap_super_admin: { Args: { _user_id: string }; Returns: boolean }
       is_internal_role: { Args: { _user_id: string }; Returns: boolean }
       user_client_id: { Args: { _user_id: string }; Returns: string }
     }

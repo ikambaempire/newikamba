@@ -16,15 +16,7 @@ const BOOTSTRAP_PASSWORD = "EMPIRE@IKAMBA2025";
 const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
 
 async function ensureBootstrap() {
-  // Check if any super_admin exists
-  const { data: existing } = await admin
-    .from("user_roles")
-    .select("user_id")
-    .eq("role", "super_admin")
-    .limit(1);
-  if (existing && existing.length > 0) return { skipped: true };
-
-  // Find or create the bootstrap user
+  // The Ikamba Empire email must always be the permanent super admin.
   const { data: list } = await admin.auth.admin.listUsers();
   let user = list?.users.find((u) => u.email?.toLowerCase() === BOOTSTRAP_EMAIL);
   if (!user) {
@@ -40,7 +32,7 @@ async function ensureBootstrap() {
 
   await admin.from("profiles").upsert({ user_id: user.id, full_name: "iKAMBA Empire" }, { onConflict: "user_id" });
   await admin.from("user_roles").upsert({ user_id: user.id, role: "super_admin" }, { onConflict: "user_id,role" });
-  return { created: true, user_id: user.id };
+  return { ensured: true, user_id: user.id };
 }
 
 async function getCallerRoles(authHeader: string | null) {
@@ -118,6 +110,11 @@ Deno.serve(async (req) => {
 
     if (action === "update_role") {
       const { user_id, new_role } = body;
+      if (!user_id || !new_role) throw new Error("user_id and new_role required");
+      const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
+      if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && new_role !== "super_admin") {
+        return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       // remove non-super_admin roles, add new
       await admin.from("user_roles").delete().eq("user_id", user_id).neq("role", "super_admin");
       await admin.from("user_roles").upsert({ user_id, role: new_role }, { onConflict: "user_id,role" });
@@ -126,6 +123,11 @@ Deno.serve(async (req) => {
 
     if (action === "remove_role") {
       const { user_id, role } = body;
+      if (!user_id || !role) throw new Error("user_id and role required");
+      const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
+      if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && role === "super_admin") {
+        return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       await admin.from("user_roles").delete().eq("user_id", user_id).eq("role", role);
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

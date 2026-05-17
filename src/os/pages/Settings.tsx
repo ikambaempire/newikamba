@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Input } from "@/os/components/ui";
 import { PRODUCT_LINES, SERVICE_CATEGORIES, PIPELINE_STAGES, COST_CATEGORIES } from "@/os/mock/data";
 import { Plus, X, Shield, Lock } from "lucide-react";
@@ -22,7 +23,7 @@ const DEFAULTS: SettingsState = {
   pipeline_stages: [...PIPELINE_STAGES],
   cost_categories: [...COST_CATEGORIES],
   payment_status: ["Paid", "Pending", "Overdue", "Partially Paid"],
-  notification_prefs: ["Email", "WhatsApp (coming soon)", "In-app"],
+  notification_prefs: ["Email", "WhatsApp", "In-app"],
 };
 
 const readStore = (): SettingsState => {
@@ -35,6 +36,24 @@ const readStore = (): SettingsState => {
 const writeStore = (s: SettingsState) => {
   localStorage.setItem(STORE_KEY, JSON.stringify(s));
   try { window.dispatchEvent(new CustomEvent("ikamba:settings-changed")); } catch {}
+};
+
+const readRemoteSettings = async (): Promise<SettingsState> => {
+  const { data, error } = await (supabase as any).from("os_platform_settings").select("setting_key, items");
+  if (error || !data) return readStore();
+  const next = { ...DEFAULTS };
+  data.forEach((row: any) => {
+    if (row.setting_key in next) next[row.setting_key as keyof SettingsState] = row.items || [];
+  });
+  writeStore(next);
+  return next;
+};
+
+const writeRemoteSettings = async (s: SettingsState, userId?: string) => {
+  writeStore(s);
+  const rows = Object.entries(s).map(([setting_key, items]) => ({ setting_key, items, updated_by: userId ?? null }));
+  const { error } = await (supabase as any).from("os_platform_settings").upsert(rows, { onConflict: "setting_key" });
+  if (error) throw error;
 };
 
 const SettingsBlock = ({
@@ -84,11 +103,12 @@ const SettingsBlock = ({
 };
 
 const Settings = () => {
-  const { roles } = useAuth();
+  const { roles, user } = useAuth();
   const canEdit = roles.includes("super_admin");
   const [state, setState] = useState<SettingsState>(() => readStore());
 
   useEffect(() => {
+    readRemoteSettings().then(setState);
     const h = () => setState(readStore());
     window.addEventListener("ikamba:settings-changed", h);
     window.addEventListener("storage", h);
@@ -98,16 +118,19 @@ const Settings = () => {
     };
   }, []);
 
-  const update = (key: keyof SettingsState, items: string[]) => {
+  const update = async (key: keyof SettingsState, items: string[]) => {
     const next = { ...state, [key]: items };
-    setState(next); writeStore(next);
+    setState(next);
+    try { await writeRemoteSettings(next, user?.id); toast.success("Settings saved"); }
+    catch (e: any) { toast.error(e?.message || "Could not save settings"); }
   };
   const add = (key: keyof SettingsState) => (v: string) => update(key, [...state[key], v]);
   const remove = (key: keyof SettingsState) => (v: string) => update(key, state[key].filter((x) => x !== v));
 
   const reset = () => {
     if (!confirm("Reset all configuration to defaults?")) return;
-    writeStore(DEFAULTS); setState(DEFAULTS); toast.success("Settings reset to defaults");
+    setState(DEFAULTS);
+    writeRemoteSettings(DEFAULTS, user?.id).then(() => toast.success("Settings reset to defaults")).catch((e) => toast.error(e?.message || "Could not reset settings"));
   };
 
   const blocks = useMemo(() => ([

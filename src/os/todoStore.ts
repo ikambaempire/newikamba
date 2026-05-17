@@ -126,6 +126,26 @@ export const toggleGoalFor = async (_userId: string, id: string, done: boolean) 
   const { error } = await supabase.from("os_weekly_goals").update({ done }).eq("id", id);
   if (error) console.error(error);
 };
+export const updateTodoFor = async (_userId: string, id: string, patch: Partial<Pick<Todo, "title" | "notes" | "due" | "priority" | "done">>) => {
+  const { error } = await supabase.from("os_todos").update({
+    ...(patch.title !== undefined ? { title: patch.title } : {}),
+    ...(patch.notes !== undefined ? { notes: patch.notes ?? null } : {}),
+    ...(patch.due !== undefined ? { due: patch.due || null } : {}),
+    ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
+    ...(patch.done !== undefined ? { done: patch.done } : {}),
+  }).eq("id", id);
+  if (error) { console.error("updateTodo failed", error); throw error; }
+};
+export const updateGoalFor = async (_userId: string, id: string, patch: Partial<Pick<WeeklyGoal, "title" | "notes" | "weekStart" | "priority" | "done">>) => {
+  const { error } = await supabase.from("os_weekly_goals").update({
+    ...(patch.title !== undefined ? { title: patch.title } : {}),
+    ...(patch.notes !== undefined ? { notes: patch.notes ?? null } : {}),
+    ...(patch.weekStart !== undefined ? { week_start: patch.weekStart } : {}),
+    ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
+    ...(patch.done !== undefined ? { done: patch.done } : {}),
+  }).eq("id", id);
+  if (error) { console.error("updateGoal failed", error); throw error; }
+};
 export const updateRemindersFired = async (id: string, remindersFired: number[]) => {
   const { error } = await supabase.from("os_todos").update({ reminders_fired: remindersFired }).eq("id", id);
   if (error) console.error(error);
