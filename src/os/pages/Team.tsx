@@ -447,9 +447,9 @@ const MemberDetailModal = ({
             <ListSection title={`Unfinished from past weeks (${pastGoals.length})`} empty="">
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
-                  onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
-                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
-                  onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
+                  onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
+                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
+                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
                 />
               ))}
             </ListSection>
@@ -457,9 +457,9 @@ const MemberDetailModal = ({
           <ListSection title={`This week (${weeklyForThis.length})`} empty="No goals for this week.">
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
-                onToggle={async () => { await toggleGoalFor(member.userId, g.id, !g.done); reload(); }}
-                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await updateGoalFor(member.userId, g.id, { title: title.trim() }); reload(); } }}
-                onDelete={async () => { await removeGoalFor(member.userId, g.id); reload(); }}
+                onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
+                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
+                onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
               />
             ))}
           </ListSection>
