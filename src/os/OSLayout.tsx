@@ -7,7 +7,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
 import {
-  ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools,
+  ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
   hasAdminRole, type OSProfile, type OSToolKey,
 } from "@/os/access";
 
@@ -53,7 +53,7 @@ const OSLayout = () => {
     if (existing) {
       setOsProfile(existing);
       setShowWizard(!existing.setupComplete);
-      if (!isAdmin) fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => p ? { ...p, allowedTools: tools } : p));
+      if (!isAdmin) fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => { setAllowedTools(user.id, tools); return p ? { ...p, allowedTools: tools } : p; }));
     } else if (isAdmin) {
       const now = new Date().toISOString();
       const adminProfile: OSProfile = {
@@ -73,7 +73,7 @@ const OSLayout = () => {
 
   useEffect(() => {
     if (!user || isAdmin) return;
-    const syncTools = () => fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => p ? { ...p, allowedTools: tools } : p));
+    const syncTools = () => fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => { setAllowedTools(user.id, tools); return p ? { ...p, allowedTools: tools } : p; }));
     window.addEventListener("focus", syncTools);
     const iv = window.setInterval(syncTools, 30000);
     return () => { window.removeEventListener("focus", syncTools); window.clearInterval(iv); };
