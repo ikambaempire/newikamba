@@ -110,6 +110,10 @@ Deno.serve(async (req) => {
 
     if (action === "update_role") {
       const { user_id, new_role } = body;
+      const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
+      if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && new_role !== "super_admin") {
+        return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       // remove non-super_admin roles, add new
       await admin.from("user_roles").delete().eq("user_id", user_id).neq("role", "super_admin");
       await admin.from("user_roles").upsert({ user_id, role: new_role }, { onConflict: "user_id,role" });
@@ -118,6 +122,10 @@ Deno.serve(async (req) => {
 
     if (action === "remove_role") {
       const { user_id, role } = body;
+      const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
+      if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && role === "super_admin") {
+        return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       await admin.from("user_roles").delete().eq("user_id", user_id).eq("role", role);
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
