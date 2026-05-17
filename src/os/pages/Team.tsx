@@ -234,6 +234,7 @@ const MemberDetailModal = ({
 }: {
   member: OSProfile; adminName: string; onClose: () => void; onAnyChange: () => void;
 }) => {
+  const { user } = useAuth();
   const [tab, setTab] = useState<"info" | "todos" | "goals" | "tools">("info");
   const [todos, setLocalTodos] = useState<Todo[]>([]);
   const [goals, setLocalGoals] = useState<WeeklyGoal[]>([]);
@@ -275,11 +276,18 @@ const MemberDetailModal = ({
     reload();
   };
 
-  const toggleTool = (k: OSToolKey) => {
+  const toggleTool = async (k: OSToolKey) => {
     const next = allowed.includes(k) ? allowed.filter((x) => x !== k) : [...allowed, k];
     setAllowed(next);
     setAllowedTools(member.userId, next);
+    await saveAllowedTools(member.userId, next, user?.id);
     onAnyChange();
+  };
+
+  const setAdminRole = async (makeAdmin: boolean) => {
+    const role = makeAdmin ? "org_admin" : "user";
+    const { error } = await supabase.functions.invoke("manage-admins", { body: { action: "update_role", user_id: member.userId, new_role: role } });
+    if (!error) onAnyChange();
   };
 
   const openTodos = todos.filter((t) => !t.done);
