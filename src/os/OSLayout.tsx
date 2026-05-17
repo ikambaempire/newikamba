@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
 import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools,
-  type OSProfile, type OSToolKey,
+  hasAdminRole, type OSProfile, type OSToolKey,
 } from "@/os/access";
 
 const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
@@ -41,7 +41,7 @@ const OSLayout = () => {
   const { signOut, profile, user, roles } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const isSuperAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
 
   const [osProfile, setOsProfile] = useState<OSProfile | null>(null);
   const [showWizard, setShowWizard] = useState(false);
@@ -53,17 +53,13 @@ const OSLayout = () => {
     if (existing) {
       setOsProfile(existing);
       setShowWizard(!existing.setupComplete);
-      if (!isSuperAdmin) {
-        fetchAllowedTools(user.id).then((tools) => {
-          if (tools) setOsProfile((p) => p ? { ...p, allowedTools: tools } : p);
-        });
-      }
-    } else if (isSuperAdmin) {
+      if (!isAdmin) fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => p ? { ...p, allowedTools: tools } : p));
+    } else if (isAdmin) {
       const now = new Date().toISOString();
       const adminProfile: OSProfile = {
         userId: user.id, email: user.email || "",
         fullName: profile?.full_name || user.email?.split("@")[0] || "Admin",
-        role: "Founder", department: "Leadership",
+        role: roles.includes("super_admin") ? "Super Admin" : "Admin", department: "Leadership",
         avatarColor: pickAvatarColor(user.id),
         setupComplete: true, allowedTools: ADMIN_TOOLS,
         createdAt: now, updatedAt: now,
@@ -73,7 +69,15 @@ const OSLayout = () => {
     } else {
       setShowWizard(true);
     }
-  }, [user, isSuperAdmin, profile?.full_name]);
+  }, [user, isAdmin, profile?.full_name, roles]);
+
+  useEffect(() => {
+    if (!user || isAdmin) return;
+    const syncTools = () => fetchAllowedTools(user.id).then((tools) => tools && setOsProfile((p) => p ? { ...p, allowedTools: tools } : p));
+    window.addEventListener("focus", syncTools);
+    const iv = window.setInterval(syncTools, 30000);
+    return () => { window.removeEventListener("focus", syncTools); window.clearInterval(iv); };
+  }, [user, isAdmin]);
 
   // React immediately to admin permission changes (same tab + cross-tab).
   useEffect(() => {
@@ -90,12 +94,12 @@ const OSLayout = () => {
   };
 
   const allowed = useMemo(() => {
-    if (isSuperAdmin) return new Set<OSToolKey>(ALL_NAV.map((n) => n.to));
+    if (isAdmin) return new Set<OSToolKey>(ALL_NAV.map((n) => n.to));
     const tools = osProfile?.allowedTools || [];
     const set = new Set<OSToolKey>([...tools, ...LOCKED_TOOLS]);
     set.delete("/os/access");
     return set;
-  }, [isSuperAdmin, osProfile?.allowedTools]);
+  }, [isAdmin, osProfile?.allowedTools]);
 
   const visibleNav = ALL_NAV.filter((n) => allowed.has(n.to));
 
