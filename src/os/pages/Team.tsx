@@ -3,8 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Field, Input, Select, Textarea, Modal } from "@/os/components/ui";
 import {
-  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, fetchAllowedTools, type OSProfile, type OSToolKey, getProfile,
-  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor,
+  ALL_TOOLS, listProfiles, setAllowedTools, saveAllowedTools, type OSProfile, type OSToolKey, getProfile,
+  DEFAULT_TOOLS, ADMIN_TOOLS, pickAvatarColor, hasAdminRole, hasSuperAdminRole, clearUserAccessCache,
 } from "@/os/access";
 import {
   fetchTodos, fetchGoals, addTodoFor, addGoalFor, removeTodoFor, removeGoalFor,
@@ -12,10 +12,12 @@ import {
   type Todo, type WeeklyGoal, type Priority, mondayOf, ymd, fmtDue,
 } from "@/os/todoStore";
 import { Users, Crown, Check, Trash2, Plus, ChevronRight, Shield, Mail, Phone, Search, Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 const Team = () => {
   const { roles, user, profile } = useAuth();
-  const isSuperAdmin = roles.includes("super_admin");
+  const isAdmin = hasAdminRole(roles);
+  const isSuperAdmin = hasSuperAdminRole(roles);
   const [profiles, setProfiles] = useState<OSProfile[]>([]);
   const [selected, setSelected] = useState<OSProfile | null>(null);
   const [tick, setTick] = useState(0);
@@ -32,16 +34,14 @@ const Team = () => {
       type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string; roles?: string[]; tools?: OSToolKey[] | null };
       let dbRows: Row[] = [];
 
-      if (isSuperAdmin) {
+      if (isAdmin) {
         try {
           const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
           if (error) throw error;
           const users = data?.users || [];
-          const toolRows = await Promise.all(users.map(async (u: any) => ({ id: u.id, tools: await fetchAllowedTools(u.id) })));
-          const toolMap = new Map(toolRows.map((r) => [r.id, r.tools]));
           dbRows = users.map((u: any) => ({
             user_id: u.id, full_name: u.full_name, email: u.email,
-            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: toolMap.get(u.id) || null,
+            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: u.tools?.length ? u.tools : null,
           }));
         } catch {
           // fallback to profiles table
@@ -77,11 +77,11 @@ const Team = () => {
           updatedAt: r.updated_at || new Date().toISOString(),
         };
       });
-      local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
+      if (!isAdmin) local.forEach((p) => { if (!dbIds.has(p.userId)) merged.push(p); });
       merged.sort((a, b) => a.fullName.localeCompare(b.fullName));
       setProfiles(merged);
     })();
-  }, [tick, isSuperAdmin]);
+  }, [tick, isAdmin]);
 
 
   const adminName = useMemo(() => {
@@ -120,7 +120,7 @@ const Team = () => {
     </div>
   );
 
-  if (!isSuperAdmin) {
+  if (!isAdmin) {
     return (
       <div>
         <PageHeader title="Team" subtitle="The people you work with on iKAMBA Media OS." />
@@ -183,8 +183,10 @@ const Team = () => {
           key={selected.userId + tick}
           member={selected}
           adminName={adminName}
+          canManageRoles={isSuperAdmin}
           onClose={() => setSelected(null)}
           onAnyChange={refresh}
+          onDeleted={() => { setSelected(null); refresh(); }}
         />
       )}
     </div>
