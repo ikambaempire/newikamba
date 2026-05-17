@@ -29,16 +29,19 @@ const Team = () => {
       const local = listProfiles();
       const localById = new Map(local.map((p) => [p.userId, p]));
 
-      type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string };
+      type Row = { user_id: string; full_name: string | null; email?: string; created_at?: string; updated_at?: string; roles?: string[]; tools?: OSToolKey[] | null };
       let dbRows: Row[] = [];
 
       if (isSuperAdmin) {
         try {
           const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
           if (error) throw error;
-          dbRows = (data?.users || []).map((u: any) => ({
+          const users = data?.users || [];
+          const toolRows = await Promise.all(users.map(async (u: any) => ({ id: u.id, tools: await fetchAllowedTools(u.id) })));
+          const toolMap = new Map(toolRows.map((r) => [r.id, r.tools]));
+          dbRows = users.map((u: any) => ({
             user_id: u.id, full_name: u.full_name, email: u.email,
-            created_at: u.created_at, updated_at: u.created_at,
+            created_at: u.created_at, updated_at: u.created_at, roles: u.roles || [], tools: toolMap.get(u.id) || null,
           }));
         } catch {
           // fallback to profiles table
@@ -57,16 +60,19 @@ const Team = () => {
           ...lp,
           fullName: lp.fullName || r.full_name || "Team member",
           email: lp.email || r.email || "",
+          role: r.roles?.includes("super_admin") ? "Super Admin" : r.roles?.includes("org_admin") ? "Admin" : lp.role,
+          allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || lp.allowedTools,
         };
+        const isAdmin = r.roles?.includes("super_admin") || r.roles?.includes("org_admin");
         return {
           userId: r.user_id,
           email: r.email || "",
           fullName: r.full_name || "Team member",
-          role: "Member",
+          role: r.roles?.includes("super_admin") ? "Super Admin" : isAdmin ? "Admin" : "Member",
           department: "Unassigned",
           avatarColor: pickAvatarColor(r.user_id),
           setupComplete: false,
-          allowedTools: DEFAULT_TOOLS,
+          allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || DEFAULT_TOOLS,
           createdAt: r.created_at || new Date().toISOString(),
           updatedAt: r.updated_at || new Date().toISOString(),
         };
