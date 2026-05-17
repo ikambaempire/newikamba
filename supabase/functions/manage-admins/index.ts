@@ -16,15 +16,7 @@ const BOOTSTRAP_PASSWORD = "EMPIRE@IKAMBA2025";
 const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
 
 async function ensureBootstrap() {
-  // Check if any super_admin exists
-  const { data: existing } = await admin
-    .from("user_roles")
-    .select("user_id")
-    .eq("role", "super_admin")
-    .limit(1);
-  if (existing && existing.length > 0) return { skipped: true };
-
-  // Find or create the bootstrap user
+  // The Ikamba Empire email must always be the permanent super admin.
   const { data: list } = await admin.auth.admin.listUsers();
   let user = list?.users.find((u) => u.email?.toLowerCase() === BOOTSTRAP_EMAIL);
   if (!user) {
@@ -40,7 +32,7 @@ async function ensureBootstrap() {
 
   await admin.from("profiles").upsert({ user_id: user.id, full_name: "iKAMBA Empire" }, { onConflict: "user_id" });
   await admin.from("user_roles").upsert({ user_id: user.id, role: "super_admin" }, { onConflict: "user_id,role" });
-  return { created: true, user_id: user.id };
+  return { ensured: true, user_id: user.id };
 }
 
 async function getCallerRoles(authHeader: string | null) {
