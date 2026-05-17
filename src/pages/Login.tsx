@@ -40,21 +40,20 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-navy flex items-center justify-center px-6">
+    <div className="min-h-screen gradient-navy flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="font-heading text-2xl font-extrabold tracking-tight text-primary-foreground">
+          <Link to="/" className="font-heading text-3xl font-extrabold tracking-tight text-white">
             iKAMBA<span className="text-accent">.</span>
           </Link>
-          <p className="text-primary-foreground/50 text-sm mt-2">Sign in to your workspace</p>
+          <p className="text-white/80 text-sm mt-2">Sign in to your workspace</p>
         </div>
 
-        <div className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-xl p-8 space-y-5">
-          {/* Google Sign In */}
+        <div className="bg-white/[0.07] border border-white/20 rounded-xl p-8 space-y-5 backdrop-blur-sm shadow-2xl">
           <Button
             type="button"
             variant="outline"
-            className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 border-0 font-semibold"
+            className="w-full bg-white text-slate-900 hover:bg-white/90 border-0 font-semibold"
             onClick={handleGoogleSignIn}
             disabled={googleLoading}
           >
@@ -69,23 +68,23 @@ const Login = () => {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-primary-foreground/10" />
+              <span className="w-full border-t border-white/20" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-transparent px-2 text-primary-foreground/30">or sign in with email</span>
+              <span className="bg-[hsl(var(--primary))] px-2 text-white/70">or sign in with email</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/40 mb-1.5 block">Email</label>
+              <label className="text-xs font-semibold uppercase tracking-widest text-white/80 mb-1.5 block">Email</label>
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" required
-                className="bg-primary-foreground/5 border-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/30" />
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent" />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/40 mb-1.5 block">Password</label>
+              <label className="text-xs font-semibold uppercase tracking-widest text-white/80 mb-1.5 block">Password</label>
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required
-                className="bg-primary-foreground/5 border-primary-foreground/10 text-primary-foreground placeholder:text-primary-foreground/30" />
+                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent" />
             </div>
             <Button type="submit" variant="hero" className="w-full" disabled={loading}>
               <LogIn size={16} className="mr-1" />
@@ -94,12 +93,12 @@ const Login = () => {
           </form>
         </div>
 
-        <p className="text-center text-primary-foreground/40 text-sm mt-6">
+        <p className="text-center text-white/70 text-sm mt-6">
           Don't have an account?{" "}
           <Link to="/signup" className="text-accent hover:underline font-medium">Create Account</Link>
         </p>
         <p className="text-center mt-4">
-          <Link to="/" className="text-primary-foreground/30 text-xs hover:text-primary-foreground/60">← Back to Website</Link>
+          <Link to="/" className="text-white/60 text-xs hover:text-white">← Back to Website</Link>
         </p>
       </div>
     </div>
