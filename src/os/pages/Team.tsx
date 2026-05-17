@@ -478,7 +478,7 @@ const ListSection = ({ title, empty, children }: { title: string; empty: string;
   );
 };
 
-const AdminTodoRow = ({ t, onToggle, onDelete, muted }: { t: Todo; onToggle: () => void; onDelete: () => void; muted?: boolean }) => {
+const AdminTodoRow = ({ t, onToggle, onEdit, onDelete, muted }: { t: Todo; onToggle: () => void; onEdit: () => void; onDelete: () => void; muted?: boolean }) => {
   const cls = t.done ? "border border-emerald-500/50 bg-emerald-500/10" : t.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2";
   return (
     <div className={`rounded-lg p-2.5 flex items-start gap-2 ${cls} ${muted ? "opacity-70" : ""}`}>
@@ -494,12 +494,13 @@ const AdminTodoRow = ({ t, onToggle, onDelete, muted }: { t: Todo; onToggle: () 
           {t.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>
+      <button onClick={onEdit} className="text-os-muted hover:text-os-gold p-1"><Pencil size={13} /></button>
       <button onClick={onDelete} className="text-os-muted hover:text-rose-300 p-1"><Trash2 size={13} /></button>
     </div>
   );
 };
 
-const AdminGoalRow = ({ g, onToggle, onDelete }: { g: WeeklyGoal; onToggle: () => void; onDelete: () => void }) => {
+const AdminGoalRow = ({ g, onToggle, onEdit, onDelete }: { g: WeeklyGoal; onToggle: () => void; onEdit: () => void; onDelete: () => void }) => {
   const cls = g.done ? "border border-emerald-500/50 bg-emerald-500/10" : g.byAdmin ? "border border-[hsl(var(--os-gold))] bg-os-gold/10" : "os-card-2";
   return (
     <div className={`rounded-lg p-2.5 flex items-start gap-2 ${cls}`}>
@@ -515,6 +516,7 @@ const AdminGoalRow = ({ g, onToggle, onDelete }: { g: WeeklyGoal; onToggle: () =
           {g.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>
+      <button onClick={onEdit} className="text-os-muted hover:text-os-gold p-1"><Pencil size={13} /></button>
       <button onClick={onDelete} className="text-os-muted hover:text-rose-300 p-1"><Trash2 size={13} /></button>
     </div>
   );
