@@ -44,13 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       supabase.from("user_roles").select("role").eq("user_id", authUser.id),
       supabase.from("profiles").select("full_name, client_id, organization_id").eq("user_id", authUser.id).single(),
     ]);
-    if (rolesRes.data) {
-      const nextRoles = rolesRes.data.map((r) => r.role);
-      if (authUser.email?.toLowerCase() === SUPER_ADMIN_EMAIL && !nextRoles.includes("super_admin")) {
-        nextRoles.push("super_admin");
-      }
-      setRoles(nextRoles);
+    const nextRoles = (rolesRes.data || []).map((r) => r.role);
+    if (authUser.email?.toLowerCase() === SUPER_ADMIN_EMAIL && !nextRoles.includes("super_admin")) {
+      nextRoles.push("super_admin");
     }
+    setRoles(nextRoles);
     if (profileRes.data) setProfile(profileRes.data);
   };
 
