@@ -110,6 +110,7 @@ Deno.serve(async (req) => {
 
     if (action === "update_role") {
       const { user_id, new_role } = body;
+      if (!user_id || !new_role) throw new Error("user_id and new_role required");
       const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
       if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && new_role !== "super_admin") {
         return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -122,6 +123,7 @@ Deno.serve(async (req) => {
 
     if (action === "remove_role") {
       const { user_id, role } = body;
+      if (!user_id || !role) throw new Error("user_id and role required");
       const { data: targetUser } = await admin.auth.admin.getUserById(user_id);
       if (targetUser.user?.email?.toLowerCase() === BOOTSTRAP_EMAIL && role === "super_admin") {
         return new Response(JSON.stringify({ error: "The Ikamba Empire account must stay super admin" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
