@@ -169,7 +169,7 @@ const OSLayout = () => {
         <SetupWizard
           userId={user.id}
           email={user.email || ""}
-          isAdmin={isSuperAdmin}
+          isAdmin={isAdmin}
           initialName={profile?.full_name || undefined}
           onComplete={() => {
             setOsProfile(getProfile(user.id));
