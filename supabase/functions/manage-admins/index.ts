@@ -66,9 +66,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Auto-bootstrap on first call too
-    await ensureBootstrap();
-
     const { user, roles } = await getCallerRoles(req.headers.get("Authorization"));
     if (!user) return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     if (!isAdminRole(roles)) {
@@ -85,7 +82,10 @@ Deno.serve(async (req) => {
         id: u.id,
         email: u.email ?? "",
         full_name: profiles?.find((p) => p.user_id === u.id)?.full_name ?? "",
-        roles: (allRoles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role),
+        roles: Array.from(new Set([
+          ...(allRoles ?? []).filter((r) => r.user_id === u.id).map((r) => r.role),
+          ...(u.email?.toLowerCase() === BOOTSTRAP_EMAIL ? ["super_admin"] : []),
+        ])),
         tools: (toolAccess ?? []).filter((t) => t.user_id === u.id).map((t) => t.tool_key),
         created_at: u.created_at,
       }));
