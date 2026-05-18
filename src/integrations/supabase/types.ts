@@ -439,6 +439,8 @@ export type Database = {
           delay_seconds: number
           enabled: boolean
           id: string
+          media_type: string | null
+          media_url: string | null
           message: string
           name: string
           popup_type: string
@@ -452,6 +454,8 @@ export type Database = {
           delay_seconds?: number
           enabled?: boolean
           id?: string
+          media_type?: string | null
+          media_url?: string | null
           message?: string
           name: string
           popup_type?: string
@@ -465,6 +469,8 @@ export type Database = {
           delay_seconds?: number
           enabled?: boolean
           id?: string
+          media_type?: string | null
+          media_url?: string | null
           message?: string
           name?: string
           popup_type?: string

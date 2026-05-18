@@ -281,9 +281,11 @@ const DeviceMockups = () => (
   </div>
 );
 
-const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
+const PopupMediaCarousel = ({ showVideo = false, customMedia }: { showVideo?: boolean; customMedia?: { url: string; type: string } | null }) => {
   const [current, setCurrent] = useState(0);
-  const slides = showVideo
+  const slides = customMedia
+    ? [{ type: (customMedia.type === "video" ? "video" : "image") as "video" | "image", src: customMedia.url, label: "Popup media" }]
+    : showVideo
     ? [
       { type: "video" as const, src: "/mockup-reel.mp4", label: "iKAMBA story preview" },
       { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
@@ -296,9 +298,10 @@ const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
 
   useEffect(() => {
     setCurrent(0);
-  }, [showVideo]);
+  }, [showVideo, customMedia?.url]);
 
   useEffect(() => {
+    if (slides.length <= 1) return;
     const timer = window.setInterval(() => setCurrent((value) => (value + 1) % slides.length), 3800);
     return () => window.clearInterval(timer);
   }, [slides.length]);
@@ -306,7 +309,7 @@ const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
   return (
     <div className="relative min-h-[260px] bg-secondary flex items-center justify-center overflow-hidden p-2 sm:p-0">
       <AnimatePresence mode="wait">
-        <motion.div key={`${slides[current].type}-${current}`} initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.35 }} className="absolute inset-0 flex items-center justify-center">
+        <motion.div key={`${slides[current].type}-${current}-${slides[current].src}`} initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.35 }} className="absolute inset-0 flex items-center justify-center">
           {slides[current].type === "video" ? (
             <video src={slides[current].src} autoPlay loop muted playsInline preload="auto" className="h-full w-full object-contain" aria-label={slides[current].label} />
           ) : (
@@ -314,11 +317,13 @@ const PopupMediaCarousel = ({ showVideo = false }: { showVideo?: boolean }) => {
           )}
         </motion.div>
       </AnimatePresence>
-      <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-        {slides.map((_, i) => (
-          <button key={i} type="button" onClick={() => setCurrent(i)} aria-label={`Show popup media ${i + 1}`} className={`h-1.5 rounded-full transition-all ${i === current ? "w-6 bg-accent" : "w-1.5 bg-muted-foreground/40"}`} />
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+          {slides.map((_, i) => (
+            <button key={i} type="button" onClick={() => setCurrent(i)} aria-label={`Show popup media ${i + 1}`} className={`h-1.5 rounded-full transition-all ${i === current ? "w-6 bg-accent" : "w-1.5 bg-muted-foreground/40"}`} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -502,8 +507,8 @@ export const WebsitePopupSystem = () => {
   const [popupStep, setPopupStep] = useState(0);
 
   useEffect(() => {
-    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds").eq("enabled", true).then(({ data }) => {
-      if (data) setSettings(data);
+    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds, media_url, media_type").eq("enabled", true).then(({ data }) => {
+      if (data) setSettings(data as any);
     });
   }, []);
 
@@ -539,7 +544,7 @@ export const WebsitePopupSystem = () => {
             <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
               <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                <PopupMediaCarousel showVideo={popupStep >= 2} />
+                <PopupMediaCarousel showVideo={popupStep >= 2} customMedia={(active as any).media_url ? { url: (active as any).media_url, type: (active as any).media_type || "image" } : null} />
                 <div className="p-6">
                   <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
                   <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>

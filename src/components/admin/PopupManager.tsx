@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Clock, MousePointer2, RefreshCw } from "lucide-react";
+import { Clock, MousePointer2, RefreshCw, Upload, Trash2, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,45 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { Database } from "@/integrations/supabase/types";
 
-type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"];
+type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"] & {
+  media_url?: string | null;
+  media_type?: string | null;
+};
+
+const BUCKET = "popup-media";
+
+const MediaBlock = ({ popup, onUpload, onRemove, busy }: { popup: PopupSetting; onUpload: (f: File) => void; onRemove: () => void; busy: boolean }) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+          {popup.media_type === "video" ? <Film size={12} /> : <ImageIcon size={12} />} Popup media
+        </span>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()} disabled={busy}>
+            <Upload size={12} /> {popup.media_url ? "Replace" : "Upload"}
+          </Button>
+          {popup.media_url && (
+            <Button size="sm" variant="ghost" onClick={onRemove} disabled={busy}>
+              <Trash2 size={12} />
+            </Button>
+          )}
+        </div>
+        <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
+      </div>
+      {popup.media_url ? (
+        popup.media_type === "video" ? (
+          <video src={popup.media_url} controls className="w-full max-h-48 rounded bg-black" />
+        ) : (
+          <img src={popup.media_url} alt="Popup media preview" className="w-full max-h-48 object-contain rounded bg-background" />
+        )
+      ) : (
+        <p className="text-xs text-muted-foreground">No custom media. Default carousel will be shown. Upload an image or short video (max 25 MB).</p>
+      )}
+    </div>
+  );
+};
 
 const PopupManager = () => {
   const [popups, setPopups] = useState<PopupSetting[]>([]);
@@ -38,13 +76,44 @@ const PopupManager = () => {
       button_text: popup.button_text,
       button_link: popup.button_link,
       delay_seconds: popup.delay_seconds,
-    }).eq("id", popup.id);
+      media_url: popup.media_url ?? null,
+      media_type: popup.media_type ?? null,
+    } as any).eq("id", popup.id);
     setSavingId(null);
     if (error) {
       toast.error("Could not save popup settings");
       return;
     }
     toast.success("Popup settings saved");
+  };
+
+  const uploadMedia = async (popup: PopupSetting, file: File) => {
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    if (!isVideo && !isImage) { toast.error("Only image or video files"); return; }
+    if (file.size > 25 * 1024 * 1024) { toast.error("Max 25 MB"); return; }
+    setSavingId(popup.id);
+    const path = `${popup.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) { setSavingId(null); toast.error(upErr.message); return; }
+    const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    const url = pub.publicUrl;
+    const type = isVideo ? "video" : "image";
+    const { error } = await supabase.from("popup_settings").update({ media_url: url, media_type: type } as any).eq("id", popup.id);
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    updateLocal(popup.id, { media_url: url, media_type: type } as any);
+    toast.success("Media uploaded");
+  };
+
+  const removeMedia = async (popup: PopupSetting) => {
+    if (!popup.media_url) return;
+    setSavingId(popup.id);
+    const { error } = await supabase.from("popup_settings").update({ media_url: null, media_type: null } as any).eq("id", popup.id);
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    updateLocal(popup.id, { media_url: null, media_type: null } as any);
+    toast.success("Media removed");
   };
 
   if (loading) return <div className="p-12 text-center text-muted-foreground">Loading popup settings...</div>;
@@ -87,6 +156,8 @@ const PopupManager = () => {
                   <Input type="number" min={1} max={120} value={popup.delay_seconds} onChange={(e) => updateLocal(popup.id, { delay_seconds: Number(e.target.value) })} />
                 </div>
               </div>
+
+              <MediaBlock popup={popup} onUpload={(f) => uploadMedia(popup, f)} onRemove={() => removeMedia(popup)} busy={savingId === popup.id} />
 
               <Button variant="hero" onClick={() => savePopup(popup)} disabled={savingId === popup.id}>
                 {savingId === popup.id ? "Saving..." : "Save Popup"}
