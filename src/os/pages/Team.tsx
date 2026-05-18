@@ -55,18 +55,21 @@ const Team = () => {
       const dbIds = new Set(dbRows.map((r) => r.user_id));
       const merged: OSProfile[] = dbRows.map((r) => {
         const lp = localById.get(r.user_id);
+        // Always prefer the DB full_name so admins see users' latest profile updates.
+        const fullName = r.full_name || lp?.fullName || "Team member";
+        const email = r.email || lp?.email || "";
         if (lp) return {
           ...lp,
-          fullName: lp.fullName || r.full_name || "Team member",
-          email: lp.email || r.email || "",
+          fullName,
+          email,
           role: r.roles?.includes("super_admin") ? "Super Admin" : r.roles?.includes("org_admin") ? "Admin" : lp.role,
           allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || lp.allowedTools,
         };
         const isAdmin = r.roles?.includes("super_admin") || r.roles?.includes("org_admin");
         return {
           userId: r.user_id,
-          email: r.email || "",
-          fullName: r.full_name || "Team member",
+          email,
+          fullName,
           role: r.roles?.includes("super_admin") ? "Super Admin" : isAdmin ? "Admin" : "Member",
           department: "Unassigned",
           avatarColor: pickAvatarColor(r.user_id),
