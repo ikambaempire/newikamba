@@ -268,15 +268,30 @@ const MemberDetailModal = ({
   const [tDue, setTDue] = useState("");
   const [tPri, setTPri] = useState<Priority>("high");
 
+  const optimisticTodo = (title: string, notes: string, due: string, priority: Priority): Todo => ({
+    id: "temp-" + Math.random().toString(36).slice(2),
+    title, notes, due, priority, done: false, remindersFired: [],
+    byAdmin: true, assignedByName: adminName, createdAt: new Date().toISOString(),
+  });
+
   const assignTodo = async () => {
     if (!tTitle.trim() || !tDue) return;
-    await invokeMemberWork({
-      action: "add_member_todo", user_id: member.userId, title: tTitle.trim(),
-      notes: tNotes.trim(), due: tDue, priority: tPri, assigned_by_name: adminName,
-    });
+    // Optimistic: show in the list immediately.
+    const optimistic = optimisticTodo(tTitle.trim(), tNotes.trim(), tDue, tPri);
+    setLocalTodos((prev) => [optimistic, ...prev]);
+    const payload = { title: tTitle.trim(), notes: tNotes.trim(), due: tDue, priority: tPri };
     setTTitle(""); setTNotes(""); setTDue(""); setTPri("high");
+    try {
+      await invokeMemberWork({
+        action: "add_member_todo", user_id: member.userId, ...payload, assigned_by_name: adminName,
+      });
+      toast.success("Task assigned");
+    } catch (e: any) {
+      toast.error("Could not assign task", { description: e?.message });
+      setLocalTodos((prev) => prev.filter((t) => t.id !== optimistic.id));
+    }
+    // Always reconcile with server.
     reload();
-    toast.success("Task assigned");
   };
 
   const [gTitle, setGTitle] = useState("");
@@ -286,13 +301,68 @@ const MemberDetailModal = ({
 
   const assignGoal = async () => {
     if (!gTitle.trim()) return;
-    await invokeMemberWork({
-      action: "add_member_goal", user_id: member.userId, title: gTitle.trim(),
-      notes: gNotes.trim(), priority: gPri, week_start: gWeek, assigned_by_name: adminName,
-    });
+    const optimistic: WeeklyGoal = {
+      id: "temp-" + Math.random().toString(36).slice(2),
+      title: gTitle.trim(), notes: gNotes.trim(), weekStart: gWeek, priority: gPri,
+      done: false, byAdmin: true, assignedByName: adminName, createdAt: new Date().toISOString(),
+    };
+    setLocalGoals((prev) => [optimistic, ...prev]);
+    const payload = { title: gTitle.trim(), notes: gNotes.trim(), week_start: gWeek, priority: gPri };
     setGTitle(""); setGNotes(""); setGPri("high");
+    try {
+      await invokeMemberWork({
+        action: "add_member_goal", user_id: member.userId, ...payload, assigned_by_name: adminName,
+      });
+      toast.success("Goal assigned");
+    } catch (e: any) {
+      toast.error("Could not assign goal", { description: e?.message });
+      setLocalGoals((prev) => prev.filter((g) => g.id !== optimistic.id));
+    }
     reload();
-    toast.success("Goal assigned");
+  };
+
+  // Optimistic todo updates
+  const updateTodo = async (id: string, patch: Partial<Todo>) => {
+    setLocalTodos((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+    try { await invokeMemberWork({ action: "update_member_todo", todo_id: id, patch }); }
+    catch (e: any) { toast.error("Update failed", { description: e?.message }); }
+    reload();
+  };
+  const deleteTodo = async (id: string) => {
+    setLocalTodos((prev) => prev.filter((t) => t.id !== id));
+    try { await invokeMemberWork({ action: "delete_member_todo", todo_id: id }); }
+    catch (e: any) { toast.error("Delete failed", { description: e?.message }); }
+    reload();
+  };
+  const updateGoal = async (id: string, patch: Partial<WeeklyGoal>) => {
+    setLocalGoals((prev) => prev.map((g) => (g.id === id ? { ...g, ...patch } : g)));
+    const dbPatch: any = { ...patch };
+    if ("weekStart" in patch) { dbPatch.week_start = patch.weekStart; delete dbPatch.weekStart; }
+    try { await invokeMemberWork({ action: "update_member_goal", goal_id: id, patch: dbPatch }); }
+    catch (e: any) { toast.error("Update failed", { description: e?.message }); }
+    reload();
+  };
+  const deleteGoal = async (id: string) => {
+    setLocalGoals((prev) => prev.filter((g) => g.id !== id));
+    try { await invokeMemberWork({ action: "delete_member_goal", goal_id: id }); }
+    catch (e: any) { toast.error("Delete failed", { description: e?.message }); }
+    reload();
+  };
+
+  // Edit user name / profile (admin power).
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState(member.fullName);
+  const saveName = async () => {
+    const newName = nameDraft.trim();
+    if (!newName || newName === member.fullName) { setEditingName(false); return; }
+    try {
+      await invokeMemberWork({ action: "update_member_profile", user_id: member.userId, full_name: newName });
+      toast.success("Profile updated");
+      setEditingName(false);
+      onAnyChange();
+    } catch (e: any) {
+      toast.error("Could not save", { description: e?.message });
+    }
   };
 
   const toggleTool = async (k: OSToolKey) => {
