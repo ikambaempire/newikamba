@@ -29,15 +29,17 @@ const Pipeline = () => {
   const { projects, updateProjectStage } = useOSStore();
   const [query, setQuery] = useState("");
   const [stageFilter, setStageFilter] = useState<"All" | PipelineStage>("All");
+  const [lineFilter, setLineFilter] = useState<string>("All");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return projects.filter((p) => {
       if (stageFilter !== "All" && p.stage !== stageFilter) return false;
+      if (lineFilter !== "All" && p.product_line !== lineFilter) return false;
       if (!q) return true;
       return [p.name, p.client, p.owner, p.service, p.product_line].some((v) => v?.toLowerCase().includes(q));
     });
-  }, [projects, query, stageFilter]);
+  }, [projects, query, stageFilter, lineFilter]);
 
   const totals = useMemo(() => {
     const value = filtered.reduce((s, p) => s + p.value, 0);
@@ -64,6 +66,12 @@ const Pipeline = () => {
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-os-muted" />
           <Input className="pl-9" placeholder="Search by project, client, owner…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
+        <div className="sm:w-48">
+          <Select value={lineFilter} onChange={(e) => setLineFilter(e.target.value)}>
+            <option value="All">All product lines</option>
+            {PRODUCT_LINES.map((l) => <option key={l} value={l}>{l}</option>)}
+          </Select>
         </div>
         <div className="sm:w-56">
           <Select value={stageFilter} onChange={(e) => setStageFilter(e.target.value as any)}>
