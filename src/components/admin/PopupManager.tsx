@@ -43,13 +43,44 @@ const PopupManager = () => {
       button_text: popup.button_text,
       button_link: popup.button_link,
       delay_seconds: popup.delay_seconds,
-    }).eq("id", popup.id);
+      media_url: popup.media_url ?? null,
+      media_type: popup.media_type ?? null,
+    } as any).eq("id", popup.id);
     setSavingId(null);
     if (error) {
       toast.error("Could not save popup settings");
       return;
     }
     toast.success("Popup settings saved");
+  };
+
+  const uploadMedia = async (popup: PopupSetting, file: File) => {
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    if (!isVideo && !isImage) { toast.error("Only image or video files"); return; }
+    if (file.size > 25 * 1024 * 1024) { toast.error("Max 25 MB"); return; }
+    setSavingId(popup.id);
+    const path = `${popup.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) { setSavingId(null); toast.error(upErr.message); return; }
+    const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    const url = pub.publicUrl;
+    const type = isVideo ? "video" : "image";
+    const { error } = await supabase.from("popup_settings").update({ media_url: url, media_type: type } as any).eq("id", popup.id);
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    updateLocal(popup.id, { media_url: url, media_type: type } as any);
+    toast.success("Media uploaded");
+  };
+
+  const removeMedia = async (popup: PopupSetting) => {
+    if (!popup.media_url) return;
+    setSavingId(popup.id);
+    const { error } = await supabase.from("popup_settings").update({ media_url: null, media_type: null } as any).eq("id", popup.id);
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    updateLocal(popup.id, { media_url: null, media_type: null } as any);
+    toast.success("Media removed");
   };
 
   if (loading) return <div className="p-12 text-center text-muted-foreground">Loading popup settings...</div>;
