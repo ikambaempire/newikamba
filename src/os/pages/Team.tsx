@@ -632,7 +632,7 @@ const AdminGoalRow = ({ g, onToggle, onEdit, onDelete }: { g: WeeklyGoal; onTogg
         <div className="flex flex-wrap gap-1.5 items-center mt-0.5">
           <span className="text-[10px] text-os-muted">Week of {g.weekStart}</span>
           <Badge tone={g.priority === "high" ? "red" : g.priority === "medium" ? "gold" : "green"}>{g.priority}</Badge>
-          {g.done && <Badge tone="green">Done</Badge>}
+          {g.done && <Badge tone="green">Achieved</Badge>}
           {g.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>
