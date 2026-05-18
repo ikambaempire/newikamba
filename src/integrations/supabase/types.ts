@@ -488,6 +488,7 @@ export type Database = {
           organization_id: string | null
           updated_at: string
           user_id: string
+          whatsapp_number: string | null
         }
         Insert: {
           client_id?: string | null
@@ -497,6 +498,7 @@ export type Database = {
           organization_id?: string | null
           updated_at?: string
           user_id: string
+          whatsapp_number?: string | null
         }
         Update: {
           client_id?: string | null
@@ -506,6 +508,7 @@ export type Database = {
           organization_id?: string | null
           updated_at?: string
           user_id?: string
+          whatsapp_number?: string | null
         }
         Relationships: []
       }
