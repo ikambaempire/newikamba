@@ -431,6 +431,21 @@ const MemberDetailModal = ({
 
       {tab === "info" && (
         <div className="space-y-2 text-sm">
+          {editingName ? (
+            <div className="flex gap-2">
+              <Input value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} placeholder="Full name" />
+              <OSButton variant="primary" onClick={saveName}>Save</OSButton>
+              <OSButton variant="ghost" onClick={() => { setEditingName(false); setNameDraft(member.fullName); }}>Cancel</OSButton>
+            </div>
+          ) : (
+            <div className="flex justify-between gap-3 items-center">
+              <span className="text-os-muted">Full name</span>
+              <span className="flex items-center gap-2 text-white">
+                {member.fullName}
+                <button onClick={() => { setNameDraft(member.fullName); setEditingName(true); }} className="text-os-muted hover:text-os-gold p-1" title="Edit name"><Pencil size={13} /></button>
+              </span>
+            </div>
+          )}
           <Row label="Email" value={member.email} />
           {member.phone && <Row label="Phone" value={member.phone} />}
           <Row label="Role" value={member.role} />
@@ -478,9 +493,9 @@ const MemberDetailModal = ({
           <ListSection title={`Open (${openTodos.length})`} empty="No open tasks.">
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
-                onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
-                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
-                onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
+                onToggle={() => updateTodo(t.id, { done: !t.done })}
+                onEdit={() => { const title = prompt("Update task title", t.title); if (title?.trim()) updateTodo(t.id, { title: title.trim() }); }}
+                onDelete={() => deleteTodo(t.id)}
               />
             ))}
           </ListSection>
@@ -488,9 +503,9 @@ const MemberDetailModal = ({
             <ListSection title={`Completed (${doneTodos.length})`} empty="">
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
-                  onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
-                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
-                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
+                  onToggle={() => updateTodo(t.id, { done: !t.done })}
+                  onEdit={() => { const title = prompt("Update task title", t.title); if (title?.trim()) updateTodo(t.id, { title: title.trim() }); }}
+                  onDelete={() => deleteTodo(t.id)}
                 />
               ))}
             </ListSection>
@@ -517,12 +532,12 @@ const MemberDetailModal = ({
           </div>
 
           {pastGoals.length > 0 && (
-            <ListSection title={`Unfinished from past weeks (${pastGoals.length})`} empty="">
+            <ListSection title={`Unachieved from past weeks (${pastGoals.length})`} empty="">
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
-                  onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
-                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
-                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
+                  onToggle={() => updateGoal(g.id, { done: !g.done })}
+                  onEdit={() => { const title = prompt("Update goal title", g.title); if (title?.trim()) updateGoal(g.id, { title: title.trim() }); }}
+                  onDelete={() => deleteGoal(g.id)}
                 />
               ))}
             </ListSection>
@@ -530,9 +545,9 @@ const MemberDetailModal = ({
           <ListSection title={`This week (${weeklyForThis.length})`} empty="No goals for this week.">
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
-                onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
-                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
-                onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
+                onToggle={() => updateGoal(g.id, { done: !g.done })}
+                onEdit={() => { const title = prompt("Update goal title", g.title); if (title?.trim()) updateGoal(g.id, { title: title.trim() }); }}
+                onDelete={() => deleteGoal(g.id)}
               />
             ))}
           </ListSection>
