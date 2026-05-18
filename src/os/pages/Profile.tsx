@@ -24,8 +24,17 @@ const Profile = () => {
 
   if (!user || !p) return <div className="text-os-muted">Loading profile…</div>;
 
-  const save = () => {
+  const save = async () => {
     upsertProfile(p);
+    // Persist the displayable name to the profiles table so admins and team see updates.
+    try {
+      await supabase.from("profiles").upsert(
+        { user_id: user.id, full_name: p.fullName?.trim() || null },
+        { onConflict: "user_id" }
+      );
+    } catch (e) {
+      console.error("profile DB sync failed", e);
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 1800);
   };
