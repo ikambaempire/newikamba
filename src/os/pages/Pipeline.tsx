@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { PageHeader, Badge, PaymentBadge, OSButton, Input, Select } from "@/os/components/ui";
-import { PIPELINE_STAGES, fmtRWF, type PipelineStage } from "@/os/mock/data";
+import { PIPELINE_STAGES, PRODUCT_LINES, fmtRWF, type PipelineStage } from "@/os/mock/data";
 import { Plus, Search, ExternalLink } from "lucide-react";
 
 const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue" | "red"> = {
