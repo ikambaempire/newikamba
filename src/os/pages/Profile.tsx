@@ -161,8 +161,9 @@ const Profile = () => {
               </Select>
             </Field>
           </div>
-          <Field label="Phone / WhatsApp">
-            <Input value={p.phone || ""} onChange={(e) => setP({ ...p, phone: e.target.value })} placeholder="+250 ..." />
+          <Field label="WhatsApp number (for notifications)">
+            <Input value={p.phone || ""} onChange={(e) => setP({ ...p, phone: e.target.value })} placeholder="+250 7XX XXX XXX" />
+            <p className="text-[11px] text-os-muted mt-1">Save your WhatsApp number here. You'll be opted in for WhatsApp alerts (task assignments, expense decisions) as soon as the WhatsApp sender is connected.</p>
           </Field>
           <Field label="Short bio">
             <Textarea rows={3} value={p.bio || ""} onChange={(e) => setP({ ...p, bio: e.target.value })} placeholder="One line about what you do" />
