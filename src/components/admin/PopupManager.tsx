@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Clock, MousePointer2, RefreshCw } from "lucide-react";
+import { Clock, MousePointer2, RefreshCw, Upload, Trash2, Image as ImageIcon, Film } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,12 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { Database } from "@/integrations/supabase/types";
 
-type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"];
+type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"] & {
+  media_url?: string | null;
+  media_type?: string | null;
+};
+
+const BUCKET = "popup-media";
 
 const PopupManager = () => {
   const [popups, setPopups] = useState<PopupSetting[]>([]);
