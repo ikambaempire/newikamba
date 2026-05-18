@@ -55,18 +55,21 @@ const Team = () => {
       const dbIds = new Set(dbRows.map((r) => r.user_id));
       const merged: OSProfile[] = dbRows.map((r) => {
         const lp = localById.get(r.user_id);
+        // Always prefer the DB full_name so admins see users' latest profile updates.
+        const fullName = r.full_name || lp?.fullName || "Team member";
+        const email = r.email || lp?.email || "";
         if (lp) return {
           ...lp,
-          fullName: lp.fullName || r.full_name || "Team member",
-          email: lp.email || r.email || "",
+          fullName,
+          email,
           role: r.roles?.includes("super_admin") ? "Super Admin" : r.roles?.includes("org_admin") ? "Admin" : lp.role,
           allowedTools: r.roles?.includes("super_admin") ? ADMIN_TOOLS : r.tools || lp.allowedTools,
         };
         const isAdmin = r.roles?.includes("super_admin") || r.roles?.includes("org_admin");
         return {
           userId: r.user_id,
-          email: r.email || "",
-          fullName: r.full_name || "Team member",
+          email,
+          fullName,
           role: r.roles?.includes("super_admin") ? "Super Admin" : isAdmin ? "Admin" : "Member",
           department: "Unassigned",
           avatarColor: pickAvatarColor(r.user_id),
@@ -265,15 +268,30 @@ const MemberDetailModal = ({
   const [tDue, setTDue] = useState("");
   const [tPri, setTPri] = useState<Priority>("high");
 
+  const optimisticTodo = (title: string, notes: string, due: string, priority: Priority): Todo => ({
+    id: "temp-" + Math.random().toString(36).slice(2),
+    title, notes, due, priority, done: false, remindersFired: [],
+    byAdmin: true, assignedByName: adminName, createdAt: new Date().toISOString(),
+  });
+
   const assignTodo = async () => {
     if (!tTitle.trim() || !tDue) return;
-    await invokeMemberWork({
-      action: "add_member_todo", user_id: member.userId, title: tTitle.trim(),
-      notes: tNotes.trim(), due: tDue, priority: tPri, assigned_by_name: adminName,
-    });
+    // Optimistic: show in the list immediately.
+    const optimistic = optimisticTodo(tTitle.trim(), tNotes.trim(), tDue, tPri);
+    setLocalTodos((prev) => [optimistic, ...prev]);
+    const payload = { title: tTitle.trim(), notes: tNotes.trim(), due: tDue, priority: tPri };
     setTTitle(""); setTNotes(""); setTDue(""); setTPri("high");
+    try {
+      await invokeMemberWork({
+        action: "add_member_todo", user_id: member.userId, ...payload, assigned_by_name: adminName,
+      });
+      toast.success("Task assigned");
+    } catch (e: any) {
+      toast.error("Could not assign task", { description: e?.message });
+      setLocalTodos((prev) => prev.filter((t) => t.id !== optimistic.id));
+    }
+    // Always reconcile with server.
     reload();
-    toast.success("Task assigned");
   };
 
   const [gTitle, setGTitle] = useState("");
@@ -283,13 +301,68 @@ const MemberDetailModal = ({
 
   const assignGoal = async () => {
     if (!gTitle.trim()) return;
-    await invokeMemberWork({
-      action: "add_member_goal", user_id: member.userId, title: gTitle.trim(),
-      notes: gNotes.trim(), priority: gPri, week_start: gWeek, assigned_by_name: adminName,
-    });
+    const optimistic: WeeklyGoal = {
+      id: "temp-" + Math.random().toString(36).slice(2),
+      title: gTitle.trim(), notes: gNotes.trim(), weekStart: gWeek, priority: gPri,
+      done: false, byAdmin: true, assignedByName: adminName, createdAt: new Date().toISOString(),
+    };
+    setLocalGoals((prev) => [optimistic, ...prev]);
+    const payload = { title: gTitle.trim(), notes: gNotes.trim(), week_start: gWeek, priority: gPri };
     setGTitle(""); setGNotes(""); setGPri("high");
+    try {
+      await invokeMemberWork({
+        action: "add_member_goal", user_id: member.userId, ...payload, assigned_by_name: adminName,
+      });
+      toast.success("Goal assigned");
+    } catch (e: any) {
+      toast.error("Could not assign goal", { description: e?.message });
+      setLocalGoals((prev) => prev.filter((g) => g.id !== optimistic.id));
+    }
     reload();
-    toast.success("Goal assigned");
+  };
+
+  // Optimistic todo updates
+  const updateTodo = async (id: string, patch: Partial<Todo>) => {
+    setLocalTodos((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+    try { await invokeMemberWork({ action: "update_member_todo", todo_id: id, patch }); }
+    catch (e: any) { toast.error("Update failed", { description: e?.message }); }
+    reload();
+  };
+  const deleteTodo = async (id: string) => {
+    setLocalTodos((prev) => prev.filter((t) => t.id !== id));
+    try { await invokeMemberWork({ action: "delete_member_todo", todo_id: id }); }
+    catch (e: any) { toast.error("Delete failed", { description: e?.message }); }
+    reload();
+  };
+  const updateGoal = async (id: string, patch: Partial<WeeklyGoal>) => {
+    setLocalGoals((prev) => prev.map((g) => (g.id === id ? { ...g, ...patch } : g)));
+    const dbPatch: any = { ...patch };
+    if ("weekStart" in patch) { dbPatch.week_start = patch.weekStart; delete dbPatch.weekStart; }
+    try { await invokeMemberWork({ action: "update_member_goal", goal_id: id, patch: dbPatch }); }
+    catch (e: any) { toast.error("Update failed", { description: e?.message }); }
+    reload();
+  };
+  const deleteGoal = async (id: string) => {
+    setLocalGoals((prev) => prev.filter((g) => g.id !== id));
+    try { await invokeMemberWork({ action: "delete_member_goal", goal_id: id }); }
+    catch (e: any) { toast.error("Delete failed", { description: e?.message }); }
+    reload();
+  };
+
+  // Edit user name / profile (admin power).
+  const [editingName, setEditingName] = useState(false);
+  const [nameDraft, setNameDraft] = useState(member.fullName);
+  const saveName = async () => {
+    const newName = nameDraft.trim();
+    if (!newName || newName === member.fullName) { setEditingName(false); return; }
+    try {
+      await invokeMemberWork({ action: "update_member_profile", user_id: member.userId, full_name: newName });
+      toast.success("Profile updated");
+      setEditingName(false);
+      onAnyChange();
+    } catch (e: any) {
+      toast.error("Could not save", { description: e?.message });
+    }
   };
 
   const toggleTool = async (k: OSToolKey) => {
@@ -358,6 +431,21 @@ const MemberDetailModal = ({
 
       {tab === "info" && (
         <div className="space-y-2 text-sm">
+          {editingName ? (
+            <div className="flex gap-2">
+              <Input value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} placeholder="Full name" />
+              <OSButton variant="primary" onClick={saveName}>Save</OSButton>
+              <OSButton variant="ghost" onClick={() => { setEditingName(false); setNameDraft(member.fullName); }}>Cancel</OSButton>
+            </div>
+          ) : (
+            <div className="flex justify-between gap-3 items-center">
+              <span className="text-os-muted">Full name</span>
+              <span className="flex items-center gap-2 text-white">
+                {member.fullName}
+                <button onClick={() => { setNameDraft(member.fullName); setEditingName(true); }} className="text-os-muted hover:text-os-gold p-1" title="Edit name"><Pencil size={13} /></button>
+              </span>
+            </div>
+          )}
           <Row label="Email" value={member.email} />
           {member.phone && <Row label="Phone" value={member.phone} />}
           <Row label="Role" value={member.role} />
@@ -405,9 +493,9 @@ const MemberDetailModal = ({
           <ListSection title={`Open (${openTodos.length})`} empty="No open tasks.">
             {openTodos.map((t) => (
               <AdminTodoRow key={t.id} t={t}
-                onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
-                onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
-                onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
+                onToggle={() => updateTodo(t.id, { done: !t.done })}
+                onEdit={() => { const title = prompt("Update task title", t.title); if (title?.trim()) updateTodo(t.id, { title: title.trim() }); }}
+                onDelete={() => deleteTodo(t.id)}
               />
             ))}
           </ListSection>
@@ -415,9 +503,9 @@ const MemberDetailModal = ({
             <ListSection title={`Completed (${doneTodos.length})`} empty="">
               {doneTodos.map((t) => (
                 <AdminTodoRow key={t.id} t={t} muted
-                  onToggle={async () => { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { done: !t.done } }); reload(); }}
-                  onEdit={async () => { const title = prompt("Update task title", t.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_todo", todo_id: t.id, patch: { title: title.trim() } }); reload(); } }}
-                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_todo", todo_id: t.id }); reload(); }}
+                  onToggle={() => updateTodo(t.id, { done: !t.done })}
+                  onEdit={() => { const title = prompt("Update task title", t.title); if (title?.trim()) updateTodo(t.id, { title: title.trim() }); }}
+                  onDelete={() => deleteTodo(t.id)}
                 />
               ))}
             </ListSection>
@@ -444,12 +532,12 @@ const MemberDetailModal = ({
           </div>
 
           {pastGoals.length > 0 && (
-            <ListSection title={`Unfinished from past weeks (${pastGoals.length})`} empty="">
+            <ListSection title={`Unachieved from past weeks (${pastGoals.length})`} empty="">
               {pastGoals.map((g) => (
                 <AdminGoalRow key={g.id} g={g}
-                  onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
-                  onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
-                  onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
+                  onToggle={() => updateGoal(g.id, { done: !g.done })}
+                  onEdit={() => { const title = prompt("Update goal title", g.title); if (title?.trim()) updateGoal(g.id, { title: title.trim() }); }}
+                  onDelete={() => deleteGoal(g.id)}
                 />
               ))}
             </ListSection>
@@ -457,9 +545,9 @@ const MemberDetailModal = ({
           <ListSection title={`This week (${weeklyForThis.length})`} empty="No goals for this week.">
             {weeklyForThis.map((g) => (
               <AdminGoalRow key={g.id} g={g}
-                onToggle={async () => { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { done: !g.done } }); reload(); }}
-                onEdit={async () => { const title = prompt("Update goal title", g.title); if (title?.trim()) { await invokeMemberWork({ action: "update_member_goal", goal_id: g.id, patch: { title: title.trim() } }); reload(); } }}
-                onDelete={async () => { await invokeMemberWork({ action: "delete_member_goal", goal_id: g.id }); reload(); }}
+                onToggle={() => updateGoal(g.id, { done: !g.done })}
+                onEdit={() => { const title = prompt("Update goal title", g.title); if (title?.trim()) updateGoal(g.id, { title: title.trim() }); }}
+                onDelete={() => deleteGoal(g.id)}
               />
             ))}
           </ListSection>
@@ -544,7 +632,7 @@ const AdminGoalRow = ({ g, onToggle, onEdit, onDelete }: { g: WeeklyGoal; onTogg
         <div className="flex flex-wrap gap-1.5 items-center mt-0.5">
           <span className="text-[10px] text-os-muted">Week of {g.weekStart}</span>
           <Badge tone={g.priority === "high" ? "red" : g.priority === "medium" ? "gold" : "green"}>{g.priority}</Badge>
-          {g.done && <Badge tone="green">Done</Badge>}
+          {g.done && <Badge tone="green">Achieved</Badge>}
           {g.byAdmin && <span className="text-[10px] text-os-gold font-bold uppercase flex items-center gap-1"><Crown size={9} /> Admin</span>}
         </div>
       </div>

@@ -61,6 +61,7 @@ export interface OSProject {
   product_line: string;
   service: string;
   objective?: string;
+  brief?: string;
   deliverables?: string;
   shoot_date?: string;
   location?: string;
@@ -68,6 +69,8 @@ export interface OSProject {
   budget_range?: string;
   payment_terms?: string;
   owner: string;
+  assigned_to_user_id?: string;
+  assigned_to_name?: string;
   notes?: string;
   references?: string;
   stage: PipelineStage;

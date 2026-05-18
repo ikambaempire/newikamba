@@ -255,6 +255,18 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (action === "update_member_profile") {
+      const { user_id, full_name, email } = body;
+      if (!user_id) throw new Error("user_id required");
+      if (typeof full_name === "string") {
+        await admin.from("profiles").upsert({ user_id, full_name: full_name.trim() || null }, { onConflict: "user_id" });
+      }
+      if (typeof email === "string" && email.trim()) {
+        await admin.auth.admin.updateUserById(user_id, { email: email.trim() });
+      }
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     return new Response(JSON.stringify({ error: "Unknown action" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message ?? String(err) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

@@ -269,6 +269,17 @@ const ReviewModal = ({ row, isAdmin, currentUserId, onClose, onChanged }: {
       .eq("id", row.id);
     setBusy(false);
     if (error) return toast.error("Could not update", { description: error.message });
+    // Notify the requester so they get a popup next time their app polls notifications.
+    try {
+      const { notify } = await import("@/os/notifications");
+      await notify(
+        row.user_id,
+        status === "approved" ? "Expense request approved ✅" : "Expense request rejected ❌",
+        `${row.category} — ${row.description.slice(0, 80)}${adminNotes.trim() ? ` · Note: ${adminNotes.trim()}` : ""}`,
+        status === "approved" ? "success" : "error",
+        "/os/expenses",
+      );
+    } catch (e) { console.error(e); }
     toast.success(`Request ${status}`);
     onChanged();
   };

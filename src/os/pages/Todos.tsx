@@ -325,7 +325,7 @@ const GoalItem = ({
         {g.notes && <div className="text-xs text-os-muted mt-0.5">{g.notes}</div>}
         <div className="flex items-center gap-2 mt-1.5 flex-wrap">
           <Badge tone={tone}>{g.priority}</Badge>
-          {g.done && <Badge tone="green">Done</Badge>}
+          {g.done && <Badge tone="green">Achieved</Badge>}
           {g.byAdmin && (
             <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-os-gold">
               <Crown size={10} /> From admin{g.assignedByName ? ` · ${g.assignedByName}` : ""}

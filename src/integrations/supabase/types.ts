@@ -266,6 +266,42 @@ export type Database = {
         }
         Relationships: []
       }
+      os_notifications: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          link: string | null
+          message: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          link?: string | null
+          message?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          link?: string | null
+          message?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       os_platform_settings: {
         Row: {
           items: string[]
