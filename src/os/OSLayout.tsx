@@ -166,6 +166,7 @@ const OSLayout = () => {
 
   return (
     <div className="os-theme min-h-screen flex">
+      <NotificationsListener />
       {showWizard && user && (
         <SetupWizard
           userId={user.id}
