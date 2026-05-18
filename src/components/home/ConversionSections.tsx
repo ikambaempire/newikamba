@@ -507,8 +507,8 @@ export const WebsitePopupSystem = () => {
   const [popupStep, setPopupStep] = useState(0);
 
   useEffect(() => {
-    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds").eq("enabled", true).then(({ data }) => {
-      if (data) setSettings(data);
+    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds, media_url, media_type").eq("enabled", true).then(({ data }) => {
+      if (data) setSettings(data as any);
     });
   }, []);
 
