@@ -124,6 +124,8 @@ const PopupManager = () => {
                 </div>
               </div>
 
+              <MediaBlock popup={popup} onUpload={(f) => uploadMedia(popup, f)} onRemove={() => removeMedia(popup)} busy={savingId === popup.id} />
+
               <Button variant="hero" onClick={() => savePopup(popup)} disabled={savingId === popup.id}>
                 {savingId === popup.id ? "Saving..." : "Save Popup"}
               </Button>
