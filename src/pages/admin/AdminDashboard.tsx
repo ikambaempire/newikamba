@@ -175,8 +175,16 @@ const AdminDashboard = () => {
           <button onClick={() => setTab("leads")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "leads" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             <TrendingUp size={14} /> Leads
           </button>
-          <button onClick={() => setTab("popups")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "popups" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-            <LayoutGrid size={14} /> Popups
+          <button
+            onClick={() => setTab("popups")}
+            className={`ml-2 px-4 py-2 text-sm font-bold rounded-md flex items-center gap-1.5 shadow-sm transition-all ${
+              tab === "popups"
+                ? "bg-yellow-400 text-black ring-2 ring-yellow-300"
+                : "bg-yellow-400 text-black hover:bg-yellow-300"
+            }`}
+            title="Manage website popups — text, images & videos"
+          >
+            <LayoutGrid size={14} /> Popup System
           </button>
           {roles.includes("super_admin") && (
             <button onClick={() => setTab("users")} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${tab === "users" ? "border-accent text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
