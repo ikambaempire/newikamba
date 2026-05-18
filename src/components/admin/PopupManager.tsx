@@ -15,6 +15,39 @@ type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"] & {
 
 const BUCKET = "popup-media";
 
+const MediaBlock = ({ popup, onUpload, onRemove, busy }: { popup: PopupSetting; onUpload: (f: File) => void; onRemove: () => void; busy: boolean }) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  return (
+    <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+          {popup.media_type === "video" ? <Film size={12} /> : <ImageIcon size={12} />} Popup media
+        </span>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()} disabled={busy}>
+            <Upload size={12} /> {popup.media_url ? "Replace" : "Upload"}
+          </Button>
+          {popup.media_url && (
+            <Button size="sm" variant="ghost" onClick={onRemove} disabled={busy}>
+              <Trash2 size={12} />
+            </Button>
+          )}
+        </div>
+        <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
+      </div>
+      {popup.media_url ? (
+        popup.media_type === "video" ? (
+          <video src={popup.media_url} controls className="w-full max-h-48 rounded bg-black" />
+        ) : (
+          <img src={popup.media_url} alt="Popup media preview" className="w-full max-h-48 object-contain rounded bg-background" />
+        )
+      ) : (
+        <p className="text-xs text-muted-foreground">No custom media. Default carousel will be shown. Upload an image or short video (max 25 MB).</p>
+      )}
+    </div>
+  );
+};
+
 const PopupManager = () => {
   const [popups, setPopups] = useState<PopupSetting[]>([]);
   const [loading, setLoading] = useState(true);
