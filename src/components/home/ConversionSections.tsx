@@ -544,7 +544,7 @@ export const WebsitePopupSystem = () => {
             <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
               <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
               <div className="grid grid-cols-1 sm:grid-cols-2">
-                <PopupMediaCarousel showVideo={popupStep >= 2} />
+                <PopupMediaCarousel showVideo={popupStep >= 2} customMedia={(active as any).media_url ? { url: (active as any).media_url, type: (active as any).media_type || "image" } : null} />
                 <div className="p-6">
                   <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
                   <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>
