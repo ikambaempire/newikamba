@@ -26,10 +26,9 @@ const Profile = () => {
 
   const save = async () => {
     upsertProfile(p);
-    // Persist the displayable name to the profiles table so admins and team see updates.
     try {
       await supabase.from("profiles").upsert(
-        { user_id: user.id, full_name: p.fullName?.trim() || null },
+        { user_id: user.id, full_name: p.fullName?.trim() || null, whatsapp_number: p.phone?.trim() || null } as any,
         { onConflict: "user_id" }
       );
     } catch (e) {
