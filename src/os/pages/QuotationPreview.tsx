@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Printer } from "lucide-react";
 import { fmtRWF } from "@/os/mock/data";
 import { Q_STATUS_LABEL, type QItem, type QCost } from "@/os/quotations/types";
+import officialLogo from "@/assets/ikamba-logo-official.png";
 
 // Brand-locked print preview. Uses Midnight Blue #0C2C47 + Warm Gold #D4A739
 // Routed outside OSLayout so the print sheet is clean (no sidebar).
@@ -43,7 +44,8 @@ const QuotationPreview = () => {
           @page { size: A4; margin: 14mm; }
           body { background: white; }
         }
-        .qtn-sheet { font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif; }
+        .qtn-sheet { font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif; color: #111111; }
+        .qtn-sheet p, .qtn-sheet div, .qtn-sheet span, .qtn-sheet td, .qtn-sheet th, .qtn-sheet pre { color: #111111; }
       `}</style>
 
       <div className="no-print max-w-[820px] mx-auto mb-3 flex items-center justify-between px-4">
@@ -59,16 +61,12 @@ const QuotationPreview = () => {
         {/* Header */}
         <div className="px-10 py-8 flex items-start justify-between border-b-4" style={{ borderColor: GOLD }}>
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-md flex items-center justify-center font-extrabold text-lg" style={{ background: GOLD, color: NAVY }}>iK</div>
-            <div>
-              <div className="text-2xl font-extrabold tracking-tight" style={{ color: NAVY }}>iKAMBA</div>
-              <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: GOLD }}>Creative Production</div>
-            </div>
+            <img src={officialLogo} alt="iKAMBA" className="h-16 w-48 object-contain object-left" />
           </div>
           <div className="text-right">
-            <div className="text-3xl font-extrabold uppercase tracking-wide" style={{ color: NAVY }}>Quotation</div>
-            <div className="text-xs text-slate-500 mt-1 font-mono">{q.quotation_number}</div>
-            <div className="text-xs text-slate-500">Status: {Q_STATUS_LABEL[q.status as keyof typeof Q_STATUS_LABEL]}</div>
+            <div className="text-3xl font-extrabold uppercase tracking-wide" style={{ color: "#111111" }}>Quotation</div>
+            <div className="text-xs mt-1 font-mono" style={{ color: "#111111" }}>{q.quotation_number}</div>
+            <div className="text-xs" style={{ color: "#111111" }}>Status: {Q_STATUS_LABEL[q.status as keyof typeof Q_STATUS_LABEL]}</div>
           </div>
         </div>
 
@@ -78,8 +76,8 @@ const QuotationPreview = () => {
             {q.company_address && <div>{q.company_address}</div>}
             {q.company_email && <div>{q.company_email}</div>}
             {q.company_phone && <div>{q.company_phone}</div>}
-            {q.company_tin && <div className="text-xs text-slate-500 mt-1">TIN/RDB: {q.company_tin}</div>}
-            {q.prepared_by_name && <div className="text-xs text-slate-500 mt-2">Prepared by: <span className="text-slate-700">{q.prepared_by_name}</span></div>}
+            {q.company_tin && <div className="text-xs mt-1">TIN/RDB: {q.company_tin}</div>}
+            {q.prepared_by_name && <div className="text-xs mt-2">Prepared by: <span>{q.prepared_by_name}</span></div>}
           </Card>
           <Card title="Quotation To" color={NAVY} accent={GOLD}>
             <div className="font-bold">{q.client_name}</div>
@@ -87,7 +85,7 @@ const QuotationPreview = () => {
             {q.client_email && <div>{q.client_email}</div>}
             {q.client_phone && <div>{q.client_phone}</div>}
             {q.client_address && <div>{q.client_address}</div>}
-            {q.client_type && <div className="text-xs text-slate-500 mt-1">{q.client_type}</div>}
+            {q.client_type && <div className="text-xs mt-1">{q.client_type}</div>}
           </Card>
         </div>
 
@@ -105,8 +103,8 @@ const QuotationPreview = () => {
         {q.project_objective && (
           <div className="px-10 py-4">
             <SectionTitle color={NAVY} accent={GOLD}>Project Summary</SectionTitle>
-            <p className="text-sm text-slate-700 mt-2 leading-relaxed">{q.project_objective}</p>
-            {q.delivery_timeline && <p className="text-xs text-slate-500 mt-2"><b>Timeline:</b> {q.delivery_timeline}</p>}
+            <p className="text-sm mt-2 leading-relaxed">{q.project_objective}</p>
+            {q.delivery_timeline && <p className="text-xs mt-2"><b>Timeline:</b> {q.delivery_timeline}</p>}
           </div>
         )}
 
@@ -133,7 +131,7 @@ const QuotationPreview = () => {
             <SumRow label="Balance" value={fmtRWF(q.balance_amount)} />
           </div>
         </div>
-        {q.amount_in_words && <div className="px-10 -mt-2 text-xs italic text-slate-500">In words: {q.amount_in_words}</div>}
+        {q.amount_in_words && <div className="px-10 -mt-2 text-xs italic">In words: {q.amount_in_words}</div>}
 
         {q.show_internal_costs_on_pdf && costs.length > 0 && (
           <div className="px-10 py-4">
@@ -182,7 +180,7 @@ const QuotationPreview = () => {
 const Card = ({ title, children, color, accent }: any) => (
   <div className="rounded-lg border border-slate-200 overflow-hidden">
     <div className="px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: color, color: accent }}>{title}</div>
-    <div className="p-4 text-sm text-slate-700 space-y-0.5">{children}</div>
+    <div className="p-4 text-sm space-y-0.5">{children}</div>
   </div>
 );
 
@@ -195,8 +193,8 @@ const SectionTitle = ({ children, color, accent }: any) => (
 
 const Meta = ({ label, value }: any) => (
   <div className="border-l-2 border-slate-200 pl-2">
-    <div className="text-[9px] uppercase tracking-widest text-slate-500">{label}</div>
-    <div className="text-slate-700 font-semibold">{value}</div>
+    <div className="text-[9px] uppercase tracking-widest">{label}</div>
+    <div className="font-semibold">{value}</div>
   </div>
 );
 
@@ -212,9 +210,9 @@ const PriceTable = ({ items, navy, gold }: any) => (
       {items.map((it: QItem, i: number) => (
         <tr key={i} className="border-t align-top">
           <td className="p-2 text-slate-500">{i + 1}</td>
-          <td className="p-2 text-slate-800">
+          <td className="p-2">
             <div className="font-semibold">{it.name}</div>
-            {it.description && <div className="text-xs text-slate-500">{it.description}</div>}
+            {it.description && <div className="text-xs">{it.description}</div>}
           </td>
           <td className="p-2 text-right">{it.quantity}</td>
           <td className="p-2 text-right">{fmtRWF(it.unit_price)}</td>
@@ -227,8 +225,8 @@ const PriceTable = ({ items, navy, gold }: any) => (
 
 const SumRow = ({ label, value, highlight, navy, gold }: any) => (
   <div className="flex items-center justify-between px-3 py-2 border-b last:border-b-0" style={highlight ? { background: navy, color: gold } : undefined}>
-    <span className={highlight ? "font-extrabold uppercase text-xs tracking-widest" : "text-slate-600 text-sm"}>{label}</span>
-    <span className={highlight ? "font-extrabold" : "text-slate-800 text-sm font-semibold"}>{value}</span>
+    <span className={highlight ? "font-extrabold uppercase text-xs tracking-widest" : "text-sm"}>{label}</span>
+    <span className={highlight ? "font-extrabold" : "text-sm font-semibold"}>{value}</span>
   </div>
 );
 

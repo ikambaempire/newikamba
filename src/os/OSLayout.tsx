@@ -2,11 +2,12 @@ import { NavLink, Outlet, useNavigate, useLocation, Link } from "react-router-do
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt, LayoutGrid,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt, Download,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
 import NotificationsListener from "@/os/NotificationsListener";
+import { WebsitePopupSystem } from "@/components/home/ConversionSections";
 import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
   hasAdminRole, type OSProfile, type OSToolKey,
@@ -25,6 +26,7 @@ const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os/reports", icon: BarChart3, label: "Reports" },
   { to: "/os/access", icon: Shield, label: "User Access" },
   { to: "/os/profile", icon: UserCircle2, label: "My Profile" },
+  { to: "/os/app", icon: Download, label: "Download App" },
   { to: "/os/settings", icon: Settings, label: "Settings" },
 ];
 
@@ -124,17 +126,6 @@ const OSLayout = () => {
         </Link>
       </div>
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
-        {isAdmin && (
-          <Link
-            to="/admin"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-3 py-2.5 mb-2 rounded-lg text-sm font-bold bg-yellow-400 text-black hover:bg-yellow-300 transition-colors shadow"
-            title="Manage popups, blog, leads & users"
-          >
-            <LayoutGrid size={18} />
-            <span>Popup & Admin</span>
-          </Link>
-        )}
         {visibleNav.map((item) => (
           <NavLink
             key={item.to}
@@ -178,6 +169,7 @@ const OSLayout = () => {
   return (
     <div className="os-theme min-h-screen flex">
       <NotificationsListener />
+      <WebsitePopupSystem showWhatsApp={false} />
       {showWizard && user && (
         <SetupWizard
           userId={user.id}
