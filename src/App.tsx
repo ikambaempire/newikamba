@@ -43,6 +43,7 @@ import OSProfile from "@/os/pages/Profile";
 import OSExpenses from "@/os/pages/Expenses";
 import OSQuotationBuilder from "@/os/pages/QuotationBuilder";
 import OSQuotationPreview from "@/os/pages/QuotationPreview";
+import OSAppDownload from "@/os/pages/AppDownload";
 
 const queryClient = new QueryClient();
 
@@ -123,6 +124,7 @@ const AnimatedRoutes = () => {
           <Route path="reports" element={<OSReports />} />
           <Route path="access" element={<OSUserAccess />} />
           <Route path="profile" element={<OSProfile />} />
+          <Route path="app" element={<OSAppDownload />} />
           <Route path="settings" element={<OSSettings />} />
         </Route>
 

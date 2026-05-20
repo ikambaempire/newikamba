@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ALL_TOOLS, getProfile, hasAdminRole } from "@/os/access";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton } from "@/os/components/ui";
 import { fmtRWF } from "@/os/mock/data";
-import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare } from "lucide-react";
+import { Plus, ArrowRight, Calendar as CalendarIcon, Wallet, CheckSquare, Download } from "lucide-react";
 
 const Dashboard = () => {
   const { projects, payments, costs, schedule } = useOSStore();
@@ -77,6 +77,10 @@ const Dashboard = () => {
           <ArrowRight size={20} className="text-os-gold" />
           <span className="text-sm font-semibold text-white">Pipeline</span>
         </Link>}
+        <Link to="/os/app" className="os-card-2 rounded-xl p-4 flex items-center gap-3 hover:border-[hsl(var(--os-gold))]/40 transition-colors">
+          <Download size={20} className="text-os-gold" />
+          <span className="text-sm font-semibold text-white">Download App</span>
+        </Link>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 mt-8">
