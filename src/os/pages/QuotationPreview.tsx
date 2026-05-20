@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Printer } from "lucide-react";
 import { fmtRWF } from "@/os/mock/data";
 import { Q_STATUS_LABEL, type QItem, type QCost } from "@/os/quotations/types";
+import officialLogo from "@/assets/ikamba-logo-official.png";
 
 // Brand-locked print preview. Uses Midnight Blue #0C2C47 + Warm Gold #D4A739
 // Routed outside OSLayout so the print sheet is clean (no sidebar).
@@ -43,7 +44,8 @@ const QuotationPreview = () => {
           @page { size: A4; margin: 14mm; }
           body { background: white; }
         }
-        .qtn-sheet { font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif; }
+        .qtn-sheet { font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif; color: #111111; }
+        .qtn-sheet p, .qtn-sheet div, .qtn-sheet span, .qtn-sheet td, .qtn-sheet th, .qtn-sheet pre { color: #111111; }
       `}</style>
 
       <div className="no-print max-w-[820px] mx-auto mb-3 flex items-center justify-between px-4">
@@ -59,16 +61,12 @@ const QuotationPreview = () => {
         {/* Header */}
         <div className="px-10 py-8 flex items-start justify-between border-b-4" style={{ borderColor: GOLD }}>
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-md flex items-center justify-center font-extrabold text-lg" style={{ background: GOLD, color: NAVY }}>iK</div>
-            <div>
-              <div className="text-2xl font-extrabold tracking-tight" style={{ color: NAVY }}>iKAMBA</div>
-              <div className="text-[10px] uppercase tracking-[0.3em]" style={{ color: GOLD }}>Creative Production</div>
-            </div>
+            <img src={officialLogo} alt="iKAMBA" className="h-16 w-48 object-contain object-left" />
           </div>
           <div className="text-right">
-            <div className="text-3xl font-extrabold uppercase tracking-wide" style={{ color: NAVY }}>Quotation</div>
-            <div className="text-xs text-slate-500 mt-1 font-mono">{q.quotation_number}</div>
-            <div className="text-xs text-slate-500">Status: {Q_STATUS_LABEL[q.status as keyof typeof Q_STATUS_LABEL]}</div>
+            <div className="text-3xl font-extrabold uppercase tracking-wide" style={{ color: "#111111" }}>Quotation</div>
+            <div className="text-xs mt-1 font-mono" style={{ color: "#111111" }}>{q.quotation_number}</div>
+            <div className="text-xs" style={{ color: "#111111" }}>Status: {Q_STATUS_LABEL[q.status as keyof typeof Q_STATUS_LABEL]}</div>
           </div>
         </div>
 
