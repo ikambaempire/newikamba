@@ -76,8 +76,8 @@ const QuotationPreview = () => {
             {q.company_address && <div>{q.company_address}</div>}
             {q.company_email && <div>{q.company_email}</div>}
             {q.company_phone && <div>{q.company_phone}</div>}
-            {q.company_tin && <div className="text-xs text-slate-500 mt-1">TIN/RDB: {q.company_tin}</div>}
-            {q.prepared_by_name && <div className="text-xs text-slate-500 mt-2">Prepared by: <span className="text-slate-700">{q.prepared_by_name}</span></div>}
+            {q.company_tin && <div className="text-xs mt-1">TIN/RDB: {q.company_tin}</div>}
+            {q.prepared_by_name && <div className="text-xs mt-2">Prepared by: <span>{q.prepared_by_name}</span></div>}
           </Card>
           <Card title="Quotation To" color={NAVY} accent={GOLD}>
             <div className="font-bold">{q.client_name}</div>
@@ -85,7 +85,7 @@ const QuotationPreview = () => {
             {q.client_email && <div>{q.client_email}</div>}
             {q.client_phone && <div>{q.client_phone}</div>}
             {q.client_address && <div>{q.client_address}</div>}
-            {q.client_type && <div className="text-xs text-slate-500 mt-1">{q.client_type}</div>}
+            {q.client_type && <div className="text-xs mt-1">{q.client_type}</div>}
           </Card>
         </div>
 
@@ -103,8 +103,8 @@ const QuotationPreview = () => {
         {q.project_objective && (
           <div className="px-10 py-4">
             <SectionTitle color={NAVY} accent={GOLD}>Project Summary</SectionTitle>
-            <p className="text-sm text-slate-700 mt-2 leading-relaxed">{q.project_objective}</p>
-            {q.delivery_timeline && <p className="text-xs text-slate-500 mt-2"><b>Timeline:</b> {q.delivery_timeline}</p>}
+            <p className="text-sm mt-2 leading-relaxed">{q.project_objective}</p>
+            {q.delivery_timeline && <p className="text-xs mt-2"><b>Timeline:</b> {q.delivery_timeline}</p>}
           </div>
         )}
 
@@ -131,7 +131,7 @@ const QuotationPreview = () => {
             <SumRow label="Balance" value={fmtRWF(q.balance_amount)} />
           </div>
         </div>
-        {q.amount_in_words && <div className="px-10 -mt-2 text-xs italic text-slate-500">In words: {q.amount_in_words}</div>}
+        {q.amount_in_words && <div className="px-10 -mt-2 text-xs italic">In words: {q.amount_in_words}</div>}
 
         {q.show_internal_costs_on_pdf && costs.length > 0 && (
           <div className="px-10 py-4">
