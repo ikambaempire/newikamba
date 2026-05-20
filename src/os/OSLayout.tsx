@@ -7,6 +7,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
 import NotificationsListener from "@/os/NotificationsListener";
+import { WebsitePopupSystem } from "@/components/home/ConversionSections";
 import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
   hasAdminRole, type OSProfile, type OSToolKey,
@@ -168,6 +169,7 @@ const OSLayout = () => {
   return (
     <div className="os-theme min-h-screen flex">
       <NotificationsListener />
+      <WebsitePopupSystem showWhatsApp={false} />
       {showWizard && user && (
         <SetupWizard
           userId={user.id}
