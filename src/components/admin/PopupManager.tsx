@@ -170,9 +170,12 @@ const PopupManager = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-bold text-foreground">Popup System</h2>
-          <p className="text-sm text-muted-foreground">Enable, disable, and edit lead capture popups.</p>
+          <p className="text-sm text-muted-foreground">Create, edit, delete, and choose where popups appear.</p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchPopups}><RefreshCw size={14} /> Refresh</Button>
+        <div className="flex gap-2">
+          <Button variant="hero" size="sm" onClick={createPopup} disabled={savingId === "new"}><Plus size={14} /> New Popup</Button>
+          <Button variant="outline" size="sm" onClick={fetchPopups}><RefreshCw size={14} /> Refresh</Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -192,6 +195,16 @@ const PopupManager = () => {
               </div>
 
               <div className="space-y-3">
+                <Input value={popup.name} onChange={(e) => updateLocal(popup.id, { name: e.target.value })} placeholder="Popup name" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <select value={popup.popup_type} onChange={(e) => updateLocal(popup.id, { popup_type: e.target.value })} className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground">
+                    <option value="time_delay">Time delay popup</option>
+                    <option value="exit_intent">Exit intent popup</option>
+                  </select>
+                  <select value={popup.target_path || "all"} onChange={(e) => updateLocal(popup.id, { target_path: e.target.value })} className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground">
+                    {PAGE_TARGETS.map((target) => <option key={target.value} value={target.value}>{target.label}</option>)}
+                  </select>
+                </div>
                 <Input value={popup.title} onChange={(e) => updateLocal(popup.id, { title: e.target.value })} placeholder="Popup title" />
                 <Textarea value={popup.message} onChange={(e) => updateLocal(popup.id, { message: e.target.value })} placeholder="Popup message" />
                 <div className="grid grid-cols-2 gap-3">
@@ -208,6 +221,9 @@ const PopupManager = () => {
 
               <Button variant="hero" onClick={() => savePopup(popup)} disabled={savingId === popup.id}>
                 {savingId === popup.id ? "Saving..." : "Save Popup"}
+              </Button>
+              <Button variant="destructive" onClick={() => deletePopup(popup)} disabled={savingId === popup.id}>
+                <Trash2 size={14} /> Delete Popup
               </Button>
             </div>
           );
