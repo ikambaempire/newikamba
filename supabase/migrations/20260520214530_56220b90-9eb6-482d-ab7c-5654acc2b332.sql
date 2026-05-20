@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Popup media is publicly readable" ON storage.objects;
