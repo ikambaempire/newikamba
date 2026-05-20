@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Input } from "@/os/components/ui";
 import { PRODUCT_LINES, SERVICE_CATEGORIES, PIPELINE_STAGES, COST_CATEGORIES } from "@/os/mock/data";
 import { hasAdminRole } from "@/os/access";
-import { Plus, X, Shield, Lock } from "lucide-react";
+import { Plus, X, Shield, Lock, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 
 const STORE_KEY = "ikamba.os.settings.v1";
@@ -161,6 +162,17 @@ const Settings = () => {
           </>
         }
       />
+      {canEdit && (
+        <section className="os-card rounded-xl p-5 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h3 className="text-white font-bold">Popup Management</h3>
+            <p className="text-sm text-os-muted">Create, edit, delete, and choose where website popups appear.</p>
+          </div>
+          <Link to="/admin">
+            <OSButton variant="primary"><LayoutGrid size={14} /> Open Popup Management</OSButton>
+          </Link>
+        </section>
+      )}
       <div className="grid lg:grid-cols-2 gap-4">
         {blocks.map((b) => (
           <SettingsBlock
