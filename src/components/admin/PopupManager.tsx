@@ -85,12 +85,15 @@ const PopupManager = () => {
   const savePopup = async (popup: PopupSetting) => {
     setSavingId(popup.id);
     const { error } = await supabase.from("popup_settings").update({
+      name: popup.name,
+      popup_type: popup.popup_type,
       enabled: popup.enabled,
       title: popup.title,
       message: popup.message,
       button_text: popup.button_text,
       button_link: popup.button_link,
       delay_seconds: popup.delay_seconds,
+      target_path: popup.target_path || "all",
       media_url: popup.media_url ?? null,
       media_type: popup.media_type ?? null,
     } as any).eq("id", popup.id);
@@ -100,6 +103,35 @@ const PopupManager = () => {
       return;
     }
     toast.success("Popup settings saved");
+  };
+
+  const createPopup = async () => {
+    setSavingId("new");
+    const { data, error } = await supabase.from("popup_settings").insert({
+      name: "New Popup",
+      popup_type: "time_delay",
+      enabled: false,
+      title: "Your popup title",
+      message: "Write the message visitors should see.",
+      button_text: "Get Started",
+      button_link: "/contact",
+      delay_seconds: 8,
+      target_path: "all",
+    } as any).select("*").single();
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    if (data) setPopups((items) => [...items, data as PopupSetting]);
+    toast.success("Popup created");
+  };
+
+  const deletePopup = async (popup: PopupSetting) => {
+    if (!confirm(`Delete ${popup.name}?`)) return;
+    setSavingId(popup.id);
+    const { error } = await supabase.from("popup_settings").delete().eq("id", popup.id);
+    setSavingId(null);
+    if (error) { toast.error(error.message); return; }
+    setPopups((items) => items.filter((item) => item.id !== popup.id));
+    toast.success("Popup deleted");
   };
 
   const uploadMedia = async (popup: PopupSetting, file: File) => {
