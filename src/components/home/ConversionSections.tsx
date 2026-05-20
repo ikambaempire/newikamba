@@ -503,7 +503,7 @@ export const ConversionSections = () => {
   );
 };
 
-export const WebsitePopupSystem = () => {
+export const WebsitePopupSystem = ({ showWhatsApp = true }: { showWhatsApp?: boolean }) => {
   const location = useLocation();
   const [settings, setSettings] = useState<PopupSetting[]>([]);
   const [active, setActive] = useState<PopupSetting | null>(null);
@@ -566,15 +566,17 @@ export const WebsitePopupSystem = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <a
-        href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
-        target="_blank"
-        rel="noreferrer"
-        className="fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-success text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
-        aria-label="Chat on WhatsApp"
-      >
-        <MessageCircle size={26} />
-      </a>
+      {showWhatsApp && (
+        <a
+          href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
+          target="_blank"
+          rel="noreferrer"
+          className="fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-success text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
+          aria-label="Chat on WhatsApp"
+        >
+          <MessageCircle size={26} />
+        </a>
+      )}
     </>
   );
 };
