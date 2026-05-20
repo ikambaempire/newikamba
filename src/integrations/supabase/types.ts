@@ -679,6 +679,7 @@ export type Database = {
           message: string
           name: string
           popup_type: string
+          target_path: string
           title: string
           updated_at: string
         }
@@ -694,6 +695,7 @@ export type Database = {
           message?: string
           name: string
           popup_type?: string
+          target_path?: string
           title?: string
           updated_at?: string
         }
@@ -709,6 +711,7 @@ export type Database = {
           message?: string
           name?: string
           popup_type?: string
+          target_path?: string
           title?: string
           updated_at?: string
         }
