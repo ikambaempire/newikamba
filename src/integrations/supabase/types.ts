@@ -323,6 +323,241 @@ export type Database = {
         }
         Relationships: []
       }
+      os_quotation_costs: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          quotation_id: string
+        }
+        Insert: {
+          amount?: number
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          quotation_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          quotation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_quotation_costs_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "os_quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      os_quotation_items: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          included: boolean
+          kind: string
+          name: string
+          position: number
+          quantity: number
+          quotation_id: string
+          unit_price: number
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          included?: boolean
+          kind?: string
+          name: string
+          position?: number
+          quantity?: number
+          quotation_id: string
+          unit_price?: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          included?: boolean
+          kind?: string
+          name?: string
+          position?: number
+          quantity?: number
+          quotation_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "os_quotation_items_quotation_id_fkey"
+            columns: ["quotation_id"]
+            isOneToOne: false
+            referencedRelation: "os_quotations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      os_quotations: {
+        Row: {
+          advance_amount: number
+          advance_percent: number
+          amount_in_words: string | null
+          balance_amount: number
+          client_address: string | null
+          client_contact_person: string | null
+          client_email: string | null
+          client_name: string
+          client_phone: string | null
+          client_type: string | null
+          company_address: string | null
+          company_email: string | null
+          company_name: string
+          company_phone: string | null
+          company_tin: string | null
+          converted_legacy_project_id: string | null
+          converted_project_id: string | null
+          created_at: string
+          currency: string
+          delivery_timeline: string | null
+          discount_amount: number
+          discount_type: string
+          discount_value: number
+          estimated_profit: number
+          id: string
+          location: string | null
+          notes: string | null
+          prepared_by_name: string | null
+          prepared_by_user_id: string | null
+          product_line: string | null
+          profit_margin: number
+          project_name: string | null
+          project_objective: string | null
+          quotation_date: string
+          quotation_number: string
+          service_category: string | null
+          shoot_date: string | null
+          show_internal_costs_on_pdf: boolean
+          status: Database["public"]["Enums"]["os_quotation_status"]
+          subtotal: number
+          tax_amount: number
+          tax_percent: number
+          terms: string | null
+          total_amount: number
+          total_cost_estimate: number
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          advance_amount?: number
+          advance_percent?: number
+          amount_in_words?: string | null
+          balance_amount?: number
+          client_address?: string | null
+          client_contact_person?: string | null
+          client_email?: string | null
+          client_name: string
+          client_phone?: string | null
+          client_type?: string | null
+          company_address?: string | null
+          company_email?: string | null
+          company_name?: string
+          company_phone?: string | null
+          company_tin?: string | null
+          converted_legacy_project_id?: string | null
+          converted_project_id?: string | null
+          created_at?: string
+          currency?: string
+          delivery_timeline?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
+          estimated_profit?: number
+          id?: string
+          location?: string | null
+          notes?: string | null
+          prepared_by_name?: string | null
+          prepared_by_user_id?: string | null
+          product_line?: string | null
+          profit_margin?: number
+          project_name?: string | null
+          project_objective?: string | null
+          quotation_date?: string
+          quotation_number?: string
+          service_category?: string | null
+          shoot_date?: string | null
+          show_internal_costs_on_pdf?: boolean
+          status?: Database["public"]["Enums"]["os_quotation_status"]
+          subtotal?: number
+          tax_amount?: number
+          tax_percent?: number
+          terms?: string | null
+          total_amount?: number
+          total_cost_estimate?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          advance_amount?: number
+          advance_percent?: number
+          amount_in_words?: string | null
+          balance_amount?: number
+          client_address?: string | null
+          client_contact_person?: string | null
+          client_email?: string | null
+          client_name?: string
+          client_phone?: string | null
+          client_type?: string | null
+          company_address?: string | null
+          company_email?: string | null
+          company_name?: string
+          company_phone?: string | null
+          company_tin?: string | null
+          converted_legacy_project_id?: string | null
+          converted_project_id?: string | null
+          created_at?: string
+          currency?: string
+          delivery_timeline?: string | null
+          discount_amount?: number
+          discount_type?: string
+          discount_value?: number
+          estimated_profit?: number
+          id?: string
+          location?: string | null
+          notes?: string | null
+          prepared_by_name?: string | null
+          prepared_by_user_id?: string | null
+          product_line?: string | null
+          profit_margin?: number
+          project_name?: string | null
+          project_objective?: string | null
+          quotation_date?: string
+          quotation_number?: string
+          service_category?: string | null
+          shoot_date?: string | null
+          show_internal_costs_on_pdf?: boolean
+          status?: Database["public"]["Enums"]["os_quotation_status"]
+          subtotal?: number
+          tax_amount?: number
+          tax_percent?: number
+          terms?: string | null
+          total_amount?: number
+          total_cost_estimate?: number
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
       os_todos: {
         Row: {
           assigned_by_name: string | null
@@ -674,7 +909,9 @@ export type Database = {
       }
       is_bootstrap_super_admin: { Args: { _user_id: string }; Returns: boolean }
       is_internal_role: { Args: { _user_id: string }; Returns: boolean }
+      next_quotation_number: { Args: never; Returns: string }
       user_client_id: { Args: { _user_id: string }; Returns: string }
+      user_owns_quotation: { Args: { _quotation_id: string }; Returns: boolean }
     }
     Enums: {
       app_role:
@@ -686,6 +923,14 @@ export type Database = {
         | "client"
         | "user"
       os_priority: "low" | "medium" | "high"
+      os_quotation_status:
+        | "draft"
+        | "sent"
+        | "approved"
+        | "rejected"
+        | "revised"
+        | "expired"
+        | "converted"
       priority_level: "low" | "medium" | "high" | "urgent"
       project_status:
         | "brief_received"
@@ -832,6 +1077,15 @@ export const Constants = {
         "user",
       ],
       os_priority: ["low", "medium", "high"],
+      os_quotation_status: [
+        "draft",
+        "sent",
+        "approved",
+        "rejected",
+        "revised",
+        "expired",
+        "converted",
+      ],
       priority_level: ["low", "medium", "high", "urgent"],
       project_status: [
         "brief_received",
