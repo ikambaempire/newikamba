@@ -41,6 +41,8 @@ import OSTodos from "@/os/pages/Todos";
 import OSUserAccess from "@/os/pages/UserAccess";
 import OSProfile from "@/os/pages/Profile";
 import OSExpenses from "@/os/pages/Expenses";
+import OSQuotationBuilder from "@/os/pages/QuotationBuilder";
+import OSQuotationPreview from "@/os/pages/QuotationPreview";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,8 @@ const AnimatedRoutes = () => {
           <Route path="calendar" element={<OSCalendar />} />
           <Route path="finance" element={<OSFinance />} />
           <Route path="quotations" element={<OSQuotations />} />
+          <Route path="quotations/new" element={<OSQuotationBuilder />} />
+          <Route path="quotations/:id" element={<OSQuotationBuilder />} />
           <Route path="expenses" element={<OSExpenses />} />
           <Route path="team" element={<OSTeam />} />
           <Route path="reports" element={<OSReports />} />
