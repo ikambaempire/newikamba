@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Clock, MousePointer2, RefreshCw, Upload, Trash2, Image as ImageIcon, Film } from "lucide-react";
+import { Clock, MousePointer2, RefreshCw, Upload, Trash2, Image as ImageIcon, Film, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,24 @@ import type { Database } from "@/integrations/supabase/types";
 type PopupSetting = Database["public"]["Tables"]["popup_settings"]["Row"] & {
   media_url?: string | null;
   media_type?: string | null;
+  target_path?: string;
 };
 
 const BUCKET = "popup-media";
+const PAGE_TARGETS = [
+  { value: "all", label: "All website pages" },
+  { value: "/", label: "Home page" },
+  { value: "/solutions", label: "Solutions" },
+  { value: "/work", label: "Work / Portfolio" },
+  { value: "/how-it-works", label: "How it works" },
+  { value: "/insights", label: "Insights" },
+  { value: "/about", label: "About" },
+  { value: "/contact", label: "Contact" },
+  { value: "/start-a-project", label: "Start a Project" },
+  { value: "/login", label: "Login" },
+  { value: "/signup", label: "Signup" },
+  { value: "/os", label: "User dashboards" },
+];
 
 const MediaBlock = ({ popup, onUpload, onRemove, busy }: { popup: PopupSetting; onUpload: (f: File) => void; onRemove: () => void; busy: boolean }) => {
   const fileRef = useRef<HTMLInputElement>(null);
