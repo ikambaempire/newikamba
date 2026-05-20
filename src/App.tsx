@@ -117,6 +117,7 @@ const AnimatedRoutes = () => {
           <Route path="quotations" element={<OSQuotations />} />
           <Route path="quotations/new" element={<OSQuotationBuilder />} />
           <Route path="quotations/:id" element={<OSQuotationBuilder />} />
+          <Route path="quotations/:id/preview" element={<OSQuotationPreview />} />
           <Route path="expenses" element={<OSExpenses />} />
           <Route path="team" element={<OSTeam />} />
           <Route path="reports" element={<OSReports />} />
