@@ -180,7 +180,7 @@ const QuotationPreview = () => {
 const Card = ({ title, children, color, accent }: any) => (
   <div className="rounded-lg border border-slate-200 overflow-hidden">
     <div className="px-4 py-2 text-xs font-bold uppercase tracking-widest" style={{ background: color, color: accent }}>{title}</div>
-    <div className="p-4 text-sm text-slate-700 space-y-0.5">{children}</div>
+    <div className="p-4 text-sm space-y-0.5">{children}</div>
   </div>
 );
 
@@ -193,8 +193,8 @@ const SectionTitle = ({ children, color, accent }: any) => (
 
 const Meta = ({ label, value }: any) => (
   <div className="border-l-2 border-slate-200 pl-2">
-    <div className="text-[9px] uppercase tracking-widest text-slate-500">{label}</div>
-    <div className="text-slate-700 font-semibold">{value}</div>
+    <div className="text-[9px] uppercase tracking-widest">{label}</div>
+    <div className="font-semibold">{value}</div>
   </div>
 );
 
@@ -210,9 +210,9 @@ const PriceTable = ({ items, navy, gold }: any) => (
       {items.map((it: QItem, i: number) => (
         <tr key={i} className="border-t align-top">
           <td className="p-2 text-slate-500">{i + 1}</td>
-          <td className="p-2 text-slate-800">
+          <td className="p-2">
             <div className="font-semibold">{it.name}</div>
-            {it.description && <div className="text-xs text-slate-500">{it.description}</div>}
+            {it.description && <div className="text-xs">{it.description}</div>}
           </td>
           <td className="p-2 text-right">{it.quantity}</td>
           <td className="p-2 text-right">{fmtRWF(it.unit_price)}</td>
@@ -225,8 +225,8 @@ const PriceTable = ({ items, navy, gold }: any) => (
 
 const SumRow = ({ label, value, highlight, navy, gold }: any) => (
   <div className="flex items-center justify-between px-3 py-2 border-b last:border-b-0" style={highlight ? { background: navy, color: gold } : undefined}>
-    <span className={highlight ? "font-extrabold uppercase text-xs tracking-widest" : "text-slate-600 text-sm"}>{label}</span>
-    <span className={highlight ? "font-extrabold" : "text-slate-800 text-sm font-semibold"}>{value}</span>
+    <span className={highlight ? "font-extrabold uppercase text-xs tracking-widest" : "text-sm"}>{label}</span>
+    <span className={highlight ? "font-extrabold" : "text-sm font-semibold"}>{value}</span>
   </div>
 );
 
