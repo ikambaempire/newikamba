@@ -1,8 +1,8 @@
-import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt, LayoutGrid,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
@@ -115,15 +115,26 @@ const OSLayout = () => {
   const SideContent = (
     <>
       <div className="px-5 pt-5 pb-4 border-b border-os">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-md bg-os-gold flex items-center justify-center text-os-navy font-extrabold text-sm">iK</div>
+        <Link to="/" className="flex items-center gap-2 group" title="Back to ikamba.africa">
+          <div className="h-8 w-8 rounded-md bg-os-gold flex items-center justify-center text-os-navy font-extrabold text-sm group-hover:scale-105 transition-transform">iK</div>
           <div>
-            <div className="text-white font-bold leading-tight">iKAMBA</div>
+            <div className="text-white font-bold leading-tight group-hover:text-os-gold transition-colors">iKAMBA</div>
             <div className="text-[10px] uppercase tracking-widest text-os-gold leading-tight">Media OS</div>
           </div>
-        </div>
+        </Link>
       </div>
       <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto">
+        {isAdmin && (
+          <Link
+            to="/admin"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 px-3 py-2.5 mb-2 rounded-lg text-sm font-bold bg-yellow-400 text-black hover:bg-yellow-300 transition-colors shadow"
+            title="Manage popups, blog, leads & users"
+          >
+            <LayoutGrid size={18} />
+            <span>Popup & Admin</span>
+          </Link>
+        )}
         {visibleNav.map((item) => (
           <NavLink
             key={item.to}
