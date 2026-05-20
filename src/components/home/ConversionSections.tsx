@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -31,6 +31,9 @@ type PopupSetting = {
   button_text: string;
   button_link: string;
   delay_seconds: number;
+  target_path?: string;
+  media_url?: string | null;
+  media_type?: string | null;
 };
 
 const fadeUp = {
@@ -501,19 +504,26 @@ export const ConversionSections = () => {
 };
 
 export const WebsitePopupSystem = () => {
+  const location = useLocation();
   const [settings, setSettings] = useState<PopupSetting[]>([]);
   const [active, setActive] = useState<PopupSetting | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [popupStep, setPopupStep] = useState(0);
 
   useEffect(() => {
-    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds, media_url, media_type").eq("enabled", true).then(({ data }) => {
+    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds, media_url, media_type, target_path").eq("enabled", true).then(({ data }) => {
       if (data) setSettings(data as any);
     });
   }, []);
 
-  const timePopup = useMemo(() => settings.find((item) => item.popup_type === "time_delay"), [settings]);
-  const exitPopup = useMemo(() => settings.find((item) => item.popup_type === "exit_intent"), [settings]);
+  const pageSettings = useMemo(() => settings.filter((item) => {
+    const target = item.target_path || "all";
+    if (target === "all") return true;
+    if (target === "/") return location.pathname === "/";
+    return location.pathname === target || location.pathname.startsWith(`${target}/`);
+  }), [settings, location.pathname]);
+  const timePopup = useMemo(() => pageSettings.find((item) => item.popup_type === "time_delay"), [pageSettings]);
+  const exitPopup = useMemo(() => pageSettings.find((item) => item.popup_type === "exit_intent"), [pageSettings]);
 
   useEffect(() => {
     if (!timePopup || dismissed) return;
