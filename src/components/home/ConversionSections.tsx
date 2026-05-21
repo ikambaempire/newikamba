@@ -34,6 +34,17 @@ type PopupSetting = {
   target_path?: string;
   media_url?: string | null;
   media_type?: string | null;
+  layout?: string;
+  bg_color?: string;
+  text_color?: string;
+  accent_color?: string;
+  button_bg_color?: string;
+  button_text_color?: string;
+  text_align?: string;
+  heading_size?: string;
+  overlay_opacity?: number;
+  show_form?: boolean;
+  eyebrow?: string;
 };
 
 const fadeUp = {
@@ -511,7 +522,7 @@ export const WebsitePopupSystem = ({ showWhatsApp = true }: { showWhatsApp?: boo
   const [popupStep, setPopupStep] = useState(0);
 
   useEffect(() => {
-    supabase.from("popup_settings").select("id, popup_type, title, message, button_text, button_link, delay_seconds, media_url, media_type, target_path").eq("enabled", true).then(({ data }) => {
+    supabase.from("popup_settings").select("*").eq("enabled", true).then(({ data }) => {
       if (data) setSettings(data as any);
     });
   }, []);
@@ -533,51 +544,83 @@ export const WebsitePopupSystem = ({ showWhatsApp = true }: { showWhatsApp?: boo
 
   useEffect(() => {
     if (!exitPopup || dismissed) return;
-    const onMouseLeave = (event: MouseEvent) => {
-      if (event.clientY <= 0) setActive(exitPopup);
-    };
+    const onMouseLeave = (event: MouseEvent) => { if (event.clientY <= 0) setActive(exitPopup); };
     document.addEventListener("mouseleave", onMouseLeave);
     return () => document.removeEventListener("mouseleave", onMouseLeave);
   }, [exitPopup, dismissed]);
 
-  const close = () => {
-    setDismissed(true);
-    setActive(null);
-    setPopupStep(0);
-  };
+  const close = () => { setDismissed(true); setActive(null); setPopupStep(0); };
 
   return (
     <>
       <AnimatePresence>
         {active && !dismissed && (
-          <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/70 backdrop-blur-sm px-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} className="relative w-full max-w-2xl rounded-lg bg-background border border-border shadow-2xl overflow-hidden">
-              <button onClick={close} className="absolute right-4 top-4 z-10 text-muted-foreground hover:text-foreground bg-background/80 rounded-full p-1" aria-label="Close popup"><X size={18} /></button>
-              <div className="grid grid-cols-1 sm:grid-cols-2">
-                <PopupMediaCarousel showVideo={popupStep >= 2} customMedia={(active as any).media_url ? { url: (active as any).media_url, type: (active as any).media_type || "image" } : null} />
-                <div className="p-6">
-                  <p className="text-xs uppercase tracking-[0.2em] text-accent font-semibold mb-3">Free Resource</p>
-                  <h2 className="text-2xl font-extrabold text-foreground mb-2">{active.title}</h2>
-                  <p className="text-sm text-muted-foreground mb-5">{active.message}</p>
-                  <StepAuditForm source="popup" onStepChange={setPopupStep} onSuccess={close} ctaLabel={active.button_text || "Get My Free Audit"} />
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+          <DesignedPopup popup={active} onClose={close} step={popupStep} onStep={setPopupStep} />
         )}
       </AnimatePresence>
       {showWhatsApp && (
-        <a
-          href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
-          target="_blank"
-          rel="noreferrer"
+        <a href="https://wa.me/250796889527?text=Hello%20iKAMBA%2C%20I%20would%20like%20to%20talk%20about%20storytelling%20for%20my%20organization."
+          target="_blank" rel="noreferrer"
           className="fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full bg-success text-primary-foreground shadow-2xl flex items-center justify-center hover:scale-105 transition-transform"
-          aria-label="Chat on WhatsApp"
-        >
-          <MessageCircle size={26} />
-        </a>
+          aria-label="Chat on WhatsApp"><MessageCircle size={26} /></a>
       )}
     </>
+  );
+};
+
+const DesignedPopup = ({ popup, onClose, step, onStep }: { popup: PopupSetting; onClose: () => void; step: number; onStep: (n: number) => void }) => {
+  const align = popup.text_align || "left";
+  const sizeClass = popup.heading_size === "xl" ? "text-3xl md:text-4xl" : popup.heading_size === "md" ? "text-xl" : "text-2xl md:text-3xl";
+  const layout = popup.layout || "media_left";
+  const bg = popup.bg_color || "#0C2C47";
+  const txt = popup.text_color || "#FFFFFF";
+  const accent = popup.accent_color || "#D4A739";
+  const btnBg = popup.button_bg_color || "#D4A739";
+  const btnTxt = popup.button_text_color || "#0C2C47";
+  const showForm = popup.show_form !== false;
+
+  const media = popup.media_url ? (
+    popup.media_type === "video"
+      ? <video src={popup.media_url} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+      : <img src={popup.media_url} alt={popup.title} className="w-full h-full object-cover" />
+  ) : <PopupMediaCarousel showVideo={step >= 2} />;
+
+  const textBlock = (
+    <div className="p-6 sm:p-8 flex flex-col justify-center" style={{ textAlign: align as any, color: txt }}>
+      {popup.eyebrow && <div className="text-[11px] uppercase tracking-[0.2em] font-bold mb-3" style={{ color: accent }}>{popup.eyebrow}</div>}
+      <h2 className={`${sizeClass} font-extrabold mb-3 leading-tight`} style={{ color: txt }}>{popup.title}</h2>
+      <p className="text-sm md:text-base opacity-90 mb-5" style={{ color: txt }}>{popup.message}</p>
+      {showForm ? (
+        <StepAuditForm source="popup" onStepChange={onStep} onSuccess={onClose} ctaLabel={popup.button_text || "Get My Free Audit"} />
+      ) : (
+        <a href={popup.button_link || "#"} onClick={onClose}
+          className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg font-bold text-sm shadow ${align === "center" ? "mx-auto" : align === "right" ? "ml-auto" : ""}`}
+          style={{ background: btnBg, color: btnTxt }}>
+          {popup.button_text || "Learn more"} <ArrowRight size={14} />
+        </a>
+      )}
+    </div>
+  );
+
+  return (
+    <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div initial={{ opacity: 0, scale: 0.94, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }}
+        className="relative w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden" style={{ background: bg }}>
+        <button onClick={onClose} className="absolute right-3 top-3 z-20 rounded-full p-1.5 bg-black/30 hover:bg-black/50 text-white" aria-label="Close"><X size={18} /></button>
+        {layout === "text_only" && <div className="min-h-[280px]">{textBlock}</div>}
+        {layout === "media_left" && <div className="grid grid-cols-1 sm:grid-cols-2 min-h-[320px]"><div className="bg-black/20">{media}</div>{textBlock}</div>}
+        {layout === "media_right" && <div className="grid grid-cols-1 sm:grid-cols-2 min-h-[320px]">{textBlock}<div className="bg-black/20">{media}</div></div>}
+        {layout === "media_top" && <div className="flex flex-col min-h-[360px]"><div className="h-48 bg-black/20">{media}</div>{textBlock}</div>}
+        {layout === "media_background" && (
+          <div className="relative min-h-[380px]">
+            <div className="absolute inset-0">{media}</div>
+            <div className="absolute inset-0" style={{ background: `rgba(0,0,0,${(popup.overlay_opacity ?? 60) / 100})` }} />
+            <div className="relative">{textBlock}</div>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
   );
 };
 
