@@ -668,50 +668,83 @@ export type Database = {
       }
       popup_settings: {
         Row: {
+          accent_color: string | null
+          bg_color: string | null
+          button_bg_color: string | null
           button_link: string
           button_text: string
+          button_text_color: string | null
           created_at: string
           delay_seconds: number
           enabled: boolean
+          eyebrow: string | null
+          heading_size: string
           id: string
+          layout: string
           media_type: string | null
           media_url: string | null
           message: string
           name: string
+          overlay_opacity: number
           popup_type: string
+          show_form: boolean
           target_path: string
+          text_align: string
+          text_color: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          accent_color?: string | null
+          bg_color?: string | null
+          button_bg_color?: string | null
           button_link?: string
           button_text?: string
+          button_text_color?: string | null
           created_at?: string
           delay_seconds?: number
           enabled?: boolean
+          eyebrow?: string | null
+          heading_size?: string
           id?: string
+          layout?: string
           media_type?: string | null
           media_url?: string | null
           message?: string
           name: string
+          overlay_opacity?: number
           popup_type?: string
+          show_form?: boolean
           target_path?: string
+          text_align?: string
+          text_color?: string | null
           title?: string
           updated_at?: string
         }
         Update: {
+          accent_color?: string | null
+          bg_color?: string | null
+          button_bg_color?: string | null
           button_link?: string
           button_text?: string
+          button_text_color?: string | null
           created_at?: string
           delay_seconds?: number
           enabled?: boolean
+          eyebrow?: string | null
+          heading_size?: string
           id?: string
+          layout?: string
           media_type?: string | null
           media_url?: string | null
           message?: string
           name?: string
+          overlay_opacity?: number
           popup_type?: string
+          show_form?: boolean
           target_path?: string
+          text_align?: string
+          text_color?: string | null
           title?: string
           updated_at?: string
         }
@@ -719,31 +752,43 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           client_id: string | null
           created_at: string
+          department: string | null
           full_name: string | null
           id: string
           organization_id: string | null
+          role_title: string | null
           updated_at: string
           user_id: string
           whatsapp_number: string | null
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           client_id?: string | null
           created_at?: string
+          department?: string | null
           full_name?: string | null
           id?: string
           organization_id?: string | null
+          role_title?: string | null
           updated_at?: string
           user_id: string
           whatsapp_number?: string | null
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           client_id?: string | null
           created_at?: string
+          department?: string | null
           full_name?: string | null
           id?: string
           organization_id?: string | null
+          role_title?: string | null
           updated_at?: string
           user_id?: string
           whatsapp_number?: string | null
