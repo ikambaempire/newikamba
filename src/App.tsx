@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Solutions from "./pages/Solutions";
 import ForTalents from "./pages/ForTalents";
 import Work from "./pages/Work";
+import CaseStudies from "./pages/CaseStudies";
 import HowItWorks from "./pages/HowItWorks";
 import Insights from "./pages/Insights";
 import About from "./pages/About";
