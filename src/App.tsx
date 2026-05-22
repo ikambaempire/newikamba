@@ -74,19 +74,10 @@ const AnimatedRoutes = () => {
         <Route path="/solutions/corporates" element={<PageTransition><Solutions /></PageTransition>} />
         <Route path="/solutions/talents" element={<PageTransition><ForTalents /></PageTransition>} />
         <Route path="/work" element={<PageTransition><Work /></PageTransition>} />
-        <Route path="/work" element={<PageTransition><Work /></PageTransition>} />
+        <Route path="/work/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
         <Route path="/how-it-works" element={<PageTransition><HowItWorks /></PageTransition>} />
-        <Route path="/insights" element={<PageTransition><Insights /></PageTransition>} />
-        <Route path="/insights/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route path="/start-a-project" element={<PageTransition><StartAProject /></PageTransition>} />
-        <Route path="/caption-generator" element={<PageTransition><CaptionGenerator /></PageTransition>} />
-        <Route path="/design-studio" element={<DesignStudio />} />
-
-        {/* Legacy redirects */}
-        <Route path="/platform" element={<PageTransition><Solutions /></PageTransition>} />
-        <Route path="/case-studies" element={<PageTransition><Work /></PageTransition>} />
+        <Route path="/case-studies" element={<PageTransition><CaseStudies /></PageTransition>} />
+        <Route path="/case-studies/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
 
         {/* Auth */}
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
