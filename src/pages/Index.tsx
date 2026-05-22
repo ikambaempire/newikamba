@@ -525,6 +525,9 @@ const Index = () => {
       {/* Trusted By */}
       <TrustedBySlider />
 
+      <SelectedWork />
+
+
       <ConversionSections />
 
       {/* The Challenge */}
