@@ -1,141 +1,116 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Film, Camera, Megaphone } from "lucide-react";
-import Card3D from "@/components/home/Card3D";
-import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
-import creativeCamera from "@/assets/creative-camera.webp";
+import { useMemo, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { PROJECTS } from "@/data/projects";
 
-const workDocumentary = "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=800&q=80";
-const workCampaign = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80";
-const workPhotography = "https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=800&q=80";
-const storytellingCommunity = "https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?w=800&q=80";
+const categories = ["All", ...Array.from(new Set(PROJECTS.map(p => p.category)))];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
-  visible: (i: number) => ({
-    opacity: 1, y: 0, filter: "blur(0px)",
-    transition: { delay: i * 0.08, duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-  }),
+const spanClass = (s?: string) => {
+  if (s === "wide") return "md:col-span-2 md:row-span-1";
+  if (s === "tall") return "md:row-span-2";
+  return "";
 };
+const heightClass = (s?: string) => (s === "tall" ? "aspect-[3/4] md:aspect-auto md:h-full md:min-h-[640px]" : s === "wide" ? "aspect-[16/9]" : "aspect-[4/3]");
 
-const projects = [
-  {
-    icon: Film,
-    category: "Documentary",
-    title: "Youth Entrepreneurship in East Africa",
-    client: "International Development Foundation",
-    desc: "A 20-minute documentary exploring how young entrepreneurs are reshaping local economies across Rwanda, Kenya, and Uganda.",
-    result: "Featured at 3 international development conferences. 45K+ views across platforms.",
-    image: workDocumentary,
-  },
-  {
-    icon: Megaphone,
-    category: "Impact Campaign",
-    title: "Climate Action – Kigali 2025",
-    client: "Environmental NGO Coalition",
-    desc: "Multi-format campaign content for a regional climate conference, including event visuals, social graphics, and recap video.",
-    result: "12 content assets delivered. Campaign reached 200K+ across digital platforms.",
-    image: workCampaign,
-  },
-  {
-    icon: Camera,
-    category: "Photography",
-    title: "Education Access in Rural Communities",
-    client: "STEM Education Initiative",
-    desc: "Photographic documentation of education programs reaching underserved communities, capturing classroom moments and community impact.",
-    result: "Photography featured in annual report and donor communications.",
-    image: workPhotography,
-  },
-  {
-    icon: Film,
-    category: "Documentary",
-    title: "Financial Inclusion: A Community Perspective",
-    client: "Regional Financial Institution",
-    desc: "Short documentary highlighting community banking programs and their impact on local families and small businesses.",
-    result: "Used in investor presentations and annual stakeholder communications.",
-    image: creativeFilmmaker,
-  },
-  {
-    icon: Megaphone,
-    category: "Campaign Storytelling",
-    title: "Health Workers on the Frontlines",
-    client: "Healthcare NGO Coalition",
-    desc: "Video series featuring health workers in rural clinics, highlighting challenges, resilience, and the impact of international health programs.",
-    result: "8 videos produced. Content used across fundraising and advocacy channels.",
-    image: creativeCamera,
-  },
-  {
-    icon: Camera,
-    category: "Photography",
-    title: "Real Estate Development Portfolio",
-    client: "Property Development Company",
-    desc: "Architectural and lifestyle photography for a premium real estate portfolio, capturing properties, communities, and the vision behind developments.",
-    result: "Photography integrated into marketing materials and online listings.",
-    image: creativeFilmmaker,
-  },
-];
+const Work = () => {
+  const [active, setActive] = useState("All");
+  const projects = useMemo(() => active === "All" ? PROJECTS : PROJECTS.filter(p => p.category === active), [active]);
 
-const Work = () => (
-  <div className="min-h-screen bg-background">
-    <Navbar />
-    <section className="section-padding pt-32 pb-16 md:pt-40">
-      <div className="max-w-5xl mx-auto">
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-xs uppercase tracking-[0.2em] font-semibold text-muted-foreground mb-4">
-          Our Work
-        </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 text-balance">
-          Stories That Communicate Real Impact
-        </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="text-lg text-muted-foreground max-w-2xl mb-16">
-          Ikamba produces documentaries, video stories, and photography that communicate real impact. Our work focuses on capturing authentic stories that inspire action and build trust.
-        </motion.p>
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* Editorial header */}
+      <section className="section-padding pt-32 pb-12 md:pt-40 md:pb-16">
+        <div className="max-w-7xl mx-auto">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-6">
+            Selected Work · 2024 – 2025
+          </motion.p>
+          <div className="grid md:grid-cols-12 gap-6 items-end">
+            <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              className="md:col-span-8 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.02] text-balance">
+              Stories that communicate <span className="text-accent">real impact.</span>
+            </motion.h1>
+            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+              className="md:col-span-4 text-base text-muted-foreground leading-relaxed">
+              Documentaries, campaigns and photography produced under iKAMBA's structured production system —
+              every story archived, governed and on time.
+            </motion.p>
+          </div>
+
+          {/* Category filters */}
+          <div className="mt-10 flex flex-wrap gap-2">
+            {categories.map(c => (
+              <button key={c} onClick={() => setActive(c)}
+                className={`px-4 py-2 rounded-full text-xs uppercase tracking-widest font-semibold border transition-all ${active === c
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-transparent text-foreground border-border hover:border-accent hover:text-accent"
+                  }`}>
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bento grid */}
+      <section className="px-4 md:px-8 pb-24">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 auto-rows-[280px] md:auto-rows-[340px] gap-4 md:gap-6">
           {projects.map((p, i) => (
-            <Card3D key={i} className="group">
-              <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={i}
-                className="bg-card border border-border rounded-xl overflow-hidden h-full shadow-[0_2px_12px_hsl(var(--foreground)/0.04)] hover:shadow-[0_12px_40px_hsl(var(--foreground)/0.1)] hover:border-accent/30 transition-all duration-300">
-                <div className="h-48 overflow-hidden">
-                  <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                </div>
-                <div className="p-8">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                      <p.icon className="text-accent" size={20} />
+            <motion.div key={p.slug}
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }} transition={{ delay: (i % 6) * 0.06, duration: 0.5 }}
+              className={`group relative overflow-hidden rounded-2xl bg-card border border-border ${spanClass(p.span)}`}>
+              <Link to={`/work/${p.slug}`} className="block h-full w-full">
+                <div className={`relative ${heightClass(p.span)} w-full overflow-hidden`}>
+                  <img src={p.cover} alt={p.title} loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                  {/* Top meta */}
+                  <div className="absolute top-4 left-4 right-4 flex items-start justify-between text-[10px] uppercase tracking-[0.2em] text-white/85 font-semibold">
+                    <span className="bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">{p.category}</span>
+                    <span className="opacity-80">{p.year}</span>
+                  </div>
+                  {/* Bottom title block */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7 text-white">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-2">{p.client}</p>
+                    <h3 className="text-xl md:text-2xl font-bold leading-tight max-w-[90%]">{p.title}</h3>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="flex flex-wrap gap-1.5 text-[10px] uppercase tracking-widest text-white/70">
+                        {p.services.slice(0, 3).map(s => <span key={s} className="border border-white/20 rounded-full px-2 py-0.5">{s}</span>)}
+                      </div>
+                      <span className="inline-flex items-center justify-center h-9 w-9 rounded-full bg-accent text-accent-foreground translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <ArrowUpRight size={16} />
+                      </span>
                     </div>
-                    <span className="text-xs uppercase tracking-widest text-accent font-semibold">{p.category}</span>
-                  </div>
-                  <h3 className="text-lg font-bold mb-1 text-foreground">{p.title}</h3>
-                  <p className="text-xs text-muted-foreground mb-3">{p.client}</p>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">{p.desc}</p>
-                  <div className="bg-accent/5 border border-accent/10 rounded-lg px-4 py-3">
-                    <p className="text-xs font-semibold text-accent-foreground">Result</p>
-                    <p className="text-sm text-foreground">{p.result}</p>
                   </div>
                 </div>
-              </motion.div>
-            </Card3D>
+              </Link>
+            </motion.div>
           ))}
         </div>
 
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}
-          className="mt-16 text-center">
-          <p className="text-lg text-muted-foreground mb-6">Interested in working together on your next storytelling project?</p>
-          <Link to="/start-a-project">
-            <Button variant="hero" size="lg">
-              Start a Project <ArrowRight className="ml-1" size={16} />
-            </Button>
-          </Link>
-        </motion.div>
-      </div>
-    </section>
-    <Footer />
-  </div>
-);
+        {/* CTA */}
+        <div className="max-w-7xl mx-auto mt-20 border-t border-border pt-12 grid md:grid-cols-2 gap-8 items-end">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+            Have a story worth governing well?
+          </h2>
+          <div className="md:text-right">
+            <Link to="/start-a-project"
+              className="inline-flex items-center gap-2 text-base font-semibold border-b-2 border-accent pb-1 hover:gap-3 transition-all">
+              Start a project <ArrowUpRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
 
 export default Work;
