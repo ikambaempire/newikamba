@@ -11,6 +11,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TrustedBySlider from "@/components/home/TrustedBySlider";
+import SelectedWork from "@/components/home/SelectedWork";
 import Card3D from "@/components/home/Card3D";
 import HeroBackgroundVideo from "@/components/home/HeroBackgroundVideo";
 import SlicedImageCarousel from "@/components/home/SlicedImageCarousel";
