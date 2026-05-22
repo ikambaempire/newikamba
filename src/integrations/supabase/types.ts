@@ -666,6 +666,39 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_logos: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string
+          name: string
+          sort_order: number
+          updated_at: string
+          visible: boolean
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+          visible?: boolean
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          visible?: boolean
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       popup_settings: {
         Row: {
           accent_color: string | null
