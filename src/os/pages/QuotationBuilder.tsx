@@ -115,11 +115,29 @@ const QuotationBuilder = () => {
       const { error } = await (supabase as any).from("os_quotations").update(payload).eq("id", qid);
       if (error) { setSaving(false); toast.error(error.message); return null; }
     }
-    // Replace items + costs
+    // Replace items + costs (strip client-only fields and surface errors)
     await (supabase as any).from("os_quotation_items").delete().eq("quotation_id", qid);
-    if (items.length) await (supabase as any).from("os_quotation_items").insert(items.map((it, idx) => ({ ...it, id: undefined, quotation_id: qid, position: idx, amount: it.quantity * it.unit_price })));
+    if (items.length) {
+      const rows = items.map((it, idx) => ({
+        quotation_id: qid,
+        kind: it.kind,
+        position: idx,
+        name: it.name || "Item",
+        description: it.description || null,
+        quantity: Number(it.quantity) || 0,
+        unit_price: Number(it.unit_price) || 0,
+        amount: (Number(it.quantity) || 0) * (Number(it.unit_price) || 0),
+        included: it.included !== false,
+      }));
+      const { error: itErr } = await (supabase as any).from("os_quotation_items").insert(rows);
+      if (itErr) { setSaving(false); toast.error("Items: " + itErr.message); return null; }
+    }
     await (supabase as any).from("os_quotation_costs").delete().eq("quotation_id", qid);
-    if (costs.length) await (supabase as any).from("os_quotation_costs").insert(costs.map((c) => ({ ...c, id: undefined, quotation_id: qid })));
+    if (costs.length) {
+      const rows = costs.map((c) => ({ quotation_id: qid, category: c.category, description: c.description || null, amount: Number(c.amount) || 0 }));
+      const { error: cErr } = await (supabase as any).from("os_quotation_costs").insert(rows);
+      if (cErr) { setSaving(false); toast.error("Costs: " + cErr.message); return null; }
+    }
     setSaving(false);
     toast.success("Saved");
     if (isNew) navigate(`/os/quotations/${qid}`, { replace: true });
