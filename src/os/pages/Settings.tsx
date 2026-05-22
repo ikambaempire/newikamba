@@ -6,6 +6,7 @@ import { PageHeader, Badge, OSButton, Input } from "@/os/components/ui";
 import { PRODUCT_LINES, SERVICE_CATEGORIES, PIPELINE_STAGES, COST_CATEGORIES } from "@/os/mock/data";
 import { hasAdminRole } from "@/os/access";
 import { Plus, X, Shield, Lock, LayoutGrid } from "lucide-react";
+import PartnerLogosManager from "@/components/admin/PartnerLogosManager";
 import { toast } from "sonner";
 
 const STORE_KEY = "ikamba.os.settings.v1";
