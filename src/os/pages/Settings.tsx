@@ -163,15 +163,26 @@ const Settings = () => {
         }
       />
       {canEdit && (
-        <section className="os-card rounded-xl p-5 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <h3 className="text-white font-bold">Popup Management</h3>
-            <p className="text-sm text-os-muted">Create, edit, delete, and choose where website popups appear.</p>
-          </div>
-          <Link to="/admin">
-            <OSButton variant="primary"><LayoutGrid size={14} /> Open Popup Management</OSButton>
-          </Link>
-        </section>
+        <>
+          <section className="os-card rounded-xl p-5 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 className="text-white font-bold">Popup Management</h3>
+              <p className="text-sm text-os-muted">Create, edit, delete, and choose where website popups appear.</p>
+            </div>
+            <Link to="/admin">
+              <OSButton variant="primary"><LayoutGrid size={14} /> Open Popup Management</OSButton>
+            </Link>
+          </section>
+          <section className="os-card rounded-xl p-5 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-white font-bold">Partner Logos</h3>
+                <p className="text-sm text-os-muted">Add, hide or remove the logos shown in "Trusted by Organizations Across Africa" on the website.</p>
+              </div>
+            </div>
+            <PartnerLogosManager />
+          </section>
+        </>
       )}
       <div className="grid lg:grid-cols-2 gap-4">
         {blocks.map((b) => (
