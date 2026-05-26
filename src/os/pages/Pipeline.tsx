@@ -242,9 +242,121 @@ const Pipeline = () => {
           setImportOpen(false);
         }}
       />
+
+      <ColumnsModal
+        open={colsOpen}
+        onClose={() => setColsOpen(false)}
+        cols={cols}
+        onSave={async (next) => {
+          setCols(next);
+          const r = await savePipelineColumns(next);
+          if (r.ok) toast.success("Columns updated for everyone");
+          else toast.error(r.error || "Could not save columns");
+          setColsOpen(false);
+        }}
+      />
     </div>
   );
 };
+
+// ── Admin column manager ───────────────────────────────────────────────────
+const slugifyKey = (s: string) =>
+  "cf_" + s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40);
+
+const ColumnsModal = ({ open, onClose, cols, onSave }: { open: boolean; onClose: () => void; cols: PipelineColumn[]; onSave: (next: PipelineColumn[]) => void }) => {
+  const [draft, setDraft] = useState<PipelineColumn[]>(cols);
+  const [newLabel, setNewLabel] = useState("");
+  const [newType, setNewType] = useState<"text" | "date" | "number">("text");
+
+  // Re-sync when modal reopens
+  useMemo(() => { if (open) setDraft(cols); return null; }, [open, cols]);
+
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= draft.length) return;
+    const next = [...draft];
+    [next[i], next[j]] = [next[j], next[i]];
+    setDraft(next);
+  };
+  const rename = (i: number, label: string) => setDraft(draft.map((c, k) => k === i ? { ...c, label } : c));
+  const toggleVis = (i: number) => setDraft(draft.map((c, k) => k === i ? { ...c, visible: !c.visible } : c));
+  const remove = (i: number) => setDraft(draft.filter((_, k) => k !== i));
+  const addCol = () => {
+    const label = newLabel.trim();
+    if (!label) return;
+    const key = slugifyKey(label);
+    if (draft.some((c) => c.key === key)) return toast.error("A column with a similar name already exists");
+    setDraft([...draft, { key, label, builtin: false, visible: true, type: newType }]);
+    setNewLabel(""); setNewType("text");
+  };
+  const resetDefaults = () => setDraft(BUILTIN_COLUMNS);
+
+  return (
+    <Modal open={open} onClose={onClose} title="Manage pipeline columns">
+      <div className="space-y-4 text-sm">
+        <p className="text-os-muted text-xs">
+          Rename, reorder, hide built-in columns, or add your own (text, date, number). Changes apply to everyone on the team.
+        </p>
+
+        <div className="rounded-lg border border-os overflow-hidden">
+          <div className="grid grid-cols-[1fr_120px_110px_60px] gap-2 px-3 py-2 bg-white/5 text-[11px] uppercase tracking-wider text-os-muted">
+            <div>Label</div>
+            <div>Type</div>
+            <div>Order</div>
+            <div className="text-right">…</div>
+          </div>
+          <div className="divide-y divide-os/50 max-h-[50vh] overflow-y-auto">
+            {draft.map((c, i) => (
+              <div key={c.key} className="grid grid-cols-[1fr_120px_110px_60px] gap-2 items-center px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <Input value={c.label} onChange={(e) => rename(i, e.target.value)} className="!py-1.5" />
+                  {c.builtin && <span className="text-[10px] text-os-muted">built-in</span>}
+                </div>
+                <div className="text-os-muted text-xs">{c.builtin ? "—" : (c.type || "text")}</div>
+                <div className="flex gap-1">
+                  <button onClick={() => move(i, -1)} className="p-1.5 rounded hover:bg-white/10 text-os-muted hover:text-white" title="Move up"><ArrowUp size={13} /></button>
+                  <button onClick={() => move(i, 1)} className="p-1.5 rounded hover:bg-white/10 text-os-muted hover:text-white" title="Move down"><ArrowDown size={13} /></button>
+                </div>
+                <div className="flex justify-end gap-1">
+                  <button onClick={() => toggleVis(i)} className="p-1.5 rounded hover:bg-white/10 text-os-muted hover:text-white" title={c.visible ? "Hide" : "Show"}>
+                    {c.visible ? <Eye size={13} /> : <EyeOff size={13} />}
+                  </button>
+                  {!c.builtin && (
+                    <button onClick={() => remove(i)} className="p-1.5 rounded hover:bg-rose-500/15 text-rose-300" title="Delete column"><Trash2 size={13} /></button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-os bg-white/[0.02] p-3">
+          <div className="text-white font-semibold text-[13px] mb-2">Add a new column</div>
+          <div className="grid grid-cols-[1fr_140px_auto] gap-2 items-end">
+            <Field label="Column name"><Input value={newLabel} onChange={(e) => setNewLabel(e.target.value)} placeholder="e.g. Meeting date" /></Field>
+            <Field label="Type">
+              <Select value={newType} onChange={(e) => setNewType(e.target.value as any)}>
+                <option value="text">Text</option>
+                <option value="date">Date</option>
+                <option value="number">Number</option>
+              </Select>
+            </Field>
+            <OSButton variant="primary" onClick={addCol}><Plus size={14} /> Add</OSButton>
+          </div>
+        </div>
+
+        <div className="flex justify-between">
+          <OSButton variant="ghost" onClick={resetDefaults}>Reset to defaults</OSButton>
+          <div className="flex gap-2">
+            <OSButton variant="outline" onClick={onClose}>Cancel</OSButton>
+            <OSButton variant="primary" onClick={() => onSave(draft)}>Save for team</OSButton>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 
 const REQUIRED_HINT = ["name", "client"];
 const KNOWN_FIELDS = ["name","client","contact_person","phone","email","product_line","service","stage","value","shoot_date","deadline","location","owner","notes","budget_range","objective","deliverables"];
