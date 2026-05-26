@@ -30,10 +30,12 @@ const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue"
 };
 
 const Pipeline = () => {
-  const { projects, updateProjectStage } = useOSStore();
+  const { projects, updateProjectStage, addProject } = useOSStore();
+  const { user } = useAuth();
   const [query, setQuery] = useState("");
   const [stageFilter, setStageFilter] = useState<"All" | PipelineStage>("All");
   const [lineFilter, setLineFilter] = useState<string>("All");
+  const [importOpen, setImportOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
