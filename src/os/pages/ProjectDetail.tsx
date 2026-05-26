@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton, Modal, Field, Input, Textarea, Select } from "@/os/components/ui";
-import { COST_CATEGORIES, DEFAULT_TASKS, PIPELINE_STAGES, fmtRWF, type PipelineStage } from "@/os/mock/data";
-import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt } from "lucide-react";
+import { COST_CATEGORIES, DEFAULT_TASKS, PIPELINE_STAGES, PRODUCT_LINES, SERVICE_CATEGORIES, fmtRWF, type PipelineStage } from "@/os/mock/data";
+import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const TABS = ["Overview","Scope","Schedule","Tasks","Team","Quotation","Costs","Payments","Files","Notes","Activity Log"] as const;
@@ -22,6 +22,7 @@ const ProjectDetail = () => {
   const [costOpen, setCostOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [schedOpen, setSchedOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (!p) return <div className="text-white">Project not found. <Link to="/os/pipeline" className="text-os-gold">Back to pipeline</Link></div>;
 
@@ -42,9 +43,12 @@ const ProjectDetail = () => {
         title={p.name}
         subtitle={`${p.client} · ${p.product_line} · ${p.service}`}
         actions={
-          <Select value={p.stage} onChange={(e) => { updateProjectStage(p.id, e.target.value as PipelineStage); toast.success("Stage updated"); }} className="max-w-[200px]">
-            {PIPELINE_STAGES.map((s) => <option key={s}>{s}</option>)}
-          </Select>
+          <>
+            <OSButton variant="outline" onClick={() => setEditOpen(true)}><Pencil size={14} /> Edit project</OSButton>
+            <Select value={p.stage} onChange={(e) => { updateProjectStage(p.id, e.target.value as PipelineStage); toast.success("Stage updated"); }} className="max-w-[200px]">
+              {PIPELINE_STAGES.map((s) => <option key={s}>{s}</option>)}
+            </Select>
+          </>
         }
       />
 
@@ -233,9 +237,50 @@ const ProjectDetail = () => {
       <Modal open={schedOpen} onClose={() => setSchedOpen(false)} title="Add Schedule">
         <ScheduleForm onSubmit={(e) => { addScheduleEvent({ ...e, project_id: p.id }); setSchedOpen(false); toast.success("Event added"); }} />
       </Modal>
+      <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Edit project">
+        <EditProjectForm project={p} onSave={(patch) => { updateProject(p.id, patch); setEditOpen(false); toast.success("Project updated"); }} />
+      </Modal>
     </div>
   );
 };
+
+const EditProjectForm = ({ project, onSave }: { project: any; onSave: (patch: any) => void }) => {
+  const [f, setF] = useState({
+    name: project.name || "", client: project.client || "",
+    contact_person: project.contact_person || "", phone: project.phone || "", email: project.email || "",
+    product_line: project.product_line || PRODUCT_LINES[0], service: project.service || SERVICE_CATEGORIES[0],
+    objective: project.objective || "", deliverables: project.deliverables || "",
+    shoot_date: project.shoot_date || "", deadline: project.deadline || "", location: project.location || "",
+    value: String(project.value || 0), payment_terms: project.payment_terms || "",
+    owner: project.owner || "", notes: project.notes || "", references: project.references || "",
+  });
+  const set = (k: string, v: string) => setF((p) => ({ ...p, [k]: v }));
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); onSave({ ...f, value: Number(f.value) || 0 }); }} className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Project name"><Input value={f.name} onChange={(e) => set("name", e.target.value)} required /></Field>
+        <Field label="Client"><Input value={f.client} onChange={(e) => set("client", e.target.value)} required /></Field>
+        <Field label="Contact person"><Input value={f.contact_person} onChange={(e) => set("contact_person", e.target.value)} /></Field>
+        <Field label="Phone"><Input value={f.phone} onChange={(e) => set("phone", e.target.value)} /></Field>
+        <Field label="Email"><Input type="email" value={f.email} onChange={(e) => set("email", e.target.value)} /></Field>
+        <Field label="Owner"><Input value={f.owner} onChange={(e) => set("owner", e.target.value)} /></Field>
+        <Field label="Product line"><Select value={f.product_line} onChange={(e) => set("product_line", e.target.value)}>{PRODUCT_LINES.map((x) => <option key={x}>{x}</option>)}</Select></Field>
+        <Field label="Service"><Select value={f.service} onChange={(e) => set("service", e.target.value)}>{SERVICE_CATEGORIES.map((x) => <option key={x}>{x}</option>)}</Select></Field>
+        <Field label="Shoot date"><Input type="date" value={f.shoot_date} onChange={(e) => set("shoot_date", e.target.value)} /></Field>
+        <Field label="Deadline"><Input type="date" value={f.deadline} onChange={(e) => set("deadline", e.target.value)} /></Field>
+        <Field label="Location"><Input value={f.location} onChange={(e) => set("location", e.target.value)} /></Field>
+        <Field label="Project value (RWF)"><Input type="number" value={f.value} onChange={(e) => set("value", e.target.value)} /></Field>
+      </div>
+      <Field label="Payment terms"><Input value={f.payment_terms} onChange={(e) => set("payment_terms", e.target.value)} /></Field>
+      <Field label="Objective"><Textarea rows={2} value={f.objective} onChange={(e) => set("objective", e.target.value)} /></Field>
+      <Field label="Deliverables"><Textarea rows={2} value={f.deliverables} onChange={(e) => set("deliverables", e.target.value)} /></Field>
+      <Field label="References"><Input value={f.references} onChange={(e) => set("references", e.target.value)} /></Field>
+      <Field label="Notes"><Textarea rows={3} value={f.notes} onChange={(e) => set("notes", e.target.value)} /></Field>
+      <div className="flex justify-end pt-2"><OSButton type="submit" variant="primary">Save changes</OSButton></div>
+    </form>
+  );
+};
+
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div><div className="text-os-muted text-xs uppercase tracking-wider">{label}</div><div className="text-white mt-0.5">{children}</div></div>

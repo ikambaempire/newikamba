@@ -99,6 +99,14 @@ const NewProject = () => {
         `/os/projects/${id}`,
       );
     }
+    if (user && (f.shoot_date || f.deadline)) {
+      const { syncProjectDatesToCalendar } = await import("@/os/utils/calendarSync");
+      const r = await syncProjectDatesToCalendar({
+        userId: user.id, projectId: id, projectName: f.name, client: f.client,
+        shootDate: f.shoot_date || null, deadline: f.deadline || null, location: f.location || null,
+      });
+      if (r.ok && (r.count || 0) > 0) toast.success(`${r.count} calendar event(s) added`);
+    }
     toast.success("Project created");
     setSubmitting(false);
     navigate(`/os/projects/${id}`);
