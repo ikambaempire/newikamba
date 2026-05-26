@@ -22,6 +22,7 @@ const ProjectDetail = () => {
   const [costOpen, setCostOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [schedOpen, setSchedOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (!p) return <div className="text-white">Project not found. <Link to="/os/pipeline" className="text-os-gold">Back to pipeline</Link></div>;
 
