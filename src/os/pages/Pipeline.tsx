@@ -53,13 +53,27 @@ const Pipeline = () => {
     return { count: filtered.length, value, paid, balance: value - paid };
   }, [filtered]);
 
+  const exportCsv = () => {
+    const headers = ["name","client","contact_person","phone","email","product_line","service","stage","value","paid","shoot_date","deadline","location","owner","payment_status"];
+    const rows = filtered.map((p) => headers.map((h) => (p as any)[h] ?? ""));
+    downloadCSV(`ikamba-pipeline-${new Date().toISOString().slice(0,10)}.csv`, toCSV(headers, rows));
+    toast.success(`Exported ${rows.length} projects`);
+  };
+
   return (
     <div>
       <PageHeader
         title="Projects Pipeline"
-        subtitle="Spreadsheet-style view. Update any project's status from its row dropdown."
-        actions={<Link to="/os/projects/new"><OSButton variant="primary"><Plus size={16} /> Create Project</OSButton></Link>}
+        subtitle="Spreadsheet-style view. Import from CSV or Google Sheets, export anytime."
+        actions={
+          <>
+            <OSButton variant="outline" onClick={() => setImportOpen(true)}><Upload size={14} /> Import</OSButton>
+            <OSButton variant="outline" onClick={exportCsv}><Download size={14} /> Export CSV</OSButton>
+            <Link to="/os/projects/new"><OSButton variant="primary"><Plus size={16} /> Create Project</OSButton></Link>
+          </>
+        }
       />
+
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         <KPI label="Projects" value={totals.count} />
