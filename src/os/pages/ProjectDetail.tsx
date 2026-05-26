@@ -43,9 +43,12 @@ const ProjectDetail = () => {
         title={p.name}
         subtitle={`${p.client} · ${p.product_line} · ${p.service}`}
         actions={
-          <Select value={p.stage} onChange={(e) => { updateProjectStage(p.id, e.target.value as PipelineStage); toast.success("Stage updated"); }} className="max-w-[200px]">
-            {PIPELINE_STAGES.map((s) => <option key={s}>{s}</option>)}
-          </Select>
+          <>
+            <OSButton variant="outline" onClick={() => setEditOpen(true)}><Pencil size={14} /> Edit project</OSButton>
+            <Select value={p.stage} onChange={(e) => { updateProjectStage(p.id, e.target.value as PipelineStage); toast.success("Stage updated"); }} className="max-w-[200px]">
+              {PIPELINE_STAGES.map((s) => <option key={s}>{s}</option>)}
+            </Select>
+          </>
         }
       />
 
