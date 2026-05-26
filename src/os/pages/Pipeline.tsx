@@ -1,9 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
-import { PageHeader, Badge, PaymentBadge, OSButton, Input, Select } from "@/os/components/ui";
+import { useAuth } from "@/hooks/useAuth";
+import { PageHeader, Badge, PaymentBadge, OSButton, Input, Select, Modal, Field, Textarea } from "@/os/components/ui";
 import { PIPELINE_STAGES, PRODUCT_LINES, fmtRWF, type PipelineStage } from "@/os/mock/data";
-import { Plus, Search, ExternalLink } from "lucide-react";
+import { Plus, Search, ExternalLink, Upload, Download, Link2 } from "lucide-react";
+import { parseCSV, rowsToObjects, toCSV, downloadCSV, fetchSheetAsCSV } from "@/os/utils/csv";
+import { syncProjectDatesToCalendar } from "@/os/utils/calendarSync";
+import { toast } from "sonner";
 
 const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue" | "red"> = {
   "New Request": "blue",
