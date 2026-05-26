@@ -269,7 +269,7 @@ const ColumnsModal = ({ open, onClose, cols, onSave }: { open: boolean; onClose:
   const [newType, setNewType] = useState<"text" | "date" | "number">("text");
 
   // Re-sync when modal reopens
-  useMemo(() => { if (open) setDraft(cols); return null; }, [open, cols]);
+  useEffect(() => { if (open) setDraft(cols); }, [open, cols]);
 
   const move = (i: number, dir: -1 | 1) => {
     const j = i + dir;
