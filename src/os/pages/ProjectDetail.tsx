@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton, Modal, Field, Input, Textarea, Select } from "@/os/components/ui";
-import { COST_CATEGORIES, DEFAULT_TASKS, PIPELINE_STAGES, fmtRWF, type PipelineStage } from "@/os/mock/data";
-import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt } from "lucide-react";
+import { COST_CATEGORIES, DEFAULT_TASKS, PIPELINE_STAGES, PRODUCT_LINES, SERVICE_CATEGORIES, fmtRWF, type PipelineStage } from "@/os/mock/data";
+import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const TABS = ["Overview","Scope","Schedule","Tasks","Team","Quotation","Costs","Payments","Files","Notes","Activity Log"] as const;
