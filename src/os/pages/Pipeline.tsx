@@ -119,44 +119,61 @@ const Pipeline = () => {
           <table className="w-full text-sm min-w-[1000px]">
             <thead className="bg-white/5 sticky top-0">
               <tr className="text-left text-os-muted text-xs uppercase tracking-wider">
-                <th className="p-3">Project</th>
-                <th className="p-3">Client</th>
-                <th className="p-3">Service</th>
-                <th className="p-3">Owner</th>
-                <th className="p-3 w-56">Status</th>
-                <th className="p-3 text-right">Value</th>
-                <th className="p-3 text-right">Paid</th>
-                <th className="p-3">Payment</th>
-                <th className="p-3">Deadline</th>
+                {visibleCols.map((c) => (
+                  <th key={c.key} className={`p-3 ${c.key === "value" || c.key === "paid" ? "text-right" : ""} ${c.key === "stage" ? "w-56" : ""}`}>{c.label}</th>
+                ))}
                 <th className="p-3 w-10" />
               </tr>
             </thead>
             <tbody>
               {filtered.map((p, i) => (
                 <tr key={p.id} className={`border-t border-os/50 hover:bg-white/5 ${i % 2 === 1 ? "bg-white/[0.02]" : ""}`}>
-                  <td className="p-3">
-                    <Link to={`/os/projects/${p.id}`} className="text-white font-semibold hover:text-os-gold">{p.name}</Link>
-                    <div className="text-[10px] text-os-muted mt-0.5">{p.product_line}</div>
-                  </td>
-                  <td className="p-3 text-os-muted">{p.client}</td>
-                  <td className="p-3"><Badge tone="blue">{p.service}</Badge></td>
-                  <td className="p-3 text-os-muted">{p.owner}</td>
-                  <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full shrink-0 bg-current text-${STAGE_TONE[p.stage] === "green" ? "emerald" : STAGE_TONE[p.stage] === "amber" ? "amber" : STAGE_TONE[p.stage] === "red" ? "rose" : STAGE_TONE[p.stage] === "blue" ? "sky" : "yellow"}-400`} />
-                      <Select
-                        value={p.stage}
-                        onChange={(e) => updateProjectStage(p.id, e.target.value as PipelineStage)}
-                        className="!py-1.5 text-xs"
-                      >
-                        {PIPELINE_STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
-                      </Select>
-                    </div>
-                  </td>
-                  <td className="p-3 text-white font-semibold text-right whitespace-nowrap">{fmtRWF(p.value)}</td>
-                  <td className="p-3 text-emerald-300 text-right whitespace-nowrap">{fmtRWF(p.paid)}</td>
-                  <td className="p-3"><PaymentBadge status={p.payment_status} /></td>
-                  <td className="p-3 text-os-muted whitespace-nowrap">{p.deadline || "—"}</td>
+                  {visibleCols.map((c) => {
+                    if (c.builtin) {
+                      switch (c.key) {
+                        case "name": return (
+                          <td key={c.key} className="p-3">
+                            <Link to={`/os/projects/${p.id}`} className="text-white font-semibold hover:text-os-gold">{p.name}</Link>
+                            <div className="text-[10px] text-os-muted mt-0.5">{p.product_line}</div>
+                          </td>
+                        );
+                        case "client":  return <td key={c.key} className="p-3 text-os-muted">{p.client}</td>;
+                        case "service": return <td key={c.key} className="p-3"><Badge tone="blue">{p.service}</Badge></td>;
+                        case "owner":   return <td key={c.key} className="p-3 text-os-muted">{p.owner}</td>;
+                        case "stage":   return (
+                          <td key={c.key} className="p-3">
+                            <div className="flex items-center gap-2">
+                              <span className={`h-2 w-2 rounded-full shrink-0 bg-current text-${STAGE_TONE[p.stage] === "green" ? "emerald" : STAGE_TONE[p.stage] === "amber" ? "amber" : STAGE_TONE[p.stage] === "red" ? "rose" : STAGE_TONE[p.stage] === "blue" ? "sky" : "yellow"}-400`} />
+                              <Select value={p.stage} onChange={(e) => updateProjectStage(p.id, e.target.value as PipelineStage)} className="!py-1.5 text-xs">
+                                {PIPELINE_STAGES.map((s) => <option key={s} value={s}>{s}</option>)}
+                              </Select>
+                            </div>
+                          </td>
+                        );
+                        case "value":          return <td key={c.key} className="p-3 text-white font-semibold text-right whitespace-nowrap">{fmtRWF(p.value)}</td>;
+                        case "paid":           return <td key={c.key} className="p-3 text-emerald-300 text-right whitespace-nowrap">{fmtRWF(p.paid)}</td>;
+                        case "payment_status": return <td key={c.key} className="p-3"><PaymentBadge status={p.payment_status} /></td>;
+                        case "deadline":       return <td key={c.key} className="p-3 text-os-muted whitespace-nowrap">{p.deadline || "—"}</td>;
+                        default:               return <td key={c.key} className="p-3 text-os-muted">{(p as any)[c.key] ?? "—"}</td>;
+                      }
+                    }
+                    // Custom column — inline editable, stored in custom_fields JSONB
+                    const cf = ((p as any).custom_fields || {}) as Record<string, any>;
+                    const val = cf[c.key] ?? "";
+                    return (
+                      <td key={c.key} className="p-3">
+                        <Input
+                          type={c.type === "date" ? "date" : c.type === "number" ? "number" : "text"}
+                          value={val}
+                          onChange={(e) => {
+                            const next = { ...cf, [c.key]: e.target.value };
+                            updateProject(p.id, { custom_fields: next } as any);
+                          }}
+                          className="!py-1.5 text-xs"
+                        />
+                      </td>
+                    );
+                  })}
                   <td className="p-3 text-right">
                     <Link to={`/os/projects/${p.id}`} className="text-os-muted hover:text-os-gold inline-block">
                       <ExternalLink size={14} />
@@ -165,7 +182,7 @@ const Pipeline = () => {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={10} className="p-8 text-center text-os-muted">No projects match your filters.</td></tr>
+                <tr><td colSpan={visibleCols.length + 1} className="p-8 text-center text-os-muted">No projects match your filters.</td></tr>
               )}
             </tbody>
           </table>
