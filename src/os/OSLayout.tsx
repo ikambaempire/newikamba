@@ -12,6 +12,7 @@ import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
   hasAdminRole, type OSProfile, type OSToolKey,
 } from "@/os/access";
+import { useOSStore } from "@/os/store";
 
 const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os", icon: LayoutDashboard, label: "Dashboard", end: true },
