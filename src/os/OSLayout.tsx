@@ -92,6 +92,15 @@ const OSLayout = () => {
     });
   }, [user]);
 
+  // Load shared pipeline + subscribe to realtime so all team members see the same projects.
+  useEffect(() => {
+    if (!user) return;
+    const { loadPipeline, subscribePipeline, unsubscribePipeline } = useOSStore.getState();
+    loadPipeline();
+    subscribePipeline();
+    return () => unsubscribePipeline();
+  }, [user]);
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
