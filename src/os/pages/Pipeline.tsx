@@ -158,9 +158,125 @@ const Pipeline = () => {
           </table>
         </div>
       </div>
+
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImport={async (objs) => {
+          let added = 0, synced = 0;
+          for (const o of objs) {
+            const name = o.name || o.project || o.project_name;
+            const client = o.client || o.client_name || o.company;
+            if (!name || !client) continue;
+            const newId = addProject({
+              name, client,
+              contact_person: o.contact_person || o.contact || "",
+              phone: o.phone || "", email: o.email || "",
+              product_line: o.product_line || PRODUCT_LINES[0],
+              service: o.service || "Other",
+              objective: o.objective || "",
+              deliverables: o.deliverables || "",
+              shoot_date: o.shoot_date || o.shoot || "",
+              location: o.location || "",
+              deadline: o.deadline || o.due_date || "",
+              budget_range: o.budget_range || o.budget || "",
+              payment_terms: o.payment_terms || "",
+              owner: o.owner || o.assigned_to || "",
+              notes: o.notes || "",
+              references: o.references || "",
+              stage: (PIPELINE_STAGES.includes(o.stage as any) ? o.stage : "New Request") as PipelineStage,
+              value: Number(String(o.value || o.amount || "0").replace(/[^\d.-]/g, "")) || 0,
+            } as any);
+            added++;
+            if (user && (o.shoot_date || o.deadline)) {
+              const r = await syncProjectDatesToCalendar({
+                userId: user.id, projectId: newId, projectName: name, client,
+                shootDate: o.shoot_date || null, deadline: o.deadline || null,
+                location: o.location || null,
+              });
+              if (r.ok && (r.count || 0) > 0) synced += r.count || 0;
+            }
+          }
+          toast.success(`Imported ${added} project${added === 1 ? "" : "s"}${synced ? ` · ${synced} calendar event(s) added` : ""}`);
+          setImportOpen(false);
+        }}
+      />
     </div>
   );
 };
+
+const ImportModal = ({ open, onClose, onImport }: { open: boolean; onClose: () => void; onImport: (objs: any[]) => void | Promise<void> }) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [sheetUrl, setSheetUrl] = useState("");
+  const [pasted, setPasted] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const runImport = async (csv: string) => {
+    const rows = parseCSV(csv);
+    const objs = rowsToObjects(rows);
+    if (!objs.length) return toast.error("No rows found in CSV.");
+    await onImport(objs);
+  };
+
+  const onFile = async (f: File) => {
+    setBusy(true);
+    try { await runImport(await f.text()); } finally { setBusy(false); }
+  };
+
+  const onSheet = async () => {
+    if (!sheetUrl.trim()) return toast.error("Paste a Google Sheets link first.");
+    setBusy(true);
+    try {
+      const csv = await fetchSheetAsCSV(sheetUrl.trim());
+      await runImport(csv);
+    } catch (e: any) { toast.error(e?.message || "Could not import sheet"); }
+    finally { setBusy(false); }
+  };
+
+  return (
+    <Modal open={open} onClose={onClose} title="Import projects into pipeline">
+      <div className="space-y-4 text-sm">
+        <p className="text-os-muted text-xs">
+          Accepted columns (case-insensitive): <b>name, client, contact_person, phone, email, product_line, service, stage, value, shoot_date, deadline, location, owner, notes</b>.
+          Dates with values automatically appear in your calendar.
+        </p>
+
+        <Field label="Upload a CSV file">
+          <input ref={fileRef} type="file" accept=".csv,text/csv" hidden
+            onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
+          <OSButton variant="outline" onClick={() => fileRef.current?.click()} disabled={busy}>
+            <Upload size={14} /> Choose CSV file
+          </OSButton>
+        </Field>
+
+        <div className="border-t border-os pt-3">
+          <Field label="…or paste a Google Sheets link (sheet must be 'Anyone with the link can view')">
+            <div className="flex gap-2">
+              <Input value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)}
+                placeholder="https://docs.google.com/spreadsheets/d/…/edit#gid=0" />
+              <OSButton variant="primary" onClick={onSheet} disabled={busy}>
+                <Link2 size={14} /> {busy ? "Importing…" : "Pull data"}
+              </OSButton>
+            </div>
+          </Field>
+        </div>
+
+        <div className="border-t border-os pt-3">
+          <Field label="…or paste CSV text directly">
+            <Textarea rows={5} value={pasted} onChange={(e) => setPasted(e.target.value)}
+              placeholder="name,client,service,value,shoot_date,deadline&#10;Brand Launch,ACME,Corporate Video,1500000,2026-06-01,2026-06-15" />
+            <div className="mt-2 flex justify-end">
+              <OSButton variant="outline" onClick={() => pasted.trim() ? runImport(pasted) : toast.error("Paste some CSV first.")} disabled={busy}>
+                Import pasted CSV
+              </OSButton>
+            </div>
+          </Field>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
 
 const KPI = ({ label, value }: { label: string; value: string | number }) => (
   <div className="os-card rounded-xl p-4">
