@@ -12,6 +12,7 @@ import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
   hasAdminRole, type OSProfile, type OSToolKey,
 } from "@/os/access";
+import { useOSStore } from "@/os/store";
 
 const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -89,6 +90,15 @@ const OSLayout = () => {
       setOsProfile(getProfile(user.id));
       setTick((t) => t + 1);
     });
+  }, [user]);
+
+  // Load shared pipeline + subscribe to realtime so all team members see the same projects.
+  useEffect(() => {
+    if (!user) return;
+    const { loadPipeline, subscribePipeline, unsubscribePipeline } = useOSStore.getState();
+    loadPipeline();
+    subscribePipeline();
+    return () => unsubscribePipeline();
   }, [user]);
 
   const handleSignOut = async () => {
