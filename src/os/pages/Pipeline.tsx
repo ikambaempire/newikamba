@@ -216,74 +216,154 @@ const Pipeline = () => {
   );
 };
 
+const REQUIRED_HINT = ["name", "client"];
+const KNOWN_FIELDS = ["name","client","contact_person","phone","email","product_line","service","stage","value","shoot_date","deadline","location","owner","notes","budget_range","objective","deliverables"];
+
 const ImportModal = ({ open, onClose, onImport }: { open: boolean; onClose: () => void; onImport: (objs: any[]) => void | Promise<void> }) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const [sheetUrl, setSheetUrl] = useState("");
   const [pasted, setPasted] = useState("");
   const [busy, setBusy] = useState(false);
+  const [preview, setPreview] = useState<{ rows: Record<string, string>[]; headers: string[]; source: string } | null>(null);
+  const [drag, setDrag] = useState(false);
 
-  const runImport = async (csv: string) => {
+  const reset = () => { setPreview(null); setPasted(""); setSheetUrl(""); };
+
+  const loadPreview = (csv: string, source: string) => {
     const rows = parseCSV(csv);
+    if (rows.length < 2) { toast.error("CSV needs a header row and at least one data row."); return; }
     const objs = rowsToObjects(rows);
-    if (!objs.length) return toast.error("No rows found in CSV.");
-    await onImport(objs);
+    const headers = Object.keys(objs[0] || {});
+    setPreview({ rows: objs, headers, source });
   };
 
   const onFile = async (f: File) => {
     setBusy(true);
-    try { await runImport(await f.text()); } finally { setBusy(false); }
+    try { loadPreview(await f.text(), f.name); } finally { setBusy(false); }
   };
 
   const onSheet = async () => {
     if (!sheetUrl.trim()) return toast.error("Paste a Google Sheets link first.");
     setBusy(true);
-    try {
-      const csv = await fetchSheetAsCSV(sheetUrl.trim());
-      await runImport(csv);
-    } catch (e: any) { toast.error(e?.message || "Could not import sheet"); }
+    try { loadPreview(await fetchSheetAsCSV(sheetUrl.trim()), "Google Sheet"); }
+    catch (e: any) { toast.error(e?.message || "Could not import sheet"); }
     finally { setBusy(false); }
   };
 
+  const downloadSample = () => {
+    const sample = `name,client,service,product_line,stage,value,shoot_date,deadline,location,owner,notes\nBrand Launch Film,ACME Corp,Corporate Video,iKAMBA Media,New Request,1500000,2026-06-01,2026-06-15,Kigali,Eric,Hero film + 3 cutdowns\nWedding Highlights,John & Jane,Wedding,iKAMBA Weddings,Scheduled,800000,2026-07-12,2026-07-26,Serena Hotel,Aline,Full day coverage`;
+    downloadCSV("ikamba-sample-pipeline.csv", sample);
+  };
+
+  const handleClose = () => { reset(); onClose(); };
+
+  const missingRequired = preview ? REQUIRED_HINT.filter(r => !preview.headers.includes(r)) : [];
+  const validCount = preview ? preview.rows.filter(o => (o.name || "").trim()).length : 0;
+
   return (
-    <Modal open={open} onClose={onClose} title="Import projects into pipeline">
-      <div className="space-y-4 text-sm">
-        <p className="text-os-muted text-xs">
-          Accepted columns (case-insensitive): <b>name, client, contact_person, phone, email, product_line, service, stage, value, shoot_date, deadline, location, owner, notes</b>.
-          Dates with values automatically appear in your calendar.
-        </p>
+    <Modal open={open} onClose={handleClose} title={preview ? `Preview · ${preview.source}` : "Import projects into pipeline"}>
+      {!preview ? (
+        <div className="space-y-4 text-sm">
+          <div className="rounded-lg border border-os bg-white/[0.02] p-3 text-xs text-os-muted">
+            <div className="text-white font-semibold text-[13px] mb-1">How it works</div>
+            We auto-detect your columns (case-insensitive, spaces OK). Common names like <b>Project Name</b>, <b>Client</b>, <b>Status</b>, <b>Amount</b>, <b>Due Date</b> all work.{" "}
+            <button type="button" className="text-os-gold underline" onClick={downloadSample}>Download a sample CSV</button>
+          </div>
 
-        <Field label="Upload a CSV file">
-          <input ref={fileRef} type="file" accept=".csv,text/csv" hidden
-            onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-          <OSButton variant="outline" onClick={() => fileRef.current?.click()} disabled={busy}>
-            <Upload size={14} /> Choose CSV file
-          </OSButton>
-        </Field>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+            onDragLeave={() => setDrag(false)}
+            onDrop={(e) => {
+              e.preventDefault(); setDrag(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f) onFile(f);
+            }}
+            onClick={() => fileRef.current?.click()}
+            className={`cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-colors ${drag ? "border-os-gold bg-os-gold/10" : "border-os hover:border-os-gold/50 hover:bg-white/[0.03]"}`}
+          >
+            <Upload size={22} className="mx-auto text-os-muted mb-2" />
+            <div className="text-white font-semibold">Drop a CSV file here</div>
+            <div className="text-os-muted text-xs mt-1">or click to choose · supports .csv (comma, semicolon, or tab)</div>
+            <input ref={fileRef} type="file" accept=".csv,text/csv,.tsv,text/tab-separated-values" hidden
+              onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
+          </div>
 
-        <div className="border-t border-os pt-3">
-          <Field label="…or paste a Google Sheets link (sheet must be 'Anyone with the link can view')">
-            <div className="flex gap-2">
-              <Input value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)}
-                placeholder="https://docs.google.com/spreadsheets/d/…/edit#gid=0" />
-              <OSButton variant="primary" onClick={onSheet} disabled={busy}>
-                <Link2 size={14} /> {busy ? "Importing…" : "Pull data"}
+          <div className="border-t border-os pt-4">
+            <Field label="Import from Google Sheets (sheet must be shared as 'Anyone with the link can view')">
+              <div className="flex gap-2">
+                <Input value={sheetUrl} onChange={(e) => setSheetUrl(e.target.value)}
+                  placeholder="https://docs.google.com/spreadsheets/d/…/edit#gid=0" />
+                <OSButton variant="primary" onClick={onSheet} disabled={busy}>
+                  <Link2 size={14} /> {busy ? "Loading…" : "Load"}
+                </OSButton>
+              </div>
+            </Field>
+          </div>
+
+          <div className="border-t border-os pt-4">
+            <Field label="Or paste CSV text">
+              <Textarea rows={4} value={pasted} onChange={(e) => setPasted(e.target.value)}
+                placeholder="name,client,service,value,shoot_date,deadline&#10;Brand Launch,ACME,Corporate Video,1500000,2026-06-01,2026-06-15" />
+              <div className="mt-2 flex justify-end">
+                <OSButton variant="outline" onClick={() => pasted.trim() ? loadPreview(pasted, "Pasted CSV") : toast.error("Paste some CSV first.")} disabled={busy}>
+                  Preview
+                </OSButton>
+              </div>
+            </Field>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3 text-sm">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone="blue">{preview.rows.length} rows</Badge>
+            <Badge tone={validCount > 0 ? "green" : "red"}>{validCount} valid</Badge>
+            {missingRequired.length > 0 && <Badge tone="amber">Missing column: {missingRequired.join(", ")}</Badge>}
+            <div className="ml-auto flex gap-2">
+              <OSButton variant="ghost" onClick={() => setPreview(null)}>← Back</OSButton>
+              <OSButton
+                variant="primary"
+                disabled={busy || validCount === 0}
+                onClick={async () => { setBusy(true); try { await onImport(preview.rows); reset(); } finally { setBusy(false); } }}
+              >
+                Import {validCount} project{validCount === 1 ? "" : "s"}
               </OSButton>
             </div>
-          </Field>
-        </div>
+          </div>
 
-        <div className="border-t border-os pt-3">
-          <Field label="…or paste CSV text directly">
-            <Textarea rows={5} value={pasted} onChange={(e) => setPasted(e.target.value)}
-              placeholder="name,client,service,value,shoot_date,deadline&#10;Brand Launch,ACME,Corporate Video,1500000,2026-06-01,2026-06-15" />
-            <div className="mt-2 flex justify-end">
-              <OSButton variant="outline" onClick={() => pasted.trim() ? runImport(pasted) : toast.error("Paste some CSV first.")} disabled={busy}>
-                Import pasted CSV
-              </OSButton>
+          <div className="rounded-lg border border-os overflow-hidden">
+            <div className="overflow-x-auto max-h-72">
+              <table className="w-full text-xs">
+                <thead className="bg-white/5 sticky top-0">
+                  <tr>
+                    {preview.headers.slice(0, 8).map(h => (
+                      <th key={h} className={`px-2 py-1.5 text-left font-semibold ${KNOWN_FIELDS.includes(h) ? "text-os-gold" : "text-os-muted"}`}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {preview.rows.slice(0, 25).map((r, i) => (
+                    <tr key={i} className="border-t border-os/50">
+                      {preview.headers.slice(0, 8).map(h => (
+                        <td key={h} className="px-2 py-1.5 text-white/80 whitespace-nowrap max-w-[180px] truncate">{r[h] || "—"}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </Field>
+            {preview.rows.length > 25 && (
+              <div className="text-[10px] text-os-muted px-2 py-1 border-t border-os bg-white/5">…showing first 25 of {preview.rows.length}</div>
+            )}
+          </div>
+
+          <p className="text-[11px] text-os-muted">
+            Columns highlighted in gold are recognized. Unrecognized columns are ignored.
+            Rows without a project name are skipped.
+          </p>
         </div>
-      </div>
+      )}
     </Modal>
   );
 };
