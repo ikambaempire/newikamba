@@ -302,6 +302,108 @@ export type Database = {
         }
         Relationships: []
       }
+      os_pipeline_projects: {
+        Row: {
+          assigned_to_name: string | null
+          assigned_to_user_id: string | null
+          brief: string | null
+          budget_range: string | null
+          client: string
+          contact_person: string | null
+          costs_total: number
+          created_at: string
+          created_by: string | null
+          custom_fields: Json
+          deadline: string | null
+          deliverables: string | null
+          email: string | null
+          id: string
+          location: string | null
+          name: string
+          next_action: string | null
+          notes: string | null
+          objective: string | null
+          owner: string | null
+          paid: number
+          payment_status: string
+          payment_terms: string | null
+          phone: string | null
+          product_line: string | null
+          references: string | null
+          service: string | null
+          shoot_date: string | null
+          stage: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          assigned_to_name?: string | null
+          assigned_to_user_id?: string | null
+          brief?: string | null
+          budget_range?: string | null
+          client?: string
+          contact_person?: string | null
+          costs_total?: number
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json
+          deadline?: string | null
+          deliverables?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          next_action?: string | null
+          notes?: string | null
+          objective?: string | null
+          owner?: string | null
+          paid?: number
+          payment_status?: string
+          payment_terms?: string | null
+          phone?: string | null
+          product_line?: string | null
+          references?: string | null
+          service?: string | null
+          shoot_date?: string | null
+          stage?: string
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          assigned_to_name?: string | null
+          assigned_to_user_id?: string | null
+          brief?: string | null
+          budget_range?: string | null
+          client?: string
+          contact_person?: string | null
+          costs_total?: number
+          created_at?: string
+          created_by?: string | null
+          custom_fields?: Json
+          deadline?: string | null
+          deliverables?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          next_action?: string | null
+          notes?: string | null
+          objective?: string | null
+          owner?: string | null
+          paid?: number
+          payment_status?: string
+          payment_terms?: string | null
+          phone?: string | null
+          product_line?: string | null
+          references?: string | null
+          service?: string | null
+          shoot_date?: string | null
+          stage?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
       os_platform_settings: {
         Row: {
           items: string[]
