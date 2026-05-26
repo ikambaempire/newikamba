@@ -75,6 +75,11 @@ const Pipeline = () => {
         subtitle="Spreadsheet-style view. Import from CSV or Google Sheets, export anytime."
         actions={
           <>
+            {isAdmin && (
+              <OSButton variant="outline" onClick={() => setColsOpen(true)}>
+                <Columns3 size={14} /> Columns
+              </OSButton>
+            )}
             <OSButton variant="outline" onClick={() => setImportOpen(true)}><Upload size={14} /> Import</OSButton>
             <OSButton variant="outline" onClick={exportCsv}><Download size={14} /> Export CSV</OSButton>
             <Link to="/os/projects/new"><OSButton variant="primary"><Plus size={16} /> Create Project</OSButton></Link>
