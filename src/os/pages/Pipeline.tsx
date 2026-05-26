@@ -163,29 +163,36 @@ const Pipeline = () => {
         open={importOpen}
         onClose={() => setImportOpen(false)}
         onImport={async (objs) => {
-          let added = 0, synced = 0;
-          for (const o of objs) {
-            const name = o.name || o.project || o.project_name;
-            const client = o.client || o.client_name || o.company;
-            if (!name || !client) continue;
+          let added = 0, synced = 0, skipped = 0;
+          const skipReasons: string[] = [];
+          for (let i = 0; i < objs.length; i++) {
+            const o = objs[i];
+            const name = (o.name || "").trim();
+            const client = (o.client || "").trim();
+            if (!name && !client) { skipped++; skipReasons.push(`Row ${i + 2}: empty row`); continue; }
+            if (!name) { skipped++; skipReasons.push(`Row ${i + 2}: missing project name`); continue; }
+            const stageMatch = PIPELINE_STAGES.find(
+              s => s.toLowerCase() === String(o.stage || "").toLowerCase()
+            );
             const newId = addProject({
-              name, client,
-              contact_person: o.contact_person || o.contact || "",
+              name,
+              client: client || "—",
+              contact_person: o.contact_person || "",
               phone: o.phone || "", email: o.email || "",
               product_line: o.product_line || PRODUCT_LINES[0],
               service: o.service || "Other",
               objective: o.objective || "",
               deliverables: o.deliverables || "",
-              shoot_date: o.shoot_date || o.shoot || "",
+              shoot_date: o.shoot_date || "",
               location: o.location || "",
-              deadline: o.deadline || o.due_date || "",
-              budget_range: o.budget_range || o.budget || "",
+              deadline: o.deadline || "",
+              budget_range: o.budget_range || "",
               payment_terms: o.payment_terms || "",
-              owner: o.owner || o.assigned_to || "",
+              owner: o.owner || "",
               notes: o.notes || "",
               references: o.references || "",
-              stage: (PIPELINE_STAGES.includes(o.stage as any) ? o.stage : "New Request") as PipelineStage,
-              value: Number(String(o.value || o.amount || "0").replace(/[^\d.-]/g, "")) || 0,
+              stage: (stageMatch || "New Request") as PipelineStage,
+              value: Number(String(o.value || "0").replace(/[^\d.-]/g, "")) || 0,
             } as any);
             added++;
             if (user && (o.shoot_date || o.deadline)) {
@@ -197,7 +204,11 @@ const Pipeline = () => {
               if (r.ok && (r.count || 0) > 0) synced += r.count || 0;
             }
           }
-          toast.success(`Imported ${added} project${added === 1 ? "" : "s"}${synced ? ` · ${synced} calendar event(s) added` : ""}`);
+          if (added > 0) {
+            toast.success(`Imported ${added} project${added === 1 ? "" : "s"}${synced ? ` · ${synced} calendar event(s)` : ""}${skipped ? ` · ${skipped} skipped` : ""}`);
+          } else {
+            toast.error(`No projects imported. ${skipReasons[0] || "Check that your file has columns like name/project and client."}`);
+          }
           setImportOpen(false);
         }}
       />
