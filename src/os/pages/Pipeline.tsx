@@ -2,11 +2,13 @@ import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { useAuth } from "@/hooks/useAuth";
+import { hasAdminRole } from "@/os/access";
 import { PageHeader, Badge, PaymentBadge, OSButton, Input, Select, Modal, Field, Textarea } from "@/os/components/ui";
 import { PIPELINE_STAGES, PRODUCT_LINES, fmtRWF, type PipelineStage } from "@/os/mock/data";
-import { Plus, Search, ExternalLink, Upload, Download, Link2 } from "lucide-react";
+import { Plus, Search, ExternalLink, Upload, Download, Link2, Columns3, Trash2, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
 import { parseCSV, rowsToObjects, toCSV, downloadCSV, fetchSheetAsCSV } from "@/os/utils/csv";
 import { syncProjectDatesToCalendar } from "@/os/utils/calendarSync";
+import { usePipelineColumns, savePipelineColumns, BUILTIN_COLUMNS, type PipelineColumn } from "@/os/pipelineColumns";
 import { toast } from "sonner";
 
 const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue" | "red"> = {
