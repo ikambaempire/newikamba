@@ -7,6 +7,7 @@ import {
   ArrowRight, FileText, Video, Target, FolderOpen,
   Camera, Film, Image, Megaphone, Users, CheckCircle2,
   Clapperboard, Aperture, Focus, MonitorPlay, Mic, Headphones, Radio, Tv, Projector, Podcast, ScanLine,
+  Heart, HeartHandshake,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -822,6 +823,74 @@ const Index = () => {
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Wedding by Ikamba Product Showcase */}
+      <section id="products" className="section-padding relative overflow-hidden bg-background">
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+          <Heart className="absolute top-16 left-[10%] text-foreground" size={120} />
+          <Heart className="absolute bottom-20 right-[8%] text-foreground" size={80} />
+          <Heart className="absolute top-1/2 left-1/2 text-foreground" size={200} />
+        </div>
+        <div className="container-padding mx-auto max-w-7xl relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="order-2 lg:order-1 relative h-[380px] md:h-[460px]">
+              <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl border border-border">
+                <img
+                  src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80"
+                  alt="Wedding photography by Ikamba"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+              <motion.div
+                className="absolute -bottom-4 -right-4 md:right-6 bg-card border border-border rounded-xl p-4 shadow-xl"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
+                    <HeartHandshake className="text-accent" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">500+ Couples</p>
+                    <p className="text-[10px] text-muted-foreground">Captured across East Africa</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }} className="order-1 lg:order-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-4">
+                <Heart size={14} /> Our Product · Wedding by Ikamba
+              </span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 text-foreground">
+                Your Love Story, <span className="text-accent">Beautifully Told</span>
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-4 max-w-xl">
+                Premium wedding photography and cinematography across East Africa. From intimate ceremonies to grand celebrations, we capture every emotion, every detail, every moment.
+              </p>
+              <div className="grid grid-cols-3 gap-4 mb-6 max-w-md">
+                <div><div className="text-2xl font-extrabold text-accent">500+</div><div className="text-xs text-muted-foreground uppercase tracking-wide">Weddings Covered</div></div>
+                <div><div className="text-2xl font-extrabold text-accent">4</div><div className="text-xs text-muted-foreground uppercase tracking-wide">Countries</div></div>
+                <div><div className="text-2xl font-extrabold text-accent">98%</div><div className="text-xs text-muted-foreground uppercase tracking-wide">Happy Couples</div></div>
+              </div>
+              <ul className="space-y-2 mb-8 text-foreground/80">
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Cinematic wedding films with same-day edit options</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Professional photography — engagement, ceremony & reception</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Drone coverage for breathtaking aerial memories</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Custom albums and digital galleries delivered within 14 days</li>
+                <li className="flex items-start gap-2"><CheckCircle2 size={18} className="text-accent mt-0.5 flex-shrink-0" /> Dedicated team of 3-4 creatives per wedding</li>
+              </ul>
+              <a href="https://wedding.ikamba.africa/" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+                  Visit Wedding by Ikamba <ArrowRight size={18} className="ml-2" />
+                </Button>
+              </a>
             </motion.div>
           </div>
         </div>

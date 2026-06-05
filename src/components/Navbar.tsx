@@ -24,6 +24,7 @@ const navLinks: Array<{
     href: "#products",
     dropdown: [
       { label: "Resona", href: "https://resona.ikamba.africa/", desc: "The African podcast platform — create, distribute & grow", external: true },
+      { label: "Wedding by Ikamba", href: "https://wedding.ikamba.africa/", desc: "Premium wedding photography & film services across East Africa", external: true },
     ],
   },
   { label: "Work", href: "/work" },
