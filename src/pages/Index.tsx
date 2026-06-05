@@ -7,6 +7,7 @@ import {
   ArrowRight, FileText, Video, Target, FolderOpen,
   Camera, Film, Image, Megaphone, Users, CheckCircle2,
   Clapperboard, Aperture, Focus, MonitorPlay, Mic, Headphones, Radio, Tv, Projector, Podcast, ScanLine,
+  Heart, HeartHandshake,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
