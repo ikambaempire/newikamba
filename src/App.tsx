@@ -13,7 +13,7 @@ import Solutions from "./pages/Solutions";
 import ForTalents from "./pages/ForTalents";
 import Work from "./pages/Work";
 import CaseStudies from "./pages/CaseStudies";
-import HowItWorks from "./pages/HowItWorks";
+
 import Insights from "./pages/Insights";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -76,7 +76,7 @@ const AnimatedRoutes = () => {
         <Route path="/solutions/talents" element={<PageTransition><ForTalents /></PageTransition>} />
         <Route path="/work" element={<PageTransition><Work /></PageTransition>} />
         <Route path="/work/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
-        <Route path="/how-it-works" element={<PageTransition><HowItWorks /></PageTransition>} />
+        <Route path="/how-it-works" element={<Navigate to="/about" replace />} />
         <Route path="/case-studies" element={<PageTransition><CaseStudies /></PageTransition>} />
         <Route path="/case-studies/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
 

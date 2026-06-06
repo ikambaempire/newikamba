@@ -594,7 +594,7 @@ const Index = () => {
               iKAMBA helps organizations shape stronger narratives, produce high-quality visual content, and communicate in ways that inspire trust, visibility, and action.
             </motion.p>
             <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3} className="mt-8">
-              <Link to="/how-it-works">
+              <Link to="/about">
                 <Button variant="hero" size="lg">
                   Discover Our Approach <ArrowRight className="ml-1" size={16} />
                 </Button>
@@ -757,7 +757,7 @@ const Index = () => {
             ))}
           </div>
           <div className="mt-10">
-            <Link to="/how-it-works">
+            <Link to="/about">
               <Button variant="outline" size="sm" className="font-semibold border-white/30 text-white hover:bg-white/10">
                 Learn More <ArrowRight className="ml-1" size={14} />
               </Button>
