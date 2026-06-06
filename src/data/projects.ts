@@ -1,15 +1,18 @@
 // Centralized portfolio source for Work grid, Case Studies, ProjectDetail and homepage strip.
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
+import reel1Asset from "@/assets/reel1.mp4.asset.json";
+import reel2Asset from "@/assets/reel2.mp4.asset.json";
 
 export interface PortfolioProject {
   slug: string;
   title: string;
   client: string;
-  category: string;        // Documentary / Campaign / Photography ...
+  category: string;
   year: string;
   services: string[];
   cover: string;
+  video?: string;
   hero?: string;
   excerpt: string;
   challenge: string;
@@ -17,13 +20,45 @@ export interface PortfolioProject {
   outcome: string;
   metrics?: { label: string; value: string }[];
   gallery?: string[];
-  featured?: boolean;       // appears on homepage
-  span?: "wide" | "tall" | "normal"; // grid hint
+  featured?: boolean;
+  span?: "wide" | "tall" | "normal";
 }
 
 const u = (p: string) => `https://images.unsplash.com/${p}?auto=format&fit=crop&w=1600&q=80`;
 
 export const PROJECTS: PortfolioProject[] = [
+  {
+    slug: "behind-the-lens-rwanda",
+    title: "Behind the Lens — On Location",
+    client: "iKAMBA Productions",
+    category: "Reel",
+    year: "2025",
+    services: ["Reel", "Behind the scenes"],
+    cover: u("photo-1485846234645-a62644f84728"),
+    video: reel1Asset.url,
+    excerpt: "Behind-the-scenes look at how our crews capture story on location across East Africa.",
+    challenge: "Show the rhythm of production without breaking the moment.",
+    approach: "Minimal crew, observational camera, ambient pacing.",
+    outcome: "A signature look at how we work — quiet, focused, deliberate.",
+    featured: true,
+    span: "wide",
+  },
+  {
+    slug: "field-stories-east-africa",
+    title: "Field Stories — East Africa",
+    client: "iKAMBA Productions",
+    category: "Reel",
+    year: "2025",
+    services: ["Reel", "Documentary"],
+    cover: u("photo-1540575467063-178a50c2df87"),
+    video: reel2Asset.url,
+    excerpt: "Moments from recent field productions — community, craft and the quiet work of storytelling.",
+    challenge: "Compress a multi-day shoot into a single rhythmic piece.",
+    approach: "Tight selects, sync sound, one continuous tonal arc.",
+    outcome: "A reel that travels — used across social, decks and onboarding.",
+    featured: true,
+    span: "tall",
+  },
   {
     slug: "youth-entrepreneurship-east-africa",
     title: "Youth Entrepreneurship in East Africa",
@@ -31,7 +66,7 @@ export const PROJECTS: PortfolioProject[] = [
     category: "Documentary",
     year: "2025",
     services: ["Documentary", "Editing", "Distribution"],
-    cover: u("photo-1485846234645-a62644f84728"),
+    cover: u("photo-1606761568499-6d2451b23c66"),
     excerpt: "A 20-minute documentary on how young entrepreneurs are reshaping economies across Rwanda, Kenya and Uganda.",
     challenge: "Tell a regional story across three countries while keeping production governance tight and on a fixed grant timeline.",
     approach: "A single production system with structured pre-interviews, shared shot lists, and centralized rushes review across all three crews.",
@@ -53,7 +88,6 @@ export const PROJECTS: PortfolioProject[] = [
     approach: "Centralized brief intake, daily delivery sprints, and multi-format export pipelines mapped to each platform.",
     outcome: "All 12 priority assets delivered on day 2. Campaign reached 200K+ across digital platforms.",
     metrics: [{ label: "Reach", value: "200K+" }, { label: "Assets", value: "80+" }, { label: "Markets", value: "4" }],
-    featured: true,
     span: "tall",
   },
   {
@@ -68,7 +102,6 @@ export const PROJECTS: PortfolioProject[] = [
     challenge: "Capture authentic classroom moments without disrupting learning, in remote sites with no power or storage.",
     approach: "Two-person crews, mirrorless silent shooting, daily offline backup workflow, and consent-first portrait protocol.",
     outcome: "Photography featured in the annual report and donor communications. Three images licensed by UNICEF Rwanda.",
-    featured: true,
     span: "normal",
   },
   {

@@ -1074,6 +1074,63 @@ export type Database = {
         }
         Relationships: []
       }
+      works: {
+        Row: {
+          category: string | null
+          client_name: string | null
+          content: string | null
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          featured: boolean
+          id: string
+          published: boolean
+          slug: string
+          sort_order: number
+          summary: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+          year: string | null
+        }
+        Insert: {
+          category?: string | null
+          client_name?: string | null
+          content?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          summary?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+          year?: string | null
+        }
+        Update: {
+          category?: string | null
+          client_name?: string | null
+          content?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
