@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 217 55% 12%;
 
-    --primary: 217 72% 18%;
+    --primary: 217 72% 14%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 214 30% 92%;
@@ -47,7 +47,7 @@
 
     /* Custom tokens */
     --navy: 217 72% 14%;
-    --navy-light: 217 55% 22%;
+    --navy-light: 217 72% 14%;
     --charcoal: 217 30% 28%;
     --warm-gray: 214 12% 55%;
     --surface: 210 25% 96%;

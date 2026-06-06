@@ -478,7 +478,7 @@ const Index = () => {
                     variant="outline"
                     size="lg"
                     onClick={() => setAiToolsOpen(true)}
-                    className="font-semibold border-white/30 bg-white text-primary hover:bg-white/90"
+                    className="font-semibold border-white/30 bg-white text-accent hover:bg-white/90 hover:text-accent"
                   >
                     Free AI Creative Tools
                   </Button>
