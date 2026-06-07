@@ -98,6 +98,16 @@ const WorksManager = () => {
     load();
   };
 
+  const togglePublish = async (id: string, published: boolean) => {
+    const { error } = await (supabase as any).from("works").update({ published }).eq("id", id);
+    if (error) {
+      toast({ title: "Update failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: published ? "Published" : "Unpublished", description: `Work is now ${published ? "visible" : "hidden"} on the site.` });
+    load();
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Delete this work? This cannot be undone.")) return;
     const { error } = await (supabase as any).from("works").delete().eq("id", id);
@@ -137,6 +147,16 @@ const WorksManager = () => {
                     {w.featured && <span className="text-[10px] uppercase tracking-widest bg-accent/15 text-accent px-1.5 py-0.5 rounded">Featured</span>}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">/our-work/{w.slug} · {w.category || "—"} · {w.year || "—"}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Switch
+                    checked={w.published}
+                    onCheckedChange={(v) => togglePublish(w.id, v)}
+                    aria-label={w.published ? "Unpublish" : "Publish"}
+                  />
+                  <span className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground w-16 text-right">
+                    {w.published ? "Published" : "Draft"}
+                  </span>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setEditing(w)}><Pencil size={14} /></Button>
                 <Button variant="ghost" size="sm" onClick={() => remove(w.id)} className="text-destructive"><Trash2 size={14} /></Button>
