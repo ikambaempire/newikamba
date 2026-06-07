@@ -22,12 +22,13 @@ type Work = {
   featured: boolean;
   published: boolean;
   sort_order: number;
+  tags: string[] | null;
 };
 
 const empty = (): Partial<Work> => ({
   title: "", slug: "", summary: "", content: "",
   cover_url: "", video_url: "", category: "", year: String(new Date().getFullYear()),
-  client_name: "", featured: false, published: true, sort_order: 0,
+  client_name: "", featured: false, published: true, sort_order: 0, tags: [],
 });
 
 const slugify = (s: string) =>
