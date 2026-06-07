@@ -41,7 +41,7 @@ const legalLinks = [
 const Footer = () => {
   const time = useKigaliTime();
   return (
-    <footer className="relative overflow-hidden bg-primary text-primary-foreground">
+    <footer className="relative overflow-hidden text-white" style={{ backgroundColor: "hsl(217 72% 14%)" }}>
       {/* Soft gold radial */}
       <div
         className="absolute inset-0 pointer-events-none opacity-60"
