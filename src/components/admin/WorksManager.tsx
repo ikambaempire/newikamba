@@ -98,6 +98,16 @@ const WorksManager = () => {
     load();
   };
 
+  const togglePublish = async (id: string, published: boolean) => {
+    const { error } = await (supabase as any).from("works").update({ published }).eq("id", id);
+    if (error) {
+      toast({ title: "Update failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: published ? "Published" : "Unpublished", description: `Work is now ${published ? "visible" : "hidden"} on the site.` });
+    load();
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Delete this work? This cannot be undone.")) return;
     const { error } = await (supabase as any).from("works").delete().eq("id", id);
