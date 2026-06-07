@@ -55,13 +55,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-14 md:gap-10 mb-20">
           {/* Navigation */}
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-primary-foreground/40 mb-6">Navigation</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40 mb-6">Navigation</p>
             <ul className="space-y-3">
               {navLinks.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-primary-foreground hover:text-accent transition-colors"
+                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-white hover:text-accent transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -72,7 +72,7 @@ const Footer = () => {
 
           {/* Social */}
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-primary-foreground/40 mb-6">Social</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40 mb-6">Social</p>
             <ul className="space-y-3">
               {socialLinks.map((l) => (
                 <li key={l.href}>
@@ -80,7 +80,7 @@ const Footer = () => {
                     href={l.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-primary-foreground hover:text-accent transition-colors"
+                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-white hover:text-accent transition-colors"
                   >
                     {l.label}
                   </a>
@@ -91,20 +91,20 @@ const Footer = () => {
 
           {/* Legals */}
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-primary-foreground/40 mb-6">Legals</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40 mb-6">Legals</p>
             <ul className="space-y-3">
               {legalLinks.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-primary-foreground hover:text-accent transition-colors"
+                    className="text-2xl md:text-3xl font-heading font-light tracking-tight text-white hover:text-accent transition-colors"
                   >
                     {l.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <div className="mt-10 space-y-1 text-sm text-primary-foreground/60">
+            <div className="mt-10 space-y-1 text-sm text-white/60">
               <p>connect@ikamba.africa</p>
               <p>0796 889 527</p>
             </div>
@@ -112,7 +112,7 @@ const Footer = () => {
         </div>
 
         {/* Meta row */}
-        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm text-primary-foreground/60 pb-12 border-t border-primary-foreground/10 pt-6">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm text-white/60 pb-12 border-t border-white/10 pt-6">
           <p>© {new Date().getFullYear()} iKAMBA. All rights reserved.</p>
           <p className="md:text-center">Kigali, Rwanda <span className="mx-2 text-accent">→</span> {time}</p>
           <button
@@ -132,7 +132,7 @@ const Footer = () => {
           style={{
             fontSize: "clamp(6rem, 24vw, 22rem)",
             background:
-              "linear-gradient(180deg, hsl(var(--primary-foreground) / 0.12) 0%, hsl(var(--accent) / 0.18) 70%, hsl(var(--accent) / 0.05) 100%)",
+              "linear-gradient(180deg, hsl(0 0% 100% / 0.12) 0%, hsl(var(--accent) / 0.18) 70%, hsl(var(--accent) / 0.05) 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
