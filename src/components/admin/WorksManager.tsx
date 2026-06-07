@@ -22,12 +22,13 @@ type Work = {
   featured: boolean;
   published: boolean;
   sort_order: number;
+  tags: string[] | null;
 };
 
 const empty = (): Partial<Work> => ({
   title: "", slug: "", summary: "", content: "",
   cover_url: "", video_url: "", category: "", year: String(new Date().getFullYear()),
-  client_name: "", featured: false, published: true, sort_order: 0,
+  client_name: "", featured: false, published: true, sort_order: 0, tags: [],
 });
 
 const slugify = (s: string) =>
@@ -184,24 +185,62 @@ const WorksManager = () => {
                 <Textarea rows={8} value={editing.content || ""} onChange={(e) => setEditing({ ...editing, content: e.target.value })} placeholder="Write the full case study. Plain text or paragraphs." />
               </div>
 
+              <div>
+                <Label>Tags (comma-separated)</Label>
+                <Input
+                  value={(editing.tags || []).join(", ")}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      tags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+                    })
+                  }
+                  placeholder="documentary, ngo, kigali"
+                />
+                {!!(editing.tags && editing.tags.length) && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {editing.tags!.map((t) => (
+                      <span key={t} className="inline-flex items-center gap-1 bg-accent/15 text-accent text-[11px] uppercase tracking-widest font-semibold px-2 py-1 rounded">
+                        {t}
+                        <button type="button" onClick={() => setEditing({ ...editing, tags: editing.tags!.filter((x) => x !== t) })} className="hover:opacity-70">
+                          <X size={10} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Cover image</Label>
-                  {editing.cover_url && <img src={editing.cover_url} className="w-full h-28 object-cover rounded mb-2" />}
+                  {editing.cover_url && (
+                    <div className="relative mb-2">
+                      <img src={editing.cover_url} className="w-full h-28 object-cover rounded" />
+                      <Button type="button" variant="destructive" size="sm" onClick={() => setEditing({ ...editing, cover_url: "" })}
+                        className="absolute top-1 right-1 h-7 px-2 text-xs">Remove</Button>
+                    </div>
+                  )}
                   <Input value={editing.cover_url || ""} onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })} placeholder="https://…" className="mb-2" />
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer hover:text-accent">
                     <Upload size={14} />
-                    <span>{uploading === "cover" ? "Uploading…" : "Upload image"}</span>
+                    <span>{uploading === "cover" ? "Uploading…" : editing.cover_url ? "Replace image" : "Upload image"}</span>
                     <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], "cover")} />
                   </label>
                 </div>
                 <div>
                   <Label>Video (optional)</Label>
-                  {editing.video_url && <video src={editing.video_url} className="w-full h-28 object-cover rounded mb-2 bg-black" muted />}
+                  {editing.video_url && (
+                    <div className="relative mb-2">
+                      <video src={editing.video_url} className="w-full h-28 object-cover rounded bg-black" muted />
+                      <Button type="button" variant="destructive" size="sm" onClick={() => setEditing({ ...editing, video_url: "" })}
+                        className="absolute top-1 right-1 h-7 px-2 text-xs">Remove</Button>
+                    </div>
+                  )}
                   <Input value={editing.video_url || ""} onChange={(e) => setEditing({ ...editing, video_url: e.target.value })} placeholder="https://…/video.mp4" className="mb-2" />
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer hover:text-accent">
                     <Upload size={14} />
-                    <span>{uploading === "video" ? "Uploading…" : "Upload video"}</span>
+                    <span>{uploading === "video" ? "Uploading…" : editing.video_url ? "Replace video" : "Upload video"}</span>
                     <input type="file" accept="video/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], "video")} />
                   </label>
                 </div>

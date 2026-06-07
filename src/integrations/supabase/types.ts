@@ -1088,6 +1088,7 @@ export type Database = {
           slug: string
           sort_order: number
           summary: string | null
+          tags: string[]
           title: string
           updated_at: string
           video_url: string | null
@@ -1106,6 +1107,7 @@ export type Database = {
           slug: string
           sort_order?: number
           summary?: string | null
+          tags?: string[]
           title: string
           updated_at?: string
           video_url?: string | null
@@ -1124,6 +1126,7 @@ export type Database = {
           slug?: string
           sort_order?: number
           summary?: string | null
+          tags?: string[]
           title?: string
           updated_at?: string
           video_url?: string | null
