@@ -148,6 +148,16 @@ const WorksManager = () => {
                   </div>
                   <p className="text-xs text-muted-foreground truncate">/our-work/{w.slug} · {w.category || "—"} · {w.year || "—"}</p>
                 </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Switch
+                    checked={w.published}
+                    onCheckedChange={(v) => togglePublish(w.id, v)}
+                    aria-label={w.published ? "Unpublish" : "Publish"}
+                  />
+                  <span className="text-[11px] uppercase tracking-widest font-semibold text-muted-foreground w-16 text-right">
+                    {w.published ? "Published" : "Draft"}
+                  </span>
+                </div>
                 <Button variant="ghost" size="sm" onClick={() => setEditing(w)}><Pencil size={14} /></Button>
                 <Button variant="ghost" size="sm" onClick={() => remove(w.id)} className="text-destructive"><Trash2 size={14} /></Button>
               </li>
