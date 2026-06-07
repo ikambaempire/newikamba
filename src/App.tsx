@@ -80,6 +80,13 @@ const AnimatedRoutes = () => {
         <Route path="/our-work/:slug" element={<PageTransition><OurWorkDetail /></PageTransition>} />
         <Route path="/work/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
         <Route path="/how-it-works" element={<Navigate to="/about" replace />} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/insights" element={<PageTransition><Insights /></PageTransition>} />
+        <Route path="/insights/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+        <Route path="/start-a-project" element={<PageTransition><StartAProject /></PageTransition>} />
+        <Route path="/caption-generator" element={<PageTransition><CaptionGenerator /></PageTransition>} />
+        <Route path="/design-studio" element={<PageTransition><DesignStudio /></PageTransition>} />
         <Route path="/case-studies" element={<PageTransition><CaseStudies /></PageTransition>} />
         <Route path="/case-studies/:slug" element={<PageTransition><CaseStudies /></PageTransition>} />
 
