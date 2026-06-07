@@ -59,8 +59,9 @@ const WorksManager = () => {
       const { error: upErr } = await supabase.storage.from("works-media").upload(path, file, { upsert: false });
       if (upErr) throw upErr;
       const { data: signed } = await supabase.storage.from("works-media").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
-      const { data: pub } = supabase.storage.from("works-media").getPublicUrl(path);
-      const url = pub?.publicUrl || signed?.signedUrl || "";
+      const url = signed?.signedUrl || "";
+      if (!url) throw new Error("Could not generate file URL");
+      setEditing((e) => e ? { ...e, [kind === "cover" ? "cover_url" : "video_url"]: url } : e);
       setEditing((e) => e ? { ...e, [kind === "cover" ? "cover_url" : "video_url"]: url } : e);
       toast({ title: "Uploaded", description: `${kind} uploaded successfully.` });
     } catch (err: any) {
