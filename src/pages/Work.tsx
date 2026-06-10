@@ -94,42 +94,37 @@ const OurWork = () => {
         </div>
       </section>
 
-      {/* Blog-style editorial list */}
+      {/* Uniform card grid */}
       <section className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 space-y-20">
-          {visible.map((p, i) => (
-            <motion.article key={p.href}
-              initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }}
-              className="grid md:grid-cols-12 gap-8 items-center">
-              <Link to={p.href} className={`md:col-span-7 group block ${i % 2 ? "md:order-2" : ""}`}>
-                <div className="relative overflow-hidden rounded-2xl aspect-[16/10] bg-muted">
-                  {p.video ? (
-                    <video src={p.video} autoPlay muted loop playsInline preload="metadata" poster={p.cover}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  ) : (
-                    <img src={p.cover} alt={p.title} loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  )}
-                  <div className="absolute top-4 left-4 bg-background/90 backdrop-blur px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold">
-                    #{String(i + 1).padStart(2, "0")} · {p.category}
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+            {visible.map((p, i) => (
+              <motion.article key={p.href}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: (i % 4) * 0.05 }}>
+                <Link to={p.href} className="group block">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-muted">
+                    <MediaPlayer
+                      url={p.video}
+                      poster={p.cover}
+                      title={p.title}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 left-3 bg-background/90 backdrop-blur px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold pointer-events-none">
+                      {p.category}
+                    </div>
                   </div>
-                </div>
-              </Link>
-              <div className={`md:col-span-5 ${i % 2 ? "md:order-1 md:pr-8" : "md:pl-4"}`}>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-3">
-                  {p.category}{p.year ? ` · ${p.year}` : ""}
-                </p>
-                <h2 className="text-2xl md:text-3xl font-extrabold leading-tight mb-3">{p.title}</h2>
-                <p className="text-sm uppercase tracking-wider text-muted-foreground font-semibold mb-4">{p.client}</p>
-                <p className="text-base text-foreground/80 leading-relaxed mb-6">{p.excerpt}</p>
-                <Link to={p.href}
-                  className="inline-flex items-center gap-2 text-sm font-semibold border-b-2 border-accent pb-0.5 hover:gap-3 transition-all">
-                  Read the story <ArrowUpRight size={16} />
+                  <div className="pt-4">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-1.5">
+                      {p.client}{p.year ? ` · ${p.year}` : ""}
+                    </p>
+                    <h2 className="text-lg md:text-xl font-extrabold leading-snug mb-2 line-clamp-2 group-hover:text-accent transition-colors">{p.title}</h2>
+                    <p className="text-sm text-foreground/70 leading-relaxed line-clamp-3">{p.excerpt}</p>
+                  </div>
                 </Link>
-              </div>
-            </motion.article>
-          ))}
+              </motion.article>
+            ))}
+          </div>
         </div>
 
         <div className="max-w-6xl mx-auto px-4 md:px-8 mt-24 border-t border-border pt-12 grid md:grid-cols-2 gap-8 items-end">
