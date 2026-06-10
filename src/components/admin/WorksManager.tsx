@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, Upload, Save, X, Pencil } from "lucide-react";
+import { Trash2, Plus, Upload, Save, X, Pencil, Eye } from "lucide-react";
+import MediaPlayer from "@/components/MediaPlayer";
 
 type Work = {
   id: string;
