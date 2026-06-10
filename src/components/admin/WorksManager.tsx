@@ -269,6 +269,21 @@ const WorksManager = () => {
                 </div>
               </div>
 
+              {(editing.video_url || editing.cover_url) && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Eye size={14} className="text-accent" />
+                    <Label className="text-xs uppercase tracking-widest font-bold">Preview (as it will appear on the site)</Label>
+                  </div>
+                  <div className="rounded-xl overflow-hidden bg-black aspect-video">
+                    <MediaPlayer url={editing.video_url} poster={editing.cover_url} title={editing.title} controls className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2">Review this before turning on "Published". Instagram/YouTube/Vimeo/TikTok links auto-play and loop with no profile chrome.</p>
+                </div>
+              )}
+
+
+
               <div className="flex items-center gap-6 pt-2">
                 <div className="flex items-center gap-2">
                   <Switch checked={!!editing.published} onCheckedChange={(v) => setEditing({ ...editing, published: v })} />
