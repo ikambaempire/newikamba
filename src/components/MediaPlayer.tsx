@@ -28,6 +28,26 @@ const MediaPlayer = ({ url, poster, title, className = "", controls = false }: P
   }
 
   if (m.kind === "embed") {
+    // Instagram embed always renders profile header + bottom action bar.
+    // We hide them by oversizing the iframe and clipping the chrome away.
+    if (m.provider === "instagram") {
+      return (
+        <div className={`${className} relative overflow-hidden bg-black`}>
+          <iframe
+            src={m.src}
+            title={title || "Instagram video"}
+            loading="lazy"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+            scrolling="no"
+            // header ≈ 54px, footer ≈ 120px on IG embeds — push iframe up & extend height to crop both
+            className="absolute left-0 w-full border-0 pointer-events-none"
+            style={{ top: "-54px", height: "calc(100% + 180px)" }}
+          />
+        </div>
+      );
+    }
+
     return (
       <iframe
         src={m.src}
