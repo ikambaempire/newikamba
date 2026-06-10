@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import MediaPlayer from "@/components/MediaPlayer";
 
 type Work = {
   id: string; slug: string; title: string; summary: string | null; content: string | null;
@@ -48,7 +49,9 @@ const OurWorkDetail = () => {
             <p className="text-sm uppercase tracking-wider text-muted-foreground font-semibold mb-8">{work.client_name}</p>
           )}
           {work.video_url ? (
-            <video src={work.video_url} autoPlay muted loop playsInline controls className="w-full rounded-2xl mb-10 bg-black aspect-video object-cover" />
+            <div className="w-full rounded-2xl mb-10 bg-black aspect-video overflow-hidden">
+              <MediaPlayer url={work.video_url} poster={work.cover_url} title={work.title} controls className="w-full h-full object-cover" />
+            </div>
           ) : work.cover_url ? (
             <img src={work.cover_url} alt={work.title} className="w-full rounded-2xl mb-10 object-cover" />
           ) : null}

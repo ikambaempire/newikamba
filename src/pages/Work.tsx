@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { PROJECTS, type PortfolioProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
+import MediaPlayer from "@/components/MediaPlayer";
 
 type Card = {
   slug: string;
