@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus, Upload, Save, X, Pencil } from "lucide-react";
+import { Trash2, Plus, Upload, Save, X, Pencil, Eye } from "lucide-react";
+import MediaPlayer from "@/components/MediaPlayer";
 
 type Work = {
   id: string;
@@ -252,7 +253,9 @@ const WorksManager = () => {
                   <Label>Video (optional)</Label>
                   {editing.video_url && (
                     <div className="relative mb-2">
-                      <video src={editing.video_url} className="w-full h-28 object-cover rounded bg-black" muted />
+                      <div className="w-full h-28 rounded overflow-hidden bg-black">
+                        <MediaPlayer url={editing.video_url} poster={editing.cover_url} className="w-full h-full object-cover" />
+                      </div>
                       <Button type="button" variant="destructive" size="sm" onClick={() => setEditing({ ...editing, video_url: "" })}
                         className="absolute top-1 right-1 h-7 px-2 text-xs">Remove</Button>
                     </div>
@@ -265,6 +268,21 @@ const WorksManager = () => {
                   </label>
                 </div>
               </div>
+
+              {(editing.video_url || editing.cover_url) && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Eye size={14} className="text-accent" />
+                    <Label className="text-xs uppercase tracking-widest font-bold">Preview (as it will appear on the site)</Label>
+                  </div>
+                  <div className="rounded-xl overflow-hidden bg-black aspect-video">
+                    <MediaPlayer url={editing.video_url} poster={editing.cover_url} title={editing.title} controls className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2">Review this before turning on "Published". Instagram/YouTube/Vimeo/TikTok links auto-play and loop with no profile chrome.</p>
+                </div>
+              )}
+
+
 
               <div className="flex items-center gap-6 pt-2">
                 <div className="flex items-center gap-2">

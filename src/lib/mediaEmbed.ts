@@ -22,7 +22,7 @@ export const resolveMedia = (url?: string | null): MediaEmbed => {
     if (host.endsWith("instagram.com")) {
       const m = parsed.pathname.match(/\/(reel|p|tv|reels)\/([^/]+)/);
       if (m) {
-        return { kind: "embed", provider: "instagram", src: `https://www.instagram.com/${m[1] === "reels" ? "reel" : m[1]}/${m[2]}/embed/captioned/` };
+        return { kind: "embed", provider: "instagram", src: `https://www.instagram.com/${m[1] === "reels" ? "reel" : m[1]}/${m[2]}/embed/` };
       }
     }
 
