@@ -253,7 +253,9 @@ const WorksManager = () => {
                   <Label>Video (optional)</Label>
                   {editing.video_url && (
                     <div className="relative mb-2">
-                      <video src={editing.video_url} className="w-full h-28 object-cover rounded bg-black" muted />
+                      <div className="w-full h-28 rounded overflow-hidden bg-black">
+                        <MediaPlayer url={editing.video_url} poster={editing.cover_url} className="w-full h-full object-cover" />
+                      </div>
                       <Button type="button" variant="destructive" size="sm" onClick={() => setEditing({ ...editing, video_url: "" })}
                         className="absolute top-1 right-1 h-7 px-2 text-xs">Remove</Button>
                     </div>
