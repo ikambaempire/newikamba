@@ -9,10 +9,11 @@ import {
   CLIENT_TYPES, COST_CATEGORIES, DEFAULT_ADDONS, DEFAULT_DELIVERABLES, DEFAULT_TERMS,
   Q_STATUS_LABEL, Q_STATUS_TONE, numberToWords, recalcTotals, type QCost, type QItem, type QStatus,
 } from "@/os/quotations/types";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, CheckCircle2, Send, FolderPlus, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, CheckCircle2, Send, FolderPlus, AlertTriangle, LayoutTemplate } from "lucide-react";
 import { toast } from "sonner";
+import CanvasEditor, { type CanvasBlock } from "@/os/quotations/CanvasEditor";
 
-type StepId = "client" | "project" | "deliverables" | "pricing" | "costs" | "terms" | "preview";
+type StepId = "client" | "project" | "deliverables" | "pricing" | "costs" | "terms" | "canvas" | "preview";
 const STEPS: { id: StepId; label: string }[] = [
   { id: "client", label: "Client" },
   { id: "project", label: "Project" },
@@ -20,6 +21,7 @@ const STEPS: { id: StepId; label: string }[] = [
   { id: "pricing", label: "Pricing" },
   { id: "costs", label: "Internal Costs" },
   { id: "terms", label: "Terms" },
+  { id: "canvas", label: "Canvas Design" },
   { id: "preview", label: "Review" },
 ];
 
@@ -56,6 +58,8 @@ const QuotationBuilder = () => {
     discount_type: "none", discount_value: 0, tax_percent: 0, advance_percent: 50,
     terms: DEFAULT_TERMS, notes: "", show_internal_costs_on_pdf: false,
     quotation_number: "(auto-generated on save)",
+    canvas_blocks: [] as CanvasBlock[],
+    canvas_enabled: false,
   });
 
   const [items, setItems] = useState<QItem[]>([
@@ -379,6 +383,27 @@ const QuotationBuilder = () => {
               <h2 className="text-white font-bold">Terms & notes</h2>
               <Field label="Terms and conditions"><Textarea rows={10} value={q.terms || ""} onChange={(e) => update({ terms: e.target.value })} /></Field>
               <Field label="Additional notes (logistics, client responsibilities, assumptions…)"><Textarea rows={4} value={q.notes || ""} onChange={(e) => update({ notes: e.target.value })} /></Field>
+            </>
+          )}
+
+          {step === "canvas" && (
+            <>
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <h2 className="text-white font-bold flex items-center gap-2"><LayoutTemplate size={16} /> Canvas design</h2>
+                  <p className="text-xs text-os-muted mt-1 max-w-xl">
+                    Drag, drop, and rearrange text, images and shapes — Canva-style. Click a block to edit, drag the gold corner to resize. Save as draft to keep your work.
+                  </p>
+                </div>
+                <label className="text-xs text-os-muted flex items-center gap-1.5">
+                  <input type="checkbox" checked={!!q.canvas_enabled} onChange={(e) => update({ canvas_enabled: e.target.checked })} />
+                  Enable canvas layout
+                </label>
+              </div>
+              <CanvasEditor
+                blocks={(q.canvas_blocks as CanvasBlock[]) || []}
+                onChange={(next) => update({ canvas_blocks: next })}
+              />
             </>
           )}
 
