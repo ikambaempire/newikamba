@@ -16,7 +16,8 @@ export type OSToolKey =
   | "/os/profile"
   | "/os/app"
   | "/os/settings"
-  | "/os/expenses";
+  | "/os/expenses"
+  | "/os/notifications";
 
 export const ALL_TOOLS: { key: OSToolKey; label: string }[] = [
   { key: "/os", label: "Dashboard" },
@@ -36,7 +37,7 @@ export const ALL_TOOLS: { key: OSToolKey; label: string }[] = [
 ];
 
 // Always-on tools every user keeps (even after permission changes).
-export const LOCKED_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/os/app", "/os/settings", "/os/expenses"];
+export const LOCKED_TOOLS: OSToolKey[] = ["/os", "/os/todos", "/os/profile", "/os/app", "/os/settings", "/os/expenses", "/os/notifications"];
 
 export const DEFAULT_TOOLS: OSToolKey[] = [...LOCKED_TOOLS, "/os/calendar", "/os/pipeline"];
 export const ADMIN_TOOLS: OSToolKey[] = ALL_TOOLS.map((t) => t.key);
