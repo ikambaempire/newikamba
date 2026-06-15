@@ -4,6 +4,7 @@ import {
   type OSProject, type OSCost, type OSPayment, type OSQuotation, type OSScheduleEvent, type PipelineStage,
 } from "@/os/mock/data";
 import { supabase } from "@/integrations/supabase/client";
+import { notify } from "@/os/notifications";
 
 interface OSStore {
   projects: OSProject[];
@@ -25,9 +26,12 @@ interface OSStore {
   deleteProject: (id: string) => void;
 
   addCost: (c: Omit<OSCost, "id">) => void;
+  deleteCost: (id: string) => void;
   addPayment: (p: Omit<OSPayment, "id">) => void;
+  deletePayment: (id: string) => void;
   addQuotation: (q: Omit<OSQuotation, "id" | "created_at">) => void;
   addScheduleEvent: (e: Omit<OSScheduleEvent, "id">) => void;
+  deleteScheduleEvent: (id: string) => void;
 
   toggleTask: (project_id: string, task_id: string) => void;
   ensureTasks: (project_id: string, defaults: string[]) => void;
@@ -130,17 +134,32 @@ export const useOSStore = create<OSStore>((set, get) => ({
   },
 
   updateProjectStage: (id, stage) => {
+    const before = get().projects.find((p) => p.id === id);
     set({ projects: get().projects.map((p) => (p.id === id ? { ...p, stage } : p)) });
     supabase.from("os_pipeline_projects" as any).update({ stage }).eq("id", id).then(({ error }) => {
       if (error) console.warn("updateProjectStage persist failed:", error);
     });
+    // Auto-notify assignee on key stage transitions
+    if (before && before.stage !== stage) {
+      const target = (before as any).assigned_to_user_id;
+      if (target) {
+        const kind = stage === "Approved" || stage === "Paid" || stage === "Delivered" ? "success" : "info";
+        notify(target, `Project moved to ${stage}`, `${before.name} · ${before.client}`, kind, `/os/projects/${id}`);
+      }
+    }
   },
 
   updateProject: (id, patch) => {
+    const before = get().projects.find((p) => p.id === id);
     set({ projects: get().projects.map((p) => (p.id === id ? { ...p, ...patch } : p)) });
     supabase.from("os_pipeline_projects" as any).update(projectToRow(patch)).eq("id", id).then(({ error }) => {
       if (error) console.warn("updateProject persist failed:", error);
     });
+    // Notify new assignee when a project is assigned/reassigned
+    const newAssignee = (patch as any).assigned_to_user_id;
+    if (newAssignee && before && (before as any).assigned_to_user_id !== newAssignee) {
+      notify(newAssignee, "You were assigned to a project", `${before.name} · ${before.client}`, "info", `/os/projects/${id}`);
+    }
   },
 
   deleteProject: (id) => {
@@ -157,6 +176,15 @@ export const useOSStore = create<OSStore>((set, get) => ({
       projects: get().projects.map((p) =>
         p.id === c.project_id ? { ...p, costs_total: p.costs_total + c.amount } : p,
       ),
+    });
+  },
+  deleteCost: (cid) => {
+    const cost = get().costs.find((c) => c.id === cid);
+    set({
+      costs: get().costs.filter((c) => c.id !== cid),
+      projects: cost ? get().projects.map((p) =>
+        p.id === cost.project_id ? { ...p, costs_total: Math.max(0, p.costs_total - cost.amount) } : p,
+      ) : get().projects,
     });
   },
   addPayment: (pay) => {
@@ -177,10 +205,36 @@ export const useOSStore = create<OSStore>((set, get) => ({
         .update({ paid: target.paid, payment_status: target.payment_status })
         .eq("id", pay.project_id)
         .then(({ error }) => { if (error) console.warn("payment persist failed", error); });
+      const assigned = (target as any).assigned_to_user_id;
+      if (assigned) {
+        notify(assigned, "Payment recorded", `${target.name}: ${pay.amount.toLocaleString()} RWF received`, "success", `/os/projects/${target.id}`);
+      }
+    }
+  },
+  deletePayment: (pid) => {
+    const pay = get().payments.find((p) => p.id === pid);
+    set({
+      payments: get().payments.filter((p) => p.id !== pid),
+      projects: pay ? get().projects.map((p) => {
+        if (p.id !== pay.project_id) return p;
+        const newPaid = Math.max(0, p.paid - pay.amount);
+        const status = newPaid >= p.value ? "Paid" : newPaid > 0 ? "Partially Paid" : "Pending";
+        return { ...p, paid: newPaid, payment_status: status as any };
+      }) : get().projects,
+    });
+    if (pay) {
+      const target = get().projects.find((p) => p.id === pay.project_id);
+      if (target) {
+        supabase.from("os_pipeline_projects" as any)
+          .update({ paid: target.paid, payment_status: target.payment_status })
+          .eq("id", pay.project_id)
+          .then(({ error }) => { if (error) console.warn("delete payment persist failed", error); });
+      }
     }
   },
   addQuotation: (q) => set({ quotations: [{ ...q, id: id(), created_at: new Date().toISOString().slice(0, 10) }, ...get().quotations] }),
   addScheduleEvent: (e) => set({ schedule: [{ ...e, id: id() }, ...get().schedule] }),
+  deleteScheduleEvent: (sid) => set({ schedule: get().schedule.filter((s) => s.id !== sid) }),
 
   toggleTask: (project_id, task_id) => {
     const tasks = (get().tasksByProject[project_id] || []).map((t) =>
