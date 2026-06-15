@@ -516,6 +516,8 @@ export type Database = {
           advance_percent: number
           amount_in_words: string | null
           balance_amount: number
+          canvas_blocks: Json
+          canvas_enabled: boolean
           client_address: string | null
           client_contact_person: string | null
           client_email: string | null
@@ -565,6 +567,8 @@ export type Database = {
           advance_percent?: number
           amount_in_words?: string | null
           balance_amount?: number
+          canvas_blocks?: Json
+          canvas_enabled?: boolean
           client_address?: string | null
           client_contact_person?: string | null
           client_email?: string | null
@@ -614,6 +618,8 @@ export type Database = {
           advance_percent?: number
           amount_in_words?: string | null
           balance_amount?: number
+          canvas_blocks?: Json
+          canvas_enabled?: boolean
           client_address?: string | null
           client_contact_person?: string | null
           client_email?: string | null
