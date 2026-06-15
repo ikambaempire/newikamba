@@ -1,19 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
 
-// Polls unread notifications for the current user every 15s, surfaces them as toasts,
-// then marks them read so they don't repeat.
+// Polls unread notifications and toasts only ones not yet shown on this device.
+// Does NOT mark them read — the bell + notifications page handles that, so users
+// can review past events.
 const NotificationsListener = () => {
   const { user } = useAuth();
-  const lastCheckRef = useRef<number>(0);
 
   useEffect(() => {
     if (!user) return;
-    let cancelled = false;
+    const seenKey = `os_seen_toast_${user.id}`;
+    let seen: Set<string>;
+    try { seen = new Set<string>(JSON.parse(localStorage.getItem(seenKey) || "[]")); }
+    catch { seen = new Set<string>(); }
 
+    let cancelled = false;
     const check = async () => {
       const { data, error } = await supabase
         .from("os_notifications")
@@ -23,10 +27,11 @@ const NotificationsListener = () => {
         .order("created_at", { ascending: true })
         .limit(20);
       if (error || cancelled || !data || data.length === 0) return;
-
-      const ids: string[] = [];
+      let added = false;
       for (const n of data as any[]) {
-        ids.push(n.id);
+        if (seen.has(n.id)) continue;
+        seen.add(n.id);
+        added = true;
         const opts: any = { description: n.message || undefined, duration: 7000 };
         const fn =
           n.kind === "success" ? toast.success
@@ -35,15 +40,19 @@ const NotificationsListener = () => {
           : toast.info;
         try { fn(n.title, opts); } catch { toast(n.title, opts); }
       }
-      await supabase.from("os_notifications").update({ read: true }).in("id", ids);
+      if (added) {
+        // Trim to last 500 to avoid unbounded growth
+        const arr = Array.from(seen);
+        const trimmed = arr.slice(Math.max(0, arr.length - 500));
+        seen = new Set(trimmed);
+        try { localStorage.setItem(seenKey, JSON.stringify(trimmed)); } catch {}
+      }
     };
 
-    // First check after small delay, then poll.
     const t0 = window.setTimeout(check, 800);
     const iv = window.setInterval(check, 15000);
     const onFocus = () => check();
     window.addEventListener("focus", onFocus);
-    lastCheckRef.current = Date.now();
 
     return () => {
       cancelled = true;
