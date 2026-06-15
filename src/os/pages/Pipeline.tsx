@@ -32,7 +32,7 @@ const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue"
 };
 
 const Pipeline = () => {
-  const { projects, updateProjectStage, updateProject, addProject } = useOSStore();
+  const { projects, updateProjectStage, updateProject, addProject, deleteProject } = useOSStore();
   const { user, roles } = useAuth();
   const isAdmin = hasAdminRole(roles);
   const { cols, setCols } = usePipelineColumns();
@@ -175,9 +175,24 @@ const Pipeline = () => {
                     );
                   })}
                   <td className="p-3 text-right">
-                    <Link to={`/os/projects/${p.id}`} className="text-os-muted hover:text-os-gold inline-block">
-                      <ExternalLink size={14} />
-                    </Link>
+                    <div className="inline-flex items-center gap-1">
+                      <Link to={`/os/projects/${p.id}`} className="text-os-muted hover:text-os-gold p-1 rounded hover:bg-white/5" title="Open">
+                        <ExternalLink size={14} />
+                      </Link>
+                      {isAdmin && (
+                        <button
+                          onClick={() => {
+                            if (!window.confirm(`Delete project "${p.name}"? This cannot be undone.`)) return;
+                            deleteProject(p.id);
+                            toast.success("Project deleted");
+                          }}
+                          className="text-os-muted hover:text-rose-300 p-1 rounded hover:bg-rose-500/10"
+                          title="Delete project"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

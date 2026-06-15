@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useOSStore } from "@/os/store";
 import { PageHeader, KPICard, Badge, PaymentBadge, OSButton, Modal, Field, Input, Textarea, Select } from "@/os/components/ui";
 import { COST_CATEGORIES, DEFAULT_TASKS, PIPELINE_STAGES, PRODUCT_LINES, SERVICE_CATEGORIES, fmtRWF, type PipelineStage } from "@/os/mock/data";
-import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt, Pencil } from "lucide-react";
+import { ArrowLeft, Plus, CalendarPlus, Wallet, Receipt, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 const TABS = ["Overview","Scope","Schedule","Tasks","Team","Quotation","Costs","Payments","Files","Notes","Activity Log"] as const;
@@ -13,6 +13,7 @@ const ProjectDetail = () => {
   const {
     projects, costs, payments, schedule, quotations, tasksByProject,
     updateProject, updateProjectStage, addCost, addPayment, addScheduleEvent, ensureTasks, toggleTask,
+    deleteCost, deletePayment, deleteScheduleEvent,
   } = useOSStore();
 
   const p = projects.find((x) => x.id === id);
@@ -111,12 +112,19 @@ const ProjectDetail = () => {
           <div className="os-card rounded-xl divide-y divide-[hsl(var(--os-border))]">
             {projectEvents.length === 0 && <div className="p-5 text-os-muted text-sm">No events scheduled.</div>}
             {projectEvents.map((e) => (
-              <div key={e.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <div className="text-white font-semibold text-sm">{e.title}</div>
+              <div key={e.id} className="p-4 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-white font-semibold text-sm truncate">{e.title}</div>
                   <div className="text-xs text-os-muted">{e.type} · {e.location || "—"}</div>
                 </div>
-                <div className="text-xs text-os-gold font-semibold">{e.date}{e.time ? ` · ${e.time}` : ""}</div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="text-xs text-os-gold font-semibold">{e.date}{e.time ? ` · ${e.time}` : ""}</div>
+                  <button
+                    onClick={() => { if (window.confirm("Delete this event?")) { deleteScheduleEvent(e.id); toast.success("Event deleted"); } }}
+                    className="text-os-muted hover:text-rose-300 p-1 rounded hover:bg-rose-500/10"
+                    title="Delete event"
+                  ><Trash2 size={13} /></button>
+                </div>
               </div>
             ))}
           </div>
@@ -169,12 +177,12 @@ const ProjectDetail = () => {
             <OSButton onClick={() => setCostOpen(true)}><Plus size={14} /> Add Cost</OSButton>
           </div>
           <div className="os-card rounded-xl overflow-x-auto">
-            <table className="w-full text-sm min-w-[600px]">
+            <table className="w-full text-sm min-w-[680px]">
               <thead><tr className="text-left text-os-muted text-xs uppercase border-b border-os">
-                <th className="p-3">Date</th><th className="p-3">Category</th><th className="p-3">Description</th><th className="p-3">Paid to</th><th className="p-3">Amount</th><th className="p-3">Status</th>
+                <th className="p-3">Date</th><th className="p-3">Category</th><th className="p-3">Description</th><th className="p-3">Paid to</th><th className="p-3">Amount</th><th className="p-3">Status</th><th className="p-3 w-10" />
               </tr></thead>
               <tbody>
-                {projectCosts.length === 0 && <tr><td colSpan={6} className="p-5 text-os-muted text-center">No costs recorded.</td></tr>}
+                {projectCosts.length === 0 && <tr><td colSpan={7} className="p-5 text-os-muted text-center">No costs recorded.</td></tr>}
                 {projectCosts.map((c) => (
                   <tr key={c.id} className="border-b border-os/50">
                     <td className="p-3 text-os-muted">{c.date}</td>
@@ -183,6 +191,13 @@ const ProjectDetail = () => {
                     <td className="p-3 text-os-muted">{c.paid_to}</td>
                     <td className="p-3 text-white font-semibold">{fmtRWF(c.amount)}</td>
                     <td className="p-3"><Badge tone={c.status === "Paid" ? "green" : "amber"}>{c.status}</Badge></td>
+                    <td className="p-3 text-right">
+                      <button
+                        onClick={() => { if (window.confirm("Delete this cost?")) { deleteCost(c.id); toast.success("Cost deleted"); } }}
+                        className="text-os-muted hover:text-rose-300 p-1 rounded hover:bg-rose-500/10"
+                        title="Delete cost"
+                      ><Trash2 size={13} /></button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -198,12 +213,12 @@ const ProjectDetail = () => {
             <OSButton onClick={() => setPayOpen(true)}><Plus size={14} /> Record Payment</OSButton>
           </div>
           <div className="os-card rounded-xl overflow-x-auto">
-            <table className="w-full text-sm min-w-[600px]">
+            <table className="w-full text-sm min-w-[680px]">
               <thead><tr className="text-left text-os-muted text-xs uppercase border-b border-os">
-                <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Amount</th><th className="p-3">Method</th><th className="p-3">Reference</th>
+                <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Amount</th><th className="p-3">Method</th><th className="p-3">Reference</th><th className="p-3 w-10" />
               </tr></thead>
               <tbody>
-                {projectPayments.length === 0 && <tr><td colSpan={5} className="p-5 text-os-muted text-center">No payments recorded.</td></tr>}
+                {projectPayments.length === 0 && <tr><td colSpan={6} className="p-5 text-os-muted text-center">No payments recorded.</td></tr>}
                 {projectPayments.map((x) => (
                   <tr key={x.id} className="border-b border-os/50">
                     <td className="p-3 text-os-muted">{x.date}</td>
@@ -211,6 +226,13 @@ const ProjectDetail = () => {
                     <td className="p-3 text-white font-semibold">{fmtRWF(x.amount)}</td>
                     <td className="p-3 text-white">{x.method}</td>
                     <td className="p-3 text-os-muted">{x.reference || "—"}</td>
+                    <td className="p-3 text-right">
+                      <button
+                        onClick={() => { if (window.confirm("Delete this payment? Project paid total will be adjusted.")) { deletePayment(x.id); toast.success("Payment deleted"); } }}
+                        className="text-os-muted hover:text-rose-300 p-1 rounded hover:bg-rose-500/10"
+                        title="Delete payment"
+                      ><Trash2 size={13} /></button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

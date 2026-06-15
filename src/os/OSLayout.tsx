@@ -2,11 +2,12 @@ import { NavLink, Outlet, useNavigate, useLocation, Link } from "react-router-do
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard, Kanban, FilePlus2, Calendar, Wallet, FileText,
-  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt, Download,
+  Users, BarChart3, Settings, LogOut, Menu, X, CheckSquare, Shield, UserCircle2, Lock, Receipt, Download, Bell,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import SetupWizard from "@/os/SetupWizard";
 import NotificationsListener from "@/os/NotificationsListener";
+import NotificationsBell from "@/os/components/NotificationsBell";
 import { WebsitePopupSystem } from "@/components/home/ConversionSections";
 import {
   ADMIN_TOOLS, LOCKED_TOOLS, getProfile, pickAvatarColor, upsertProfile, onAccessChange, fetchAllowedTools, setAllowedTools,
@@ -26,6 +27,7 @@ const ALL_NAV: { to: OSToolKey; icon: any; label: string; end?: boolean }[] = [
   { to: "/os/team", icon: Users, label: "Team" },
   { to: "/os/reports", icon: BarChart3, label: "Reports" },
   { to: "/os/access", icon: Shield, label: "User Access" },
+  { to: "/os/notifications", icon: Bell, label: "Notifications" },
   { to: "/os/profile", icon: UserCircle2, label: "My Profile" },
   { to: "/os/app", icon: Download, label: "Download App" },
   { to: "/os/settings", icon: Settings, label: "Settings" },
@@ -213,8 +215,11 @@ const OSLayout = () => {
             <div className="h-6 w-6 rounded bg-os-gold flex items-center justify-center text-os-navy font-extrabold text-xs">iK</div>
             <span className="text-white font-bold text-sm">iKAMBA Media OS</span>
           </div>
-          <div className="w-6" />
+          <NotificationsBell />
         </header>
+        <div className="hidden lg:flex items-center justify-end px-6 h-12 bg-os-navy-deep border-b border-os">
+          <NotificationsBell />
+        </div>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           {blocked ? (
             <BlockedView />
