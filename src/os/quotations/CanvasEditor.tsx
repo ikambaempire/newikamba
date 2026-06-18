@@ -117,18 +117,27 @@ const CanvasEditor = ({ blocks, onChange, background }: Props) => {
             onPointerUp={onPointerUp}
             onPointerLeave={onPointerUp}
             className="relative bg-white shadow-lg mx-auto"
-            style={{ width: CANVAS_W, height: CANVAS_H }}
+            style={{ width: CANVAS_W, minHeight: CANVAS_H }}
           >
-            {blocks.map((b) => (
-              <BlockView
-                key={b.id}
-                block={b}
-                selected={selected === b.id}
-                onPointerDown={(e, m) => onPointerDown(e, b, m)}
-                onChangeText={(t) => updateBlock(b.id, { text: t })}
-              />
-            ))}
-            {blocks.length === 0 && (
+            {/* Real quotation template renders here as the editing surface */}
+            {background && (
+              <div className="absolute inset-0 overflow-hidden pointer-events-auto">
+                {background}
+              </div>
+            )}
+            {/* Drag-and-drop overlay blocks sit on top */}
+            <div className="absolute inset-0" style={{ minHeight: CANVAS_H }}>
+              {blocks.map((b) => (
+                <BlockView
+                  key={b.id}
+                  block={b}
+                  selected={selected === b.id}
+                  onPointerDown={(e, m) => onPointerDown(e, b, m)}
+                  onChangeText={(t) => updateBlock(b.id, { text: t })}
+                />
+              ))}
+            </div>
+            {!background && blocks.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-sm pointer-events-none">
                 Empty canvas — add a text, image, or shape block to start.
               </div>
