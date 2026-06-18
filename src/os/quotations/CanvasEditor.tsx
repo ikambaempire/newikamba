@@ -24,9 +24,12 @@ const uid = () =>
 type Props = {
   blocks: CanvasBlock[];
   onChange: (next: CanvasBlock[]) => void;
+  /** Optional rendered template that sits BEHIND the editable overlay blocks
+   *  so users can edit "on the real template" (Canva-style). */
+  background?: React.ReactNode;
 };
 
-const CanvasEditor = ({ blocks, onChange }: Props) => {
+const CanvasEditor = ({ blocks, onChange, background }: Props) => {
   const [selected, setSelected] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ id: string; mode: "move" | "resize"; startX: number; startY: number; bx: number; by: number; bw: number; bh: number } | null>(null);
