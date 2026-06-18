@@ -62,6 +62,7 @@ const QuotationBuilder = () => {
     quotation_number: "(auto-generated on save)",
     canvas_blocks: [] as CanvasBlock[],
     canvas_enabled: false,
+    template_format: "standard" as "standard" | "sectioned",
   });
 
   const [items, setItems] = useState<QItem[]>([
