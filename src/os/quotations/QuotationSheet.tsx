@@ -1,6 +1,7 @@
 import officialLogo from "@/assets/ikamba-logo-official.png";
 import { fmtRWF } from "@/os/mock/data";
 import { Q_STATUS_LABEL, type QItem } from "@/os/quotations/types";
+import EditableText from "@/os/quotations/EditableText";
 
 const NAVY = "#0C2C47";
 const GOLD = "#D4A739";
@@ -13,34 +14,30 @@ const formatDate = (d?: string) => {
   } catch { return d; }
 };
 
-const PartyCard = ({ title, data }: { title: string; data: [string, any, boolean?][] }) => (
-  <div className="rounded-md p-4" style={{ background: SOFT_GOLD }}>
-    <h3 className="font-extrabold mb-3 text-base" style={{ color: GOLD }}>{title}</h3>
-    <div className="space-y-1 text-sm">
-      {data.filter(([, v]) => v).map(([label, value, bold], i) => (
-        <div key={i} className={bold ? "font-bold" : ""} style={bold ? { color: NAVY } : {}}>
-          {label && <span className="inline-block w-16 text-xs font-bold text-slate-500 uppercase">{label}</span>}
-          <span>{value}</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+type SheetProps = {
+  q: any;
+  items: QItem[];
+  editable?: boolean;
+  onUpdate?: (patch: any) => void;
+  onUpdateItem?: (idx: number, patch: Partial<QItem>) => void;
+};
 
-const Row = ({ label, value, accent, labelAccent }: { label: string; value: string; accent?: string; labelAccent?: boolean }) => (
-  <div className="flex items-baseline justify-between">
-    <span className="text-base" style={labelAccent && accent ? { color: accent, fontWeight: 600 } : {}}>{label}</span>
-    <span className="text-base font-bold" style={accent ? { color: accent } : { color: NAVY }}>{value}</span>
-  </div>
-);
+const E = (props: any) => <EditableText {...props} />;
 
 /**
- * Re-usable rendering of the iKAMBA quotation template. Used by:
- *  - QuotationPreview (full /preview page)
- *  - CanvasEditor background (so canvas overlays sit on top of the real template)
+ * Re-usable iKAMBA quotation template (Standard, branded).
+ * Used by QuotationPreview and as a CanvasEditor background — fully editable
+ * inline when `editable` is true.
  */
-export const QuotationSheet = ({ q, items }: { q: any; items: QItem[] }) => {
+export const QuotationSheet = ({ q, items, editable, onUpdate, onUpdateItem }: SheetProps) => {
   const allItems = (items || []).filter((i) => i.included);
+  const set = (k: string) => (v: string) => onUpdate?.({ [k]: v });
+  const setItem = (origIdx: number, k: keyof QItem) => (v: string) => {
+    if (!onUpdateItem) return;
+    if (k === "quantity" || k === "unit_price") onUpdateItem(origIdx, { [k]: Number(v) || 0 } as any);
+    else onUpdateItem(origIdx, { [k]: v } as any);
+  };
+
   return (
     <div className="qtn bg-white p-10" style={{ fontFamily: "'Poppins', 'Plus Jakarta Sans', sans-serif", color: "#1a1a1a" }}>
       <h1 className="text-center text-3xl font-extrabold tracking-wide mb-8" style={{ color: GOLD }}>Quotation</h1>
@@ -58,24 +55,30 @@ export const QuotationSheet = ({ q, items }: { q: any; items: QItem[] }) => {
       </div>
 
       <div className="grid grid-cols-2 gap-5 mb-6">
-        <PartyCard title="Quotation by" data={[
-          ["", q.company_name, true],
-          ["", q.company_address],
-          ["", [q.company_email, q.company_phone].filter(Boolean).join(" · ")],
-          ["TIN/RDB", q.company_tin],
-        ]} />
-        <PartyCard title="Quotation to" data={[
-          ["", q.client_name, true],
-          ["", q.client_contact_person],
-          ["", [q.client_email, q.client_phone].filter(Boolean).join(" · ")],
-          ["", q.client_address],
-          ["TYPE", q.client_type],
-        ]} />
+        <div className="rounded-md p-4" style={{ background: SOFT_GOLD }}>
+          <h3 className="font-extrabold mb-3 text-base" style={{ color: GOLD }}>Quotation by</h3>
+          <div className="space-y-1 text-sm">
+            <div className="font-bold" style={{ color: NAVY }}><E value={q.company_name} editable={editable} onChange={set("company_name")} placeholder="Company name" /></div>
+            <div><E value={q.company_address} editable={editable} onChange={set("company_address")} placeholder="Address" /></div>
+            <div><E value={q.company_email} editable={editable} onChange={set("company_email")} placeholder="email@company" /> {q.company_phone && "· "}<E value={q.company_phone} editable={editable} onChange={set("company_phone")} placeholder="phone" /></div>
+            <div><span className="inline-block w-16 text-xs font-bold text-slate-500 uppercase">TIN/RDB</span><E value={q.company_tin} editable={editable} onChange={set("company_tin")} placeholder="—" /></div>
+          </div>
+        </div>
+        <div className="rounded-md p-4" style={{ background: SOFT_GOLD }}>
+          <h3 className="font-extrabold mb-3 text-base" style={{ color: GOLD }}>Quotation to</h3>
+          <div className="space-y-1 text-sm">
+            <div className="font-bold" style={{ color: NAVY }}><E value={q.client_name} editable={editable} onChange={set("client_name")} placeholder="Client name" /></div>
+            <div><E value={q.client_contact_person} editable={editable} onChange={set("client_contact_person")} placeholder="Contact person" /></div>
+            <div><E value={q.client_email} editable={editable} onChange={set("client_email")} placeholder="email" /> {q.client_phone && "· "}<E value={q.client_phone} editable={editable} onChange={set("client_phone")} placeholder="phone" /></div>
+            <div><E value={q.client_address} editable={editable} onChange={set("client_address")} placeholder="Address" /></div>
+            <div><span className="inline-block w-16 text-xs font-bold text-slate-500 uppercase">TYPE</span><E value={q.client_type} editable={editable} onChange={set("client_type")} /></div>
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-between text-sm mb-6 px-2">
-        <div><span className="text-slate-500">Project</span> <span className="font-bold ml-3" style={{ color: NAVY }}>{q.project_name || "—"}</span></div>
-        <div><span className="text-slate-500">Location</span> <span className="font-bold ml-3" style={{ color: NAVY }}>{q.location || "Rwanda"}</span></div>
+        <div><span className="text-slate-500">Project</span> <span className="font-bold ml-3" style={{ color: NAVY }}><E value={q.project_name} editable={editable} onChange={set("project_name")} placeholder="Project name" /></span></div>
+        <div><span className="text-slate-500">Location</span> <span className="font-bold ml-3" style={{ color: NAVY }}><E value={q.location || "Rwanda"} editable={editable} onChange={set("location")} /></span></div>
       </div>
 
       <table className="w-full text-sm border-collapse mb-6">
@@ -88,34 +91,31 @@ export const QuotationSheet = ({ q, items }: { q: any; items: QItem[] }) => {
           </tr>
         </thead>
         <tbody>
-          {allItems.map((it, i) => (
-            <tr key={i} style={i % 2 === 1 ? { background: SOFT_GOLD } : undefined}>
-              <td className="p-3 align-top">
-                <span className="font-semibold">{i + 1}. {it.name}</span>
-                {it.description && <div className="text-xs text-slate-600 mt-0.5">{it.description}</div>}
-              </td>
-              <td className="p-3 text-right align-top">{it.quantity}</td>
-              <td className="p-3 text-right align-top">{fmtRWF(it.unit_price)}</td>
-              <td className="p-3 text-right align-top font-semibold">{fmtRWF(it.quantity * it.unit_price)}</td>
-            </tr>
-          ))}
+          {allItems.map((it, i) => {
+            const origIdx = (items || []).indexOf(it);
+            return (
+              <tr key={i} style={i % 2 === 1 ? { background: SOFT_GOLD } : undefined}>
+                <td className="p-3 align-top">
+                  <span className="font-semibold">{i + 1}. <E value={it.name} editable={editable} onChange={setItem(origIdx, "name")} placeholder="Item name" /></span>
+                  <div className="text-xs text-slate-600 mt-0.5"><E value={it.description} editable={editable} onChange={setItem(origIdx, "description")} placeholder={editable ? "Description (optional)" : ""} /></div>
+                </td>
+                <td className="p-3 text-right align-top"><E value={it.quantity} editable={editable} onChange={setItem(origIdx, "quantity")} /></td>
+                <td className="p-3 text-right align-top"><E value={editable ? it.unit_price : fmtRWF(it.unit_price)} editable={editable} onChange={setItem(origIdx, "unit_price")} /></td>
+                <td className="p-3 text-right align-top font-semibold">{fmtRWF(it.quantity * it.unit_price)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
       <div className="grid grid-cols-2 gap-8 mb-6">
         <div>
-          {q.terms && (
-            <>
-              <h3 className="font-extrabold mb-3" style={{ color: GOLD }}>Terms and Conditions</h3>
-              <pre className="text-xs leading-relaxed whitespace-pre-wrap font-sans text-slate-700">{q.terms}</pre>
-            </>
-          )}
-          {q.notes && (
-            <div className="mt-5">
-              <h3 className="font-extrabold mb-2" style={{ color: GOLD }}>Additional Notes</h3>
-              <p className="text-xs leading-relaxed text-slate-700 whitespace-pre-wrap">{q.notes}</p>
-            </div>
-          )}
+          <h3 className="font-extrabold mb-3" style={{ color: GOLD }}>Terms and Conditions</h3>
+          <pre className="text-xs leading-relaxed whitespace-pre-wrap font-sans text-slate-700"><E value={q.terms} editable={editable} multiline onChange={set("terms")} placeholder={editable ? "Terms…" : ""} /></pre>
+          <div className="mt-5">
+            <h3 className="font-extrabold mb-2" style={{ color: GOLD }}>Additional Notes</h3>
+            <p className="text-xs leading-relaxed text-slate-700 whitespace-pre-wrap"><E value={q.notes} editable={editable} multiline onChange={set("notes")} placeholder={editable ? "Notes…" : ""} /></p>
+          </div>
         </div>
         <div>
           <div className="space-y-3">
@@ -148,12 +148,19 @@ export const QuotationSheet = ({ q, items }: { q: any; items: QItem[] }) => {
         </div>
         <div className="text-right">
           <div className="h-14" />
-          <div className="text-sm font-semibold text-slate-700">{q.prepared_by_name || "iKAMBA Empire Ltd"}</div>
+          <div className="text-sm font-semibold text-slate-700"><E value={q.prepared_by_name || "iKAMBA Empire Ltd"} editable={editable} onChange={set("prepared_by_name")} /></div>
           <div className="text-xs text-slate-500">Authorized Signature</div>
         </div>
       </div>
     </div>
   );
 };
+
+const Row = ({ label, value, accent, labelAccent }: { label: string; value: string; accent?: string; labelAccent?: boolean }) => (
+  <div className="flex items-baseline justify-between">
+    <span className="text-base" style={labelAccent && accent ? { color: accent, fontWeight: 600 } : {}}>{label}</span>
+    <span className="text-base font-bold" style={accent ? { color: accent } : { color: NAVY }}>{value}</span>
+  </div>
+);
 
 export default QuotationSheet;

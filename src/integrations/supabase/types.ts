@@ -537,6 +537,7 @@ export type Database = {
           discount_amount: number
           discount_type: string
           discount_value: number
+          equipment_section: string | null
           estimated_profit: number
           id: string
           location: string | null
@@ -556,6 +557,8 @@ export type Database = {
           subtotal: number
           tax_amount: number
           tax_percent: number
+          team_section: string | null
+          template_format: string
           terms: string | null
           total_amount: number
           total_cost_estimate: number
@@ -588,6 +591,7 @@ export type Database = {
           discount_amount?: number
           discount_type?: string
           discount_value?: number
+          equipment_section?: string | null
           estimated_profit?: number
           id?: string
           location?: string | null
@@ -607,6 +611,8 @@ export type Database = {
           subtotal?: number
           tax_amount?: number
           tax_percent?: number
+          team_section?: string | null
+          template_format?: string
           terms?: string | null
           total_amount?: number
           total_cost_estimate?: number
@@ -639,6 +645,7 @@ export type Database = {
           discount_amount?: number
           discount_type?: string
           discount_value?: number
+          equipment_section?: string | null
           estimated_profit?: number
           id?: string
           location?: string | null
@@ -658,6 +665,8 @@ export type Database = {
           subtotal?: number
           tax_amount?: number
           tax_percent?: number
+          team_section?: string | null
+          template_format?: string
           terms?: string | null
           total_amount?: number
           total_cost_estimate?: number
