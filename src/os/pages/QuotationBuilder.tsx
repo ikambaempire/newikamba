@@ -395,8 +395,8 @@ const QuotationBuilder = () => {
                 <div>
                   <h2 className="text-white font-bold flex items-center gap-2"><LayoutTemplate size={16} /> Edit your quotation (Canva-style)</h2>
                   <p className="text-xs text-os-muted mt-1 max-w-xl">
-                    Your real quotation template is shown below — drag overlay text, images and highlights on top of it,
-                    Canva-style. The base content (items, totals, terms) keeps updating from the previous steps.
+                    Click any text on the quotation below to edit it directly — names, prices,
+                    descriptions, terms, everything. You can also drop overlay text/images/shapes on top.
                   </p>
                 </div>
                 <label className="text-xs text-os-muted flex items-center gap-1.5">
@@ -404,15 +404,43 @@ const QuotationBuilder = () => {
                   Apply overlays when exporting
                 </label>
               </div>
+
+              {/* Template format picker */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="text-xs text-os-muted self-center mr-1">Template:</span>
+                {[
+                  { id: "standard", label: "Standard (branded)" },
+                  { id: "sectioned", label: "Sectioned (spreadsheet style)" },
+                ].map((t) => (
+                  <button key={t.id} onClick={() => update({ template_format: t.id })}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${q.template_format === t.id ? "bg-os-gold text-[hsl(var(--os-navy-deep))] border-os-gold" : "border-os text-white hover:bg-white/5"}`}>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
               <CanvasEditor
                 blocks={(q.canvas_blocks as CanvasBlock[]) || []}
                 onChange={(next) => update({ canvas_blocks: next })}
                 background={
                   <div style={{ transform: "scale(0.94)", transformOrigin: "top left", width: "106.4%" }}>
-                    <QuotationSheet
-                      q={{ ...q, subtotal: totals.subtotal, discount_amount: totals.discount_amount, tax_amount: totals.tax_amount, total_amount: totals.total_amount, advance_amount: totals.advance_amount, balance_amount: totals.balance_amount, amount_in_words: numberToWords(totals.total_amount) }}
-                      items={items}
-                    />
+                    {q.template_format === "sectioned" ? (
+                      <QuotationSheetSectioned
+                        q={{ ...q, subtotal: totals.subtotal, discount_amount: totals.discount_amount, tax_amount: totals.tax_amount, total_amount: totals.total_amount, advance_amount: totals.advance_amount, balance_amount: totals.balance_amount, amount_in_words: numberToWords(totals.total_amount) }}
+                        items={items}
+                        editable
+                        onUpdate={update}
+                        onUpdateItem={updateItem}
+                      />
+                    ) : (
+                      <QuotationSheet
+                        q={{ ...q, subtotal: totals.subtotal, discount_amount: totals.discount_amount, tax_amount: totals.tax_amount, total_amount: totals.total_amount, advance_amount: totals.advance_amount, balance_amount: totals.balance_amount, amount_in_words: numberToWords(totals.total_amount) }}
+                        items={items}
+                        editable
+                        onUpdate={update}
+                        onUpdateItem={updateItem}
+                      />
+                    )}
                   </div>
                 }
               />
