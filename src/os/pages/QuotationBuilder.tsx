@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, CheckCircle2, Send, Fol
 import { toast } from "sonner";
 import CanvasEditor, { type CanvasBlock } from "@/os/quotations/CanvasEditor";
 import { QuotationSheet } from "@/os/quotations/QuotationSheet";
+import { QuotationSheetSectioned } from "@/os/quotations/QuotationSheetSectioned";
 
 type StepId = "client" | "project" | "deliverables" | "pricing" | "costs" | "terms" | "canvas" | "preview";
 const STEPS: { id: StepId; label: string }[] = [
