@@ -12,6 +12,7 @@ import {
 import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, CheckCircle2, Send, FolderPlus, AlertTriangle, LayoutTemplate } from "lucide-react";
 import { toast } from "sonner";
 import CanvasEditor, { type CanvasBlock } from "@/os/quotations/CanvasEditor";
+import { QuotationSheet } from "@/os/quotations/QuotationSheet";
 
 type StepId = "client" | "project" | "deliverables" | "pricing" | "costs" | "terms" | "canvas" | "preview";
 const STEPS: { id: StepId; label: string }[] = [
