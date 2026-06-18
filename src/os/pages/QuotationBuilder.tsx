@@ -12,6 +12,7 @@ import {
 import { ArrowLeft, ArrowRight, Plus, Trash2, Save, Eye, CheckCircle2, Send, FolderPlus, AlertTriangle, LayoutTemplate } from "lucide-react";
 import { toast } from "sonner";
 import CanvasEditor, { type CanvasBlock } from "@/os/quotations/CanvasEditor";
+import { QuotationSheet } from "@/os/quotations/QuotationSheet";
 
 type StepId = "client" | "project" | "deliverables" | "pricing" | "costs" | "terms" | "canvas" | "preview";
 const STEPS: { id: StepId; label: string }[] = [
@@ -390,19 +391,28 @@ const QuotationBuilder = () => {
             <>
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
-                  <h2 className="text-white font-bold flex items-center gap-2"><LayoutTemplate size={16} /> Canvas design</h2>
+                  <h2 className="text-white font-bold flex items-center gap-2"><LayoutTemplate size={16} /> Edit your quotation (Canva-style)</h2>
                   <p className="text-xs text-os-muted mt-1 max-w-xl">
-                    Drag, drop, and rearrange text, images and shapes — Canva-style. Click a block to edit, drag the gold corner to resize. Save as draft to keep your work.
+                    Your real quotation template is shown below — drag overlay text, images and highlights on top of it,
+                    Canva-style. The base content (items, totals, terms) keeps updating from the previous steps.
                   </p>
                 </div>
                 <label className="text-xs text-os-muted flex items-center gap-1.5">
                   <input type="checkbox" checked={!!q.canvas_enabled} onChange={(e) => update({ canvas_enabled: e.target.checked })} />
-                  Enable canvas layout
+                  Apply overlays when exporting
                 </label>
               </div>
               <CanvasEditor
                 blocks={(q.canvas_blocks as CanvasBlock[]) || []}
                 onChange={(next) => update({ canvas_blocks: next })}
+                background={
+                  <div style={{ transform: "scale(0.94)", transformOrigin: "top left", width: "106.4%" }}>
+                    <QuotationSheet
+                      q={{ ...q, subtotal: totals.subtotal, discount_amount: totals.discount_amount, tax_amount: totals.tax_amount, total_amount: totals.total_amount, advance_amount: totals.advance_amount, balance_amount: totals.balance_amount, amount_in_words: numberToWords(totals.total_amount) }}
+                      items={items}
+                    />
+                  </div>
+                }
               />
             </>
           )}

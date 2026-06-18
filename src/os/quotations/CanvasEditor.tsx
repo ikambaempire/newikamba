@@ -24,9 +24,12 @@ const uid = () =>
 type Props = {
   blocks: CanvasBlock[];
   onChange: (next: CanvasBlock[]) => void;
+  /** Optional rendered template that sits BEHIND the editable overlay blocks
+   *  so users can edit "on the real template" (Canva-style). */
+  background?: React.ReactNode;
 };
 
-const CanvasEditor = ({ blocks, onChange }: Props) => {
+const CanvasEditor = ({ blocks, onChange, background }: Props) => {
   const [selected, setSelected] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ id: string; mode: "move" | "resize"; startX: number; startY: number; bx: number; by: number; bw: number; bh: number } | null>(null);
@@ -114,18 +117,27 @@ const CanvasEditor = ({ blocks, onChange }: Props) => {
             onPointerUp={onPointerUp}
             onPointerLeave={onPointerUp}
             className="relative bg-white shadow-lg mx-auto"
-            style={{ width: CANVAS_W, height: CANVAS_H }}
+            style={{ width: CANVAS_W, minHeight: CANVAS_H }}
           >
-            {blocks.map((b) => (
-              <BlockView
-                key={b.id}
-                block={b}
-                selected={selected === b.id}
-                onPointerDown={(e, m) => onPointerDown(e, b, m)}
-                onChangeText={(t) => updateBlock(b.id, { text: t })}
-              />
-            ))}
-            {blocks.length === 0 && (
+            {/* Real quotation template renders here as the editing surface */}
+            {background && (
+              <div className="absolute inset-0 overflow-hidden pointer-events-auto">
+                {background}
+              </div>
+            )}
+            {/* Drag-and-drop overlay blocks sit on top */}
+            <div className="absolute inset-0" style={{ minHeight: CANVAS_H }}>
+              {blocks.map((b) => (
+                <BlockView
+                  key={b.id}
+                  block={b}
+                  selected={selected === b.id}
+                  onPointerDown={(e, m) => onPointerDown(e, b, m)}
+                  onChangeText={(t) => updateBlock(b.id, { text: t })}
+                />
+              ))}
+            </div>
+            {!background && blocks.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-sm pointer-events-none">
                 Empty canvas — add a text, image, or shape block to start.
               </div>

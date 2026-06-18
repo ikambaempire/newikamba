@@ -70,10 +70,24 @@ const rowToProject = (r: any): OSProject => ({
   ...(r.custom_fields ? { custom_fields: r.custom_fields } : {}),
 } as any);
 
+// Whitelist of columns that exist on public.os_pipeline_projects so we never send
+// stray form fields (e.g. owner_user_id from the wizard) that would fail the insert.
+const PIPELINE_COLUMNS = new Set([
+  "id","name","client","contact_person","phone","email","product_line","service",
+  "objective","brief","deliverables","shoot_date","location","deadline",
+  "budget_range","payment_terms","owner","assigned_to_user_id","assigned_to_name",
+  "notes","references","stage","value","paid","costs_total","next_action",
+  "payment_status","custom_fields",
+]);
+const DATE_COLUMNS = new Set(["shoot_date","deadline"]);
+
 const projectToRow = (p: Partial<OSProject> & { id?: string }) => {
-  const { custom_fields, ...rest } = p as any;
-  const row: any = { ...rest };
-  if (custom_fields !== undefined) row.custom_fields = custom_fields;
+  const row: any = {};
+  for (const [k, v] of Object.entries(p)) {
+    if (!PIPELINE_COLUMNS.has(k)) continue;
+    if (DATE_COLUMNS.has(k) && (v === "" || v == null)) { row[k] = null; continue; }
+    row[k] = v;
+  }
   return row;
 };
 
@@ -123,12 +137,22 @@ export const useOSStore = create<OSStore>((set, get) => ({
 
   addProject: (p) => {
     const nid = id();
-    const newP: OSProject = { ...p, id: nid, paid: 0, costs_total: 0, payment_status: "Pending" };
+    // Map wizard-only fields (owner_user_id) to real columns before persisting.
+    const src: any = p;
+    const mapped: any = { ...p };
+    if (src.owner_user_id && !mapped.assigned_to_user_id) mapped.assigned_to_user_id = src.owner_user_id;
+    if (src.owner && !mapped.assigned_to_name) mapped.assigned_to_name = src.owner;
+    delete mapped.owner_user_id;
+
+    const newP: OSProject = { ...(mapped as any), id: nid, paid: 0, costs_total: 0, payment_status: "Pending" };
     set({ projects: [newP, ...get().projects] });
-    // Write-through to Supabase (fire & forget)
     (async () => {
       const { error } = await supabase.from("os_pipeline_projects" as any).insert(projectToRow(newP));
-      if (error) console.warn("addProject persist failed:", error);
+      if (error) {
+        console.error("addProject persist failed:", error);
+        const { toast } = await import("sonner");
+        toast.error(`Could not save project: ${error.message}`);
+      }
     })();
     return nid;
   },
