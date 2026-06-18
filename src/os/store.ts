@@ -70,10 +70,24 @@ const rowToProject = (r: any): OSProject => ({
   ...(r.custom_fields ? { custom_fields: r.custom_fields } : {}),
 } as any);
 
+// Whitelist of columns that exist on public.os_pipeline_projects so we never send
+// stray form fields (e.g. owner_user_id from the wizard) that would fail the insert.
+const PIPELINE_COLUMNS = new Set([
+  "id","name","client","contact_person","phone","email","product_line","service",
+  "objective","brief","deliverables","shoot_date","location","deadline",
+  "budget_range","payment_terms","owner","assigned_to_user_id","assigned_to_name",
+  "notes","references","stage","value","paid","costs_total","next_action",
+  "payment_status","custom_fields",
+]);
+const DATE_COLUMNS = new Set(["shoot_date","deadline"]);
+
 const projectToRow = (p: Partial<OSProject> & { id?: string }) => {
-  const { custom_fields, ...rest } = p as any;
-  const row: any = { ...rest };
-  if (custom_fields !== undefined) row.custom_fields = custom_fields;
+  const row: any = {};
+  for (const [k, v] of Object.entries(p)) {
+    if (!PIPELINE_COLUMNS.has(k)) continue;
+    if (DATE_COLUMNS.has(k) && (v === "" || v == null)) { row[k] = null; continue; }
+    row[k] = v;
+  }
   return row;
 };
 
