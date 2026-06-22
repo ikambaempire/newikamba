@@ -82,7 +82,10 @@ const Login = () => {
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent" />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-widest text-white/80 mb-1.5 block">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-white/80">Password</label>
+                <Link to="/forgot-password" className="text-xs text-accent hover:underline">Forgot password?</Link>
+              </div>
               <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus-visible:ring-accent" />
             </div>
