@@ -24,9 +24,14 @@ const NotificationsListener = () => {
 
     let firstLoad = true;
     let cancelled = false;
+    let prefs: NotificationPrefs = loadPrefs(user.id);
+    const onPrefsChanged = (e: any) => {
+      if (!e?.detail || e.detail.userId === user.id) prefs = loadPrefs(user.id);
+    };
+    window.addEventListener("ikamba:notif-prefs-changed", onPrefsChanged as any);
 
     // Ask once for browser notification permission (no-op if already decided).
-    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+    if (prefs.browserNotif && typeof Notification !== "undefined" && Notification.permission === "default") {
       try { Notification.requestPermission().catch(() => {}); } catch {}
     }
 
