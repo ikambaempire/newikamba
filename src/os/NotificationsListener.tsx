@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
+import { loadPrefs, categorize, DEFAULT_PREFS, type NotificationPrefs } from "@/os/notificationPrefs";
 
 // Listens to os_notifications for the current user via Postgres realtime,
 // and also polls as a safety net. New notifications trigger:
@@ -23,9 +24,14 @@ const NotificationsListener = () => {
 
     let firstLoad = true;
     let cancelled = false;
+    let prefs: NotificationPrefs = loadPrefs(user.id);
+    const onPrefsChanged = (e: any) => {
+      if (!e?.detail || e.detail.userId === user.id) prefs = loadPrefs(user.id);
+    };
+    window.addEventListener("ikamba:notif-prefs-changed", onPrefsChanged as any);
 
     // Ask once for browser notification permission (no-op if already decided).
-    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+    if (prefs.browserNotif && typeof Notification !== "undefined" && Notification.permission === "default") {
       try { Notification.requestPermission().catch(() => {}); } catch {}
     }
 
@@ -52,16 +58,30 @@ const NotificationsListener = () => {
     const popup = (n: any) => {
       if (seen.has(n.id)) return;
       seen.add(n.id);
-      const opts: any = { description: n.message || undefined, duration: 8000 };
-      const fn =
-        n.kind === "success" ? toast.success
-        : n.kind === "error" ? toast.error
-        : n.kind === "warning" ? toast.warning
-        : toast.info;
-      try { fn(n.title, opts); } catch { toast(n.title, opts); }
+
+      // Honor per-device preferences (kind + category filters).
+      const kindOK = prefs.kinds[(n.kind as keyof typeof prefs.kinds)] ?? true;
+      const cat = categorize(n);
+      const catOK = prefs.categories[cat] ?? true;
+      const allowed = kindOK && catOK;
+
+      if (allowed && prefs.showPopup) {
+        const opts: any = { description: n.message || undefined, duration: 8000 };
+        const fn =
+          n.kind === "success" ? toast.success
+          : n.kind === "error" ? toast.error
+          : n.kind === "warning" ? toast.warning
+          : toast.info;
+        try { fn(n.title, opts); } catch { toast(n.title, opts); }
+      }
 
       // Browser system notification (shows even if tab is in background).
-      if (typeof Notification !== "undefined" && Notification.permission === "granted" && document.visibilityState !== "visible") {
+      if (
+        allowed && prefs.browserNotif &&
+        typeof Notification !== "undefined" &&
+        Notification.permission === "granted" &&
+        document.visibilityState !== "visible"
+      ) {
         try {
           const bn = new Notification(n.title, {
             body: n.message || "",
@@ -71,7 +91,7 @@ const NotificationsListener = () => {
           bn.onclick = () => { window.focus(); if (n.link) window.location.href = n.link; bn.close(); };
         } catch {}
       }
-      playSound();
+      if (allowed && prefs.playSound) playSound();
     };
 
     const trim = () => {
@@ -126,6 +146,7 @@ const NotificationsListener = () => {
       window.clearTimeout(t0);
       window.clearInterval(iv);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("ikamba:notif-prefs-changed", onPrefsChanged as any);
       try { supabase.removeChannel(channel); } catch {}
     };
   }, [user]);
