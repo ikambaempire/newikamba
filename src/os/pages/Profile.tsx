@@ -192,6 +192,60 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      <ChangePasswordCard email={user.email || ""} />
+    </div>
+  );
+};
+
+const ChangePasswordCard = ({ email }: { email: string }) => {
+  const [pw, setPw] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const update = async () => {
+    if (pw.length < 8) { toast.error("Password must be at least 8 characters"); return; }
+    if (pw !== confirm) { toast.error("Passwords do not match"); return; }
+    setSaving(true);
+    const { error } = await supabase.auth.updateUser({ password: pw });
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    setPw(""); setConfirm("");
+    toast.success("Password updated");
+  };
+
+  const sendReset = async () => {
+    if (!email) return;
+    setSending(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setSending(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Reset link sent to " + email);
+  };
+
+  return (
+    <div className="os-card rounded-xl p-5 mt-6 max-w-2xl ml-auto">
+      <h3 className="text-white font-bold mb-1">Password</h3>
+      <p className="text-xs text-os-muted mb-4">Change your password or email yourself a reset link.</p>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Field label="New password">
+          <Input type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="At least 8 characters" />
+        </Field>
+        <Field label="Confirm new password">
+          <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Repeat password" />
+        </Field>
+      </div>
+      <div className="flex flex-wrap gap-2 mt-4">
+        <OSButton variant="primary" onClick={update} disabled={saving || !pw}>
+          {saving ? "Updating…" : "Update password"}
+        </OSButton>
+        <OSButton variant="outline" onClick={sendReset} disabled={sending || !email}>
+          {sending ? "Sending…" : "Email me a reset link"}
+        </OSButton>
+      </div>
     </div>
   );
 };
