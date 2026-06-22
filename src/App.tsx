@@ -134,6 +134,7 @@ const AnimatedRoutes = () => {
           <Route path="profile" element={<OSProfile />} />
           <Route path="app" element={<OSAppDownload />} />
           <Route path="notifications" element={<OSNotifications />} />
+          <Route path="notifications/preferences" element={<OSNotificationPrefs />} />
           <Route path="settings" element={<OSSettings />} />
         </Route>
 
