@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Badge, OSButton, Input } from "@/os/components/ui";
 import { PRODUCT_LINES, SERVICE_CATEGORIES, PIPELINE_STAGES, COST_CATEGORIES } from "@/os/mock/data";
 import { hasAdminRole } from "@/os/access";
-import { Plus, X, Shield, Lock, LayoutGrid } from "lucide-react";
+import { Plus, X, Shield, Lock, LayoutGrid, Megaphone, Send } from "lucide-react";
 import PartnerLogosManager from "@/components/admin/PartnerLogosManager";
 import { toast } from "sonner";
 
@@ -183,6 +183,7 @@ const Settings = () => {
             </div>
             <PartnerLogosManager />
           </section>
+          <BroadcastCard />
         </>
       )}
       <div className="grid lg:grid-cols-2 gap-4">
@@ -198,6 +199,64 @@ const Settings = () => {
         ))}
       </div>
     </div>
+  );
+};
+
+const BroadcastCard = () => {
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [kind, setKind] = useState("info");
+  const [link, setLink] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const send = async () => {
+    if (!title.trim()) { toast.error("Add a title"); return; }
+    if (!confirm("Send this announcement to every user on the platform?")) return;
+    setSending(true);
+    const { data, error } = await supabase.functions.invoke("broadcast-notification", {
+      body: { title: title.trim(), message: message.trim() || null, kind, link: link.trim() || null },
+    });
+    setSending(false);
+    if (error) { toast.error(error.message || "Failed to broadcast"); return; }
+    toast.success(`Announcement sent to ${(data as any)?.count ?? "all"} users`);
+    setTitle(""); setMessage(""); setLink("");
+  };
+
+  return (
+    <section className="os-card rounded-xl p-5 mb-4">
+      <div className="flex items-center gap-2 mb-1">
+        <Megaphone size={16} className="text-accent" />
+        <h3 className="text-white font-bold">Platform Announcement</h3>
+      </div>
+      <p className="text-sm text-os-muted mb-4">Send a notification to every user — use this to announce new features, updates, or platform changes. It pops up live in their dashboard.</p>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <Input placeholder="Title (e.g. New feature: Canvas editor)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Input placeholder="Optional link (e.g. /os/quotations)" value={link} onChange={(e) => setLink(e.target.value)} />
+      </div>
+      <div className="mt-3">
+        <textarea
+          className="w-full rounded-lg bg-white/5 border border-white/10 text-white text-sm p-3 min-h-[80px] outline-none focus:border-accent"
+          placeholder="Message — what changed and why users should care"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+      </div>
+      <div className="flex flex-wrap items-center gap-2 mt-3">
+        <select
+          className="rounded-lg bg-white/5 border border-white/10 text-white text-sm px-3 py-2 outline-none focus:border-accent"
+          value={kind}
+          onChange={(e) => setKind(e.target.value)}
+        >
+          <option value="info">Info</option>
+          <option value="success">Success</option>
+          <option value="warning">Warning</option>
+          <option value="error">Important</option>
+        </select>
+        <OSButton variant="primary" onClick={send} disabled={sending || !title.trim()}>
+          <Send size={14} /> {sending ? "Sending…" : "Send to everyone"}
+        </OSButton>
+      </div>
+    </section>
   );
 };
 
