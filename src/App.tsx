@@ -23,6 +23,8 @@ import DesignStudio from "./pages/DesignStudio";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AuthRedirect from "./pages/AuthRedirect";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import OurWorkDetail from "./pages/OurWorkDetail";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -95,6 +97,8 @@ const AnimatedRoutes = () => {
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
         <Route path="/auth-redirect" element={<AuthRedirect />} />
+        <Route path="/forgot-password" element={<PageTransition><ForgotPassword /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
 
         {/* Client Workspace */}
         <Route path="/workspace" element={<Navigate to="/os" replace />} />
