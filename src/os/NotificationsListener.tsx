@@ -146,6 +146,7 @@ const NotificationsListener = () => {
       window.clearTimeout(t0);
       window.clearInterval(iv);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("ikamba:notif-prefs-changed", onPrefsChanged as any);
       try { supabase.removeChannel(channel); } catch {}
     };
   }, [user]);
