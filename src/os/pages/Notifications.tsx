@@ -88,6 +88,9 @@ const Notifications = () => {
         subtitle={`${unread} unread · ${items.length} total`}
         actions={
           <>
+            <Link to="/os/notifications/preferences">
+              <OSButton variant="outline"><SettingsIcon size={14} /> Preferences</OSButton>
+            </Link>
             <OSButton variant="outline" onClick={load}><RefreshCw size={14} /> Refresh</OSButton>
             <OSButton variant="outline" onClick={markAllRead} disabled={unread === 0}><CheckCheck size={14} /> Mark all read</OSButton>
             <OSButton variant="ghost" onClick={clearAllRead}><Trash2 size={14} /> Clear read</OSButton>
