@@ -49,6 +49,7 @@ import OSQuotationBuilder from "@/os/pages/QuotationBuilder";
 import OSQuotationPreview from "@/os/pages/QuotationPreview";
 import OSAppDownload from "@/os/pages/AppDownload";
 import OSNotifications from "@/os/pages/Notifications";
+import OSNotificationPrefs from "@/os/pages/NotificationPreferences";
 
 const queryClient = new QueryClient();
 
