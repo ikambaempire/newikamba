@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Bell } from "lucide-react";
+import { loadPrefs, categorize, DEFAULT_PREFS, type NotificationPrefs } from "@/os/notificationPrefs";
 
 // Listens to os_notifications for the current user via Postgres realtime,
 // and also polls as a safety net. New notifications trigger:
