@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download, MonitorSmartphone, Smartphone } from "lucide-react";
 import { PageHeader, OSButton } from "@/os/components/ui";
+import ikambaIcon from "@/assets/ikamba-icon.png";
 
 const AppDownload = () => {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
@@ -32,8 +33,8 @@ const AppDownload = () => {
       <PageHeader title="Download the App" subtitle="Install iKAMBA Media OS on Android, iPhone, iPad, Mac, or Windows." />
       <section className="os-card rounded-xl p-6 sm:p-8 max-w-3xl">
         <div className="flex flex-col sm:flex-row gap-5 sm:items-center">
-          <div className="h-16 w-16 rounded-2xl bg-os-gold flex items-center justify-center shrink-0">
-            <MonitorSmartphone size={32} />
+          <div className="h-16 w-16 rounded-2xl bg-os-navy-deep flex items-center justify-center shrink-0 border border-os-gold/30">
+            <img src={ikambaIcon} alt="iKAMBA" className="h-10 w-10 object-contain" />
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="text-white text-xl font-bold">Install iKAMBA on this device</h2>
