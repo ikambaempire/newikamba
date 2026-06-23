@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Download, MonitorSmartphone, Smartphone } from "lucide-react";
 import { PageHeader, OSButton } from "@/os/components/ui";
+import ikambaIcon from "@/assets/ikamba-icon.png";
 
 const AppDownload = () => {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
