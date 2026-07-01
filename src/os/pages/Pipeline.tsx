@@ -32,7 +32,7 @@ const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue"
 };
 
 const Pipeline = () => {
-  const { projects, updateProjectStage, updateProject, addProject, deleteProject } = useOSStore();
+  const { projects, updateProjectStage, updateProject, addProject, deleteProject, clearAllProjects } = useOSStore();
   const { user, roles } = useAuth();
   const isAdmin = hasAdminRole(roles);
   const { cols, setCols } = usePipelineColumns();
