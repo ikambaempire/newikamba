@@ -213,22 +213,6 @@ const Pipeline = () => {
                       </td>
                     );
 
-                    // Custom column — inline editable, stored in custom_fields JSONB
-                    const cf = ((p as any).custom_fields || {}) as Record<string, any>;
-                    const val = cf[c.key] ?? "";
-                    return (
-                      <td key={c.key} className="p-3">
-                        <Input
-                          type={c.type === "date" ? "date" : c.type === "number" ? "number" : "text"}
-                          value={val}
-                          onChange={(e) => {
-                            const next = { ...cf, [c.key]: e.target.value };
-                            updateProject(p.id, { custom_fields: next } as any);
-                          }}
-                          className="!py-1.5 text-xs"
-                        />
-                      </td>
-                    );
                   })}
                   <td className="p-3 text-right">
                     <div className="inline-flex items-center gap-1">
