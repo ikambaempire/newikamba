@@ -355,6 +355,7 @@ const Pipeline = () => {
               references: o.references || "",
               stage: (stageMatch || "New Request") as PipelineStage,
               value: Number(String(o.value || "0").replace(/[^\d.-]/g, "")) || 0,
+              paid: Number(String(o.paid || "0").replace(/[^\d.-]/g, "")) || 0,
             } as any);
             added++;
             if (user && (o.shoot_date || o.deadline)) {
