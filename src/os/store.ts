@@ -146,7 +146,11 @@ export const useOSStore = create<OSStore>((set, get) => ({
     if (src.owner && !mapped.assigned_to_name) mapped.assigned_to_name = src.owner;
     delete mapped.owner_user_id;
 
-    const newP: OSProject = { ...(mapped as any), id: nid, paid: 0, costs_total: 0, payment_status: "Pending" };
+    const paidIn = Math.max(0, Number(mapped.paid) || 0);
+    const value = Math.max(0, Number(mapped.value) || 0);
+    const status = paidIn >= value && value > 0 ? "Paid" : paidIn > 0 ? "Partially Paid" : "Pending";
+    delete mapped.paid;
+    const newP: OSProject = { ...(mapped as any), id: nid, paid: paidIn, costs_total: 0, payment_status: status as any };
     set({ projects: [newP, ...get().projects] });
     (async () => {
       const { error } = await supabase.from("os_pipeline_projects" as any).insert(projectToRow(newP));
@@ -155,9 +159,14 @@ export const useOSStore = create<OSStore>((set, get) => ({
         const { toast } = await import("sonner");
         toast.error(`Could not save project: ${error.message}`);
       }
+      // If paid recorded on import, also log a payment row so Finance reflects it
+      if (paidIn > 0) {
+        get().addPayment({ project_id: nid, amount: paidIn, method: "Imported", date: new Date().toISOString().slice(0, 10), note: "Imported from spreadsheet" } as any);
+      }
     })();
     return nid;
   },
+
 
   updateProjectStage: (id, stage) => {
     const before = get().projects.find((p) => p.id === id);
