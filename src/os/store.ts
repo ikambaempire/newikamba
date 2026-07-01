@@ -20,10 +20,12 @@ interface OSStore {
   subscribePipeline: () => void;
   unsubscribePipeline: () => void;
 
-  addProject: (p: Omit<OSProject, "id" | "paid" | "costs_total" | "payment_status">) => string;
+  addProject: (p: Omit<OSProject, "id" | "paid" | "costs_total" | "payment_status"> & { paid?: number }) => string;
   updateProjectStage: (id: string, stage: PipelineStage) => void;
   updateProject: (id: string, patch: Partial<OSProject>) => void;
   deleteProject: (id: string) => void;
+  clearAllProjects: () => Promise<{ ok: boolean; error?: string; count?: number }>;
+
 
   addCost: (c: Omit<OSCost, "id">) => void;
   deleteCost: (id: string) => void;
