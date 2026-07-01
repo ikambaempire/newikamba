@@ -204,6 +204,15 @@ export const useOSStore = create<OSStore>((set, get) => ({
     });
   },
 
+  clearAllProjects: async () => {
+    const count = get().projects.length;
+    const { error } = await supabase.from("os_pipeline_projects" as any).delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (error) return { ok: false, error: error.message };
+    set({ projects: [] });
+    return { ok: true, count };
+  },
+
+
   addCost: (c) => {
     const cost = { ...c, id: id() };
     set({
