@@ -147,14 +147,17 @@ const Pipeline = () => {
                     if (c.builtin) {
                       switch (c.key) {
                         case "name": return (
-                          <td key={c.key} className="p-3">
-                            <Link to={`/os/projects/${p.id}`} className="text-white font-semibold hover:text-os-gold">{p.name}</Link>
-                            <div className="text-[10px] text-os-muted mt-0.5">{p.product_line}</div>
+                          <td key={c.key} className="p-3 min-w-[220px]">
+                            <div className="flex items-center gap-1.5">
+                              <Link to={`/os/projects/${p.id}`} className="text-os-gold hover:text-white shrink-0" title="Open"><ExternalLink size={12} /></Link>
+                              <InlineText value={p.name} onSave={(v) => v && v !== p.name && updateProject(p.id, { name: v })} />
+                            </div>
+                            <div className="text-[10px] text-os-muted mt-0.5 pl-5">{p.product_line}</div>
                           </td>
                         );
-                        case "client":  return <td key={c.key} className="p-3 text-os-muted">{p.client}</td>;
-                        case "service": return <td key={c.key} className="p-3"><Badge tone="blue">{p.service}</Badge></td>;
-                        case "owner":   return <td key={c.key} className="p-3 text-os-muted">{p.owner}</td>;
+                        case "client":  return <td key={c.key} className="p-3"><InlineText value={p.client} onSave={(v) => v !== p.client && updateProject(p.id, { client: v })} /></td>;
+                        case "service": return <td key={c.key} className="p-3"><InlineText value={p.service} onSave={(v) => v !== p.service && updateProject(p.id, { service: v })} /></td>;
+                        case "owner":   return <td key={c.key} className="p-3"><InlineText value={p.owner} onSave={(v) => v !== p.owner && updateProject(p.id, { owner: v })} /></td>;
                         case "stage":   return (
                           <td key={c.key} className="p-3">
                             <div className="flex items-center gap-2">
@@ -165,13 +168,51 @@ const Pipeline = () => {
                             </div>
                           </td>
                         );
-                        case "value":          return <td key={c.key} className="p-3 text-white font-semibold text-right whitespace-nowrap">{fmtRWF(p.value)}</td>;
-                        case "paid":           return <td key={c.key} className="p-3 text-emerald-300 text-right whitespace-nowrap">{fmtRWF(p.paid)}</td>;
+                        case "value": return (
+                          <td key={c.key} className="p-3 text-right whitespace-nowrap min-w-[130px]">
+                            <InlineNumber value={p.value} align="right" onSave={(n) => n !== p.value && updateProject(p.id, { value: n })} />
+                          </td>
+                        );
+                        case "paid": return (
+                          <td key={c.key} className="p-3 text-right whitespace-nowrap min-w-[130px]">
+                            <InlineNumber
+                              value={p.paid}
+                              align="right"
+                              className="text-emerald-300"
+                              onSave={(n) => {
+                                if (n === p.paid) return;
+                                const status = n >= p.value && p.value > 0 ? "Paid" : n > 0 ? "Partially Paid" : "Pending";
+                                updateProject(p.id, { paid: n, payment_status: status as any });
+                              }}
+                            />
+                          </td>
+                        );
                         case "payment_status": return <td key={c.key} className="p-3"><PaymentBadge status={p.payment_status} /></td>;
-                        case "deadline":       return <td key={c.key} className="p-3 text-os-muted whitespace-nowrap">{p.deadline || "—"}</td>;
-                        default:               return <td key={c.key} className="p-3 text-os-muted">{(p as any)[c.key] ?? "—"}</td>;
+                        case "deadline": return (
+                          <td key={c.key} className="p-3 whitespace-nowrap">
+                            <InlineDate value={p.deadline} onSave={(v) => v !== p.deadline && updateProject(p.id, { deadline: v })} />
+                          </td>
+                        );
+                        default: return <td key={c.key} className="p-3"><InlineText value={(p as any)[c.key] || ""} onSave={(v) => updateProject(p.id, { [c.key]: v } as any)} /></td>;
                       }
                     }
+                    // Custom column — inline editable, stored in custom_fields JSONB
+                    const cf = ((p as any).custom_fields || {}) as Record<string, any>;
+                    const val = cf[c.key] ?? "";
+                    return (
+                      <td key={c.key} className="p-3">
+                        <Input
+                          type={c.type === "date" ? "date" : c.type === "number" ? "number" : "text"}
+                          value={val}
+                          onChange={(e) => {
+                            const next = { ...cf, [c.key]: e.target.value };
+                            updateProject(p.id, { custom_fields: next } as any);
+                          }}
+                          className="!py-1.5 text-xs"
+                        />
+                      </td>
+                    );
+
                     // Custom column — inline editable, stored in custom_fields JSONB
                     const cf = ((p as any).custom_fields || {}) as Record<string, any>;
                     const val = cf[c.key] ?? "";
