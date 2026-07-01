@@ -82,8 +82,23 @@ const Pipeline = () => {
             )}
             <OSButton variant="outline" onClick={() => setImportOpen(true)}><Upload size={14} /> Import</OSButton>
             <OSButton variant="outline" onClick={exportCsv}><Download size={14} /> Export CSV</OSButton>
+            {isAdmin && projects.length > 0 && (
+              <OSButton
+                variant="outline"
+                onClick={async () => {
+                  const first = window.prompt(`Delete ALL ${projects.length} projects from the pipeline? This cannot be undone.\n\nType DELETE to confirm.`);
+                  if (first !== "DELETE") return;
+                  const r = await clearAllProjects();
+                  if (r.ok) toast.success(`Cleared ${r.count || 0} projects`);
+                  else toast.error(r.error || "Could not clear pipeline");
+                }}
+              >
+                <Trash2 size={14} /> Clear all
+              </OSButton>
+            )}
             <Link to="/os/projects/new"><OSButton variant="primary"><Plus size={16} /> Create Project</OSButton></Link>
           </>
+
         }
       />
 
