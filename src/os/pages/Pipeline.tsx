@@ -31,6 +31,83 @@ const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue"
   "Closed": "default",
 };
 
+// ---- Inline editable cells (click to edit, blur/Enter to save, Esc to cancel) ----
+const InlineText = ({ value, onSave, className = "" }: { value: string; onSave: (v: string) => void; className?: string }) => {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(value ?? "");
+  useEffect(() => { setV(value ?? ""); }, [value]);
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className={`w-full text-left px-1.5 py-1 rounded hover:bg-white/5 hover:ring-1 hover:ring-white/10 text-white/90 truncate ${className}`}
+        title="Click to edit"
+      >
+        {value || <span className="text-os-muted italic">—</span>}
+      </button>
+    );
+  }
+  return (
+    <Input
+      autoFocus
+      value={v}
+      onChange={(e) => setV(e.target.value)}
+      onBlur={() => { setEditing(false); onSave(v.trim()); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") { (e.target as HTMLInputElement).blur(); }
+        if (e.key === "Escape") { setV(value ?? ""); setEditing(false); }
+      }}
+      className="!py-1.5 text-xs"
+    />
+  );
+};
+
+const InlineNumber = ({ value, onSave, align = "left", className = "" }: { value: number; onSave: (n: number) => void; align?: "left" | "right"; className?: string }) => {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(String(value ?? 0));
+  useEffect(() => { setV(String(value ?? 0)); }, [value]);
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className={`w-full px-1.5 py-1 rounded hover:bg-white/5 hover:ring-1 hover:ring-white/10 font-semibold text-${align} ${className || "text-white"}`}
+        title="Click to edit"
+      >
+        {fmtRWF(value || 0)}
+      </button>
+    );
+  }
+  return (
+    <Input
+      autoFocus
+      type="number"
+      inputMode="decimal"
+      value={v}
+      onChange={(e) => setV(e.target.value)}
+      onBlur={() => { setEditing(false); onSave(Math.max(0, Number(v) || 0)); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+        if (e.key === "Escape") { setV(String(value ?? 0)); setEditing(false); }
+      }}
+      className={`!py-1.5 text-xs text-${align}`}
+    />
+  );
+};
+
+const InlineDate = ({ value, onSave }: { value: string; onSave: (v: string) => void }) => {
+  return (
+    <Input
+      type="date"
+      value={value || ""}
+      onChange={(e) => onSave(e.target.value)}
+      className="!py-1.5 text-xs"
+    />
+  );
+};
+
+
 const Pipeline = () => {
   const { projects, updateProjectStage, updateProject, addProject, deleteProject, clearAllProjects } = useOSStore();
   const { user, roles } = useAuth();
