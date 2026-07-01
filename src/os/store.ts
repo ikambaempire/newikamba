@@ -20,10 +20,12 @@ interface OSStore {
   subscribePipeline: () => void;
   unsubscribePipeline: () => void;
 
-  addProject: (p: Omit<OSProject, "id" | "paid" | "costs_total" | "payment_status">) => string;
+  addProject: (p: Omit<OSProject, "id" | "paid" | "costs_total" | "payment_status"> & { paid?: number }) => string;
   updateProjectStage: (id: string, stage: PipelineStage) => void;
   updateProject: (id: string, patch: Partial<OSProject>) => void;
   deleteProject: (id: string) => void;
+  clearAllProjects: () => Promise<{ ok: boolean; error?: string; count?: number }>;
+
 
   addCost: (c: Omit<OSCost, "id">) => void;
   deleteCost: (id: string) => void;
@@ -144,7 +146,11 @@ export const useOSStore = create<OSStore>((set, get) => ({
     if (src.owner && !mapped.assigned_to_name) mapped.assigned_to_name = src.owner;
     delete mapped.owner_user_id;
 
-    const newP: OSProject = { ...(mapped as any), id: nid, paid: 0, costs_total: 0, payment_status: "Pending" };
+    const paidIn = Math.max(0, Number(mapped.paid) || 0);
+    const value = Math.max(0, Number(mapped.value) || 0);
+    const status = paidIn >= value && value > 0 ? "Paid" : paidIn > 0 ? "Partially Paid" : "Pending";
+    delete mapped.paid;
+    const newP: OSProject = { ...(mapped as any), id: nid, paid: paidIn, costs_total: 0, payment_status: status as any };
     set({ projects: [newP, ...get().projects] });
     (async () => {
       const { error } = await supabase.from("os_pipeline_projects" as any).insert(projectToRow(newP));
@@ -153,9 +159,14 @@ export const useOSStore = create<OSStore>((set, get) => ({
         const { toast } = await import("sonner");
         toast.error(`Could not save project: ${error.message}`);
       }
+      // If paid recorded on import, also log a payment row so Finance reflects it
+      if (paidIn > 0) {
+        get().addPayment({ project_id: nid, amount: paidIn, method: "Imported", date: new Date().toISOString().slice(0, 10), note: "Imported from spreadsheet" } as any);
+      }
     })();
     return nid;
   },
+
 
   updateProjectStage: (id, stage) => {
     const before = get().projects.find((p) => p.id === id);
@@ -192,6 +203,15 @@ export const useOSStore = create<OSStore>((set, get) => ({
       if (error) console.warn("deleteProject persist failed:", error);
     });
   },
+
+  clearAllProjects: async () => {
+    const count = get().projects.length;
+    const { error } = await supabase.from("os_pipeline_projects" as any).delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    if (error) return { ok: false, error: error.message };
+    set({ projects: [] });
+    return { ok: true, count };
+  },
+
 
   addCost: (c) => {
     const cost = { ...c, id: id() };

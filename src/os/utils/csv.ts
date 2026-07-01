@@ -96,7 +96,9 @@ const HEADER_ALIASES: Record<string, string> = {
   stage: "stage", status: "stage", pipeline_stage: "stage", project_status: "stage",
   // financial
   value: "value", amount: "value", price: "value", total: "value", quote: "value", budget: "value",
-  paid: "paid",
+  paid: "paid", amount_paid: "paid", paidamount: "paid", paid_amount: "paid",
+  deposit: "paid", advance: "paid", received: "paid", collected: "paid",
+  amount_received: "paid", amountreceived: "paid",
   // dates
   shoot_date: "shoot_date", shoot: "shoot_date", date: "shoot_date", production_date: "shoot_date",
   deadline: "deadline", due_date: "deadline", due: "deadline", delivery_date: "deadline",

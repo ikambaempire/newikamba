@@ -31,8 +31,85 @@ const STAGE_TONE: Record<string, "default" | "gold" | "green" | "amber" | "blue"
   "Closed": "default",
 };
 
+// ---- Inline editable cells (click to edit, blur/Enter to save, Esc to cancel) ----
+const InlineText = ({ value, onSave, className = "" }: { value: string; onSave: (v: string) => void; className?: string }) => {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(value ?? "");
+  useEffect(() => { setV(value ?? ""); }, [value]);
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className={`w-full text-left px-1.5 py-1 rounded hover:bg-white/5 hover:ring-1 hover:ring-white/10 text-white/90 truncate ${className}`}
+        title="Click to edit"
+      >
+        {value || <span className="text-os-muted italic">—</span>}
+      </button>
+    );
+  }
+  return (
+    <Input
+      autoFocus
+      value={v}
+      onChange={(e) => setV(e.target.value)}
+      onBlur={() => { setEditing(false); onSave(v.trim()); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") { (e.target as HTMLInputElement).blur(); }
+        if (e.key === "Escape") { setV(value ?? ""); setEditing(false); }
+      }}
+      className="!py-1.5 text-xs"
+    />
+  );
+};
+
+const InlineNumber = ({ value, onSave, align = "left", className = "" }: { value: number; onSave: (n: number) => void; align?: "left" | "right"; className?: string }) => {
+  const [editing, setEditing] = useState(false);
+  const [v, setV] = useState(String(value ?? 0));
+  useEffect(() => { setV(String(value ?? 0)); }, [value]);
+  if (!editing) {
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className={`w-full px-1.5 py-1 rounded hover:bg-white/5 hover:ring-1 hover:ring-white/10 font-semibold text-${align} ${className || "text-white"}`}
+        title="Click to edit"
+      >
+        {fmtRWF(value || 0)}
+      </button>
+    );
+  }
+  return (
+    <Input
+      autoFocus
+      type="number"
+      inputMode="decimal"
+      value={v}
+      onChange={(e) => setV(e.target.value)}
+      onBlur={() => { setEditing(false); onSave(Math.max(0, Number(v) || 0)); }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+        if (e.key === "Escape") { setV(String(value ?? 0)); setEditing(false); }
+      }}
+      className={`!py-1.5 text-xs text-${align}`}
+    />
+  );
+};
+
+const InlineDate = ({ value, onSave }: { value: string; onSave: (v: string) => void }) => {
+  return (
+    <Input
+      type="date"
+      value={value || ""}
+      onChange={(e) => onSave(e.target.value)}
+      className="!py-1.5 text-xs"
+    />
+  );
+};
+
+
 const Pipeline = () => {
-  const { projects, updateProjectStage, updateProject, addProject, deleteProject } = useOSStore();
+  const { projects, updateProjectStage, updateProject, addProject, deleteProject, clearAllProjects } = useOSStore();
   const { user, roles } = useAuth();
   const isAdmin = hasAdminRole(roles);
   const { cols, setCols } = usePipelineColumns();
@@ -82,8 +159,23 @@ const Pipeline = () => {
             )}
             <OSButton variant="outline" onClick={() => setImportOpen(true)}><Upload size={14} /> Import</OSButton>
             <OSButton variant="outline" onClick={exportCsv}><Download size={14} /> Export CSV</OSButton>
+            {isAdmin && projects.length > 0 && (
+              <OSButton
+                variant="outline"
+                onClick={async () => {
+                  const first = window.prompt(`Delete ALL ${projects.length} projects from the pipeline? This cannot be undone.\n\nType DELETE to confirm.`);
+                  if (first !== "DELETE") return;
+                  const r = await clearAllProjects();
+                  if (r.ok) toast.success(`Cleared ${r.count || 0} projects`);
+                  else toast.error(r.error || "Could not clear pipeline");
+                }}
+              >
+                <Trash2 size={14} /> Clear all
+              </OSButton>
+            )}
             <Link to="/os/projects/new"><OSButton variant="primary"><Plus size={16} /> Create Project</OSButton></Link>
           </>
+
         }
       />
 
@@ -132,14 +224,17 @@ const Pipeline = () => {
                     if (c.builtin) {
                       switch (c.key) {
                         case "name": return (
-                          <td key={c.key} className="p-3">
-                            <Link to={`/os/projects/${p.id}`} className="text-white font-semibold hover:text-os-gold">{p.name}</Link>
-                            <div className="text-[10px] text-os-muted mt-0.5">{p.product_line}</div>
+                          <td key={c.key} className="p-3 min-w-[220px]">
+                            <div className="flex items-center gap-1.5">
+                              <Link to={`/os/projects/${p.id}`} className="text-os-gold hover:text-white shrink-0" title="Open"><ExternalLink size={12} /></Link>
+                              <InlineText value={p.name} onSave={(v) => v && v !== p.name && updateProject(p.id, { name: v })} />
+                            </div>
+                            <div className="text-[10px] text-os-muted mt-0.5 pl-5">{p.product_line}</div>
                           </td>
                         );
-                        case "client":  return <td key={c.key} className="p-3 text-os-muted">{p.client}</td>;
-                        case "service": return <td key={c.key} className="p-3"><Badge tone="blue">{p.service}</Badge></td>;
-                        case "owner":   return <td key={c.key} className="p-3 text-os-muted">{p.owner}</td>;
+                        case "client":  return <td key={c.key} className="p-3"><InlineText value={p.client} onSave={(v) => v !== p.client && updateProject(p.id, { client: v })} /></td>;
+                        case "service": return <td key={c.key} className="p-3"><InlineText value={p.service} onSave={(v) => v !== p.service && updateProject(p.id, { service: v })} /></td>;
+                        case "owner":   return <td key={c.key} className="p-3"><InlineText value={p.owner} onSave={(v) => v !== p.owner && updateProject(p.id, { owner: v })} /></td>;
                         case "stage":   return (
                           <td key={c.key} className="p-3">
                             <div className="flex items-center gap-2">
@@ -150,11 +245,32 @@ const Pipeline = () => {
                             </div>
                           </td>
                         );
-                        case "value":          return <td key={c.key} className="p-3 text-white font-semibold text-right whitespace-nowrap">{fmtRWF(p.value)}</td>;
-                        case "paid":           return <td key={c.key} className="p-3 text-emerald-300 text-right whitespace-nowrap">{fmtRWF(p.paid)}</td>;
+                        case "value": return (
+                          <td key={c.key} className="p-3 text-right whitespace-nowrap min-w-[130px]">
+                            <InlineNumber value={p.value} align="right" onSave={(n) => n !== p.value && updateProject(p.id, { value: n })} />
+                          </td>
+                        );
+                        case "paid": return (
+                          <td key={c.key} className="p-3 text-right whitespace-nowrap min-w-[130px]">
+                            <InlineNumber
+                              value={p.paid}
+                              align="right"
+                              className="text-emerald-300"
+                              onSave={(n) => {
+                                if (n === p.paid) return;
+                                const status = n >= p.value && p.value > 0 ? "Paid" : n > 0 ? "Partially Paid" : "Pending";
+                                updateProject(p.id, { paid: n, payment_status: status as any });
+                              }}
+                            />
+                          </td>
+                        );
                         case "payment_status": return <td key={c.key} className="p-3"><PaymentBadge status={p.payment_status} /></td>;
-                        case "deadline":       return <td key={c.key} className="p-3 text-os-muted whitespace-nowrap">{p.deadline || "—"}</td>;
-                        default:               return <td key={c.key} className="p-3 text-os-muted">{(p as any)[c.key] ?? "—"}</td>;
+                        case "deadline": return (
+                          <td key={c.key} className="p-3 whitespace-nowrap">
+                            <InlineDate value={p.deadline} onSave={(v) => v !== p.deadline && updateProject(p.id, { deadline: v })} />
+                          </td>
+                        );
+                        default: return <td key={c.key} className="p-3"><InlineText value={(p as any)[c.key] || ""} onSave={(v) => updateProject(p.id, { [c.key]: v } as any)} /></td>;
                       }
                     }
                     // Custom column — inline editable, stored in custom_fields JSONB
@@ -173,6 +289,7 @@ const Pipeline = () => {
                         />
                       </td>
                     );
+
                   })}
                   <td className="p-3 text-right">
                     <div className="inline-flex items-center gap-1">
@@ -238,6 +355,7 @@ const Pipeline = () => {
               references: o.references || "",
               stage: (stageMatch || "New Request") as PipelineStage,
               value: Number(String(o.value || "0").replace(/[^\d.-]/g, "")) || 0,
+              paid: Number(String(o.paid || "0").replace(/[^\d.-]/g, "")) || 0,
             } as any);
             added++;
             if (user && (o.shoot_date || o.deadline)) {
