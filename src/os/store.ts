@@ -159,9 +159,11 @@ export const useOSStore = create<OSStore>((set, get) => ({
         const { toast } = await import("sonner");
         toast.error(`Could not save project: ${error.message}`);
       }
-      // If paid recorded on import, also log a payment row so Finance reflects it
+      // If paid recorded on import, log a payment row for Finance without
+      // re-adding to `paid` (the amount is already reflected on the project).
       if (paidIn > 0) {
-        get().addPayment({ project_id: nid, amount: paidIn, method: "Imported", date: new Date().toISOString().slice(0, 10), note: "Imported from spreadsheet" } as any);
+        const payment = { id: id(), project_id: nid, amount: paidIn, method: "Imported", date: new Date().toISOString().slice(0, 10), note: "Imported from spreadsheet" } as any;
+        set({ payments: [payment, ...get().payments] });
       }
     })();
     return nid;
