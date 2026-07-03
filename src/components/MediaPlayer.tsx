@@ -29,7 +29,7 @@ const MediaPlayer = ({ url, poster, title, className = "", controls = false }: P
 
   if (m.kind === "embed") {
     // Instagram embed always renders profile header + bottom action bar.
-    // We hide them by oversizing the iframe and clipping the chrome away.
+    // Zoom into the video area and cover any remaining chrome with a fade.
     if (m.provider === "instagram") {
       return (
         <div className={`${className} relative overflow-hidden bg-black`}>
@@ -40,10 +40,14 @@ const MediaPlayer = ({ url, poster, title, className = "", controls = false }: P
             allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
             allowFullScreen
             scrolling="no"
-            // header ≈ 54px, footer ≈ 120px on IG embeds — push iframe up & extend height to crop both
-            className="absolute left-0 w-full border-0 pointer-events-none"
-            style={{ top: "-54px", height: "calc(100% + 180px)" }}
+            className="absolute left-1/2 top-1/2 border-0 pointer-events-none"
+            style={{
+              width: "160%",
+              height: "calc(160% + 260px)",
+              transform: "translate(-50%, -50%) translateY(-24px)",
+            }}
           />
+          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black via-black/85 to-transparent pointer-events-none" />
         </div>
       );
     }
