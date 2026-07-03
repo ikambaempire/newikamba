@@ -55,18 +55,26 @@ const WorksManager = () => {
 
   const handleUpload = async (file: File, kind: "cover" | "video") => {
     setUploading(kind);
+    const field = kind === "cover" ? "cover_url" : "video_url";
+    // Instant local preview so the editor feels fast; swapped for the hosted URL once upload finishes.
+    const localUrl = URL.createObjectURL(file);
+    setEditing((e) => e ? { ...e, [field]: localUrl } : e);
     try {
-      const ext = file.name.split(".").pop();
+      const ext = (file.name.split(".").pop() || "bin").toLowerCase();
       const path = `${kind}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("works-media").upload(path, file, { upsert: false });
+      const { error: upErr } = await supabase.storage
+        .from("works-media")
+        .upload(path, file, { upsert: false, cacheControl: "31536000", contentType: file.type || undefined });
       if (upErr) throw upErr;
       const { data: signed } = await supabase.storage.from("works-media").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
       const url = signed?.signedUrl || "";
       if (!url) throw new Error("Could not generate file URL");
-      setEditing((e) => e ? { ...e, [kind === "cover" ? "cover_url" : "video_url"]: url } : e);
-      setEditing((e) => e ? { ...e, [kind === "cover" ? "cover_url" : "video_url"]: url } : e);
+      setEditing((e) => e ? { ...e, [field]: url } : e);
+      URL.revokeObjectURL(localUrl);
       toast({ title: "Uploaded", description: `${kind} uploaded successfully.` });
     } catch (err: any) {
+      setEditing((e) => e && (e as any)[field] === localUrl ? { ...e, [field]: "" } : e);
+      URL.revokeObjectURL(localUrl);
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
       setUploading(null);
