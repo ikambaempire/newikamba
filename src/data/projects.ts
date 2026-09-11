@@ -1,8 +1,8 @@
 // Centralized portfolio source for Work grid, Case Studies, ProjectDetail and homepage strip.
 import creativeFilmmaker from "@/assets/creative-filmmaker.webp";
 import creativeCamera from "@/assets/creative-camera.webp";
-import reel1Asset from "@/assets/reel1.mp4.asset.json";
-import reel2Asset from "@/assets/reel2.mp4.asset.json";
+
+
 
 export interface PortfolioProject {
   slug: string;
@@ -35,7 +35,7 @@ export const PROJECTS: PortfolioProject[] = [
     year: "2025",
     services: ["Reel", "Behind the scenes"],
     cover: u("photo-1485846234645-a62644f84728"),
-    video: reel1Asset.url,
+    video: "/reel1.mp4",
     excerpt: "Behind-the-scenes look at how our crews capture story on location across East Africa.",
     challenge: "Show the rhythm of production without breaking the moment.",
     approach: "Minimal crew, observational camera, ambient pacing.",
@@ -51,7 +51,7 @@ export const PROJECTS: PortfolioProject[] = [
     year: "2025",
     services: ["Reel", "Documentary"],
     cover: u("photo-1540575467063-178a50c2df87"),
-    video: reel2Asset.url,
+    video: "/reel2.mp4",
     excerpt: "Moments from recent field productions — community, craft and the quiet work of storytelling.",
     challenge: "Compress a multi-day shoot into a single rhythmic piece.",
     approach: "Tight selects, sync sound, one continuous tonal arc.",
