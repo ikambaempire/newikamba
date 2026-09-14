@@ -1099,7 +1099,9 @@ export type Database = {
           created_by: string | null
           featured: boolean
           id: string
+          orientation: string
           published: boolean
+          show_on_home: boolean
           slug: string
           sort_order: number
           summary: string | null
@@ -1118,7 +1120,9 @@ export type Database = {
           created_by?: string | null
           featured?: boolean
           id?: string
+          orientation?: string
           published?: boolean
+          show_on_home?: boolean
           slug: string
           sort_order?: number
           summary?: string | null
@@ -1137,7 +1141,9 @@ export type Database = {
           created_by?: string | null
           featured?: boolean
           id?: string
+          orientation?: string
           published?: boolean
+          show_on_home?: boolean
           slug?: string
           sort_order?: number
           summary?: string | null
