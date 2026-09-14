@@ -309,16 +309,35 @@ const WorksManager = () => {
                     <Eye size={14} className="text-accent" />
                     <Label className="text-xs uppercase tracking-widest font-bold">Preview (as it will appear on the site)</Label>
                   </div>
-                  <div className="rounded-xl overflow-hidden bg-black aspect-video">
+                  <div className={`rounded-xl overflow-hidden bg-black mx-auto ${editing.orientation === "portrait" ? "aspect-[9/16] max-w-[260px]" : "aspect-video"}`}>
                     <MediaPlayer url={editing.video_url} poster={editing.cover_url} title={editing.title} controls className="w-full h-full object-cover" />
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-2">Review this before turning on "Published". Instagram/YouTube/Vimeo/TikTok links auto-play and loop with no profile chrome.</p>
                 </div>
               )}
 
+              <div>
+                <Label>Orientation</Label>
+                <div className="flex gap-2 mt-1">
+                  {(["landscape", "portrait"] as const).map((o) => (
+                    <button
+                      key={o}
+                      type="button"
+                      onClick={() => setEditing({ ...editing, orientation: o })}
+                      className={`px-3 py-1.5 rounded-md text-xs uppercase tracking-widest font-semibold border transition-colors ${
+                        (editing.orientation || "landscape") === o
+                          ? "bg-accent text-accent-foreground border-accent"
+                          : "border-border text-muted-foreground hover:border-accent"
+                      }`}
+                    >
+                      {o}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">Detected automatically on upload. Portrait keeps vertical videos uncropped.</p>
+              </div>
 
-
-              <div className="flex items-center gap-6 pt-2">
+              <div className="flex flex-wrap items-center gap-6 pt-2">
                 <div className="flex items-center gap-2">
                   <Switch checked={!!editing.published} onCheckedChange={(v) => setEditing({ ...editing, published: v })} />
                   <Label>Published</Label>
@@ -326,6 +345,10 @@ const WorksManager = () => {
                 <div className="flex items-center gap-2">
                   <Switch checked={!!editing.featured} onCheckedChange={(v) => setEditing({ ...editing, featured: v })} />
                   <Label>Featured</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={!!editing.show_on_home} onCheckedChange={(v) => setEditing({ ...editing, show_on_home: v })} />
+                  <Label>Show on homepage</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Label>Sort</Label>
