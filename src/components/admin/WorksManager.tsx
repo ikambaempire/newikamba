@@ -85,6 +85,7 @@ const WorksManager = () => {
     const localUrl = URL.createObjectURL(file);
     setEditing((e) => e ? { ...e, [field]: localUrl } : e);
     try {
+      const orientation = await detectOrientation(file);
       const ext = (file.name.split(".").pop() || "bin").toLowerCase();
       const path = `${kind}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: upErr } = await supabase.storage
@@ -94,7 +95,7 @@ const WorksManager = () => {
       const { data: signed } = await supabase.storage.from("works-media").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
       const url = signed?.signedUrl || "";
       if (!url) throw new Error("Could not generate file URL");
-      setEditing((e) => e ? { ...e, [field]: url } : e);
+      setEditing((e) => e ? { ...e, [field]: url, orientation } : e);
       URL.revokeObjectURL(localUrl);
       toast({ title: "Uploaded", description: `${kind} uploaded successfully.` });
     } catch (err: any) {
