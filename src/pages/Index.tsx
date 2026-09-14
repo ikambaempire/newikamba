@@ -191,14 +191,43 @@ const typewriterWords = ["Storytelling", "Documentaries", "Campaigns", "Photogra
 /* Featured Work Carousel - 90seconds Self Serve Creation style */
 const FeaturedWorkCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [cards, setCards] = useState<any[]>(featuredWork);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Admin-selected work items ("Show on homepage") replace the default showcase.
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("works")
+        .select("id, title, slug, summary, category, cover_url, video_url, client_name, orientation")
+        .eq("published", true)
+        .eq("show_on_home", true)
+        .order("sort_order", { ascending: true })
+        .limit(8);
+      if (data && data.length) {
+        setCards(
+          data.map((w: any) => ({
+            title: w.title,
+            category: (w.category || "Story").toUpperCase(),
+            desc: w.summary || "",
+            image: w.cover_url,
+            video: w.video_url,
+            stat: w.client_name || "",
+            href: `/our-work/${w.slug}`,
+          }))
+        );
+        setActiveIndex(0);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % featuredWork.length);
+      setActiveIndex((prev) => (prev + 1) % cards.length);
     }, 3500);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
+  }, [cards.length]);
+
 
   return (
     <section className="section-padding bg-background overflow-hidden">
@@ -220,7 +249,7 @@ const FeaturedWorkCarousel = () => {
 
         {/* Carousel container */}
         <div className="relative flex items-center justify-center h-[420px] md:h-[480px]">
-          {featuredWork.map((item, i) => {
+          {cards.map((item, i) => {
             const offset = i - activeIndex;
             const absOffset = Math.abs(offset);
             const isActive = offset === 0;
@@ -246,7 +275,12 @@ const FeaturedWorkCarousel = () => {
                 style={{ perspective: 1000 }}
               >
                 <div className={`relative w-[280px] md:w-[320px] h-[380px] md:h-[420px] rounded-2xl overflow-hidden shadow-2xl ${isActive ? 'ring-2 ring-accent/50' : ''}`}>
-                  <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  {item.video ? (
+                    <MediaPlayer url={item.video} poster={item.image} title={item.title}
+                      className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="text-[9px] uppercase tracking-[0.2em] bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-semibold">
@@ -274,7 +308,7 @@ const FeaturedWorkCarousel = () => {
 
         {/* Dots */}
         <div className="flex justify-center gap-2 mt-6">
-          {featuredWork.map((_, i) => (
+          {cards.map((_, i) => (
             <button
               key={i}
               onClick={() => {

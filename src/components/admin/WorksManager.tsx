@@ -22,6 +22,8 @@ type Work = {
   client_name: string | null;
   featured: boolean;
   published: boolean;
+  show_on_home: boolean;
+  orientation: string;
   sort_order: number;
   tags: string[] | null;
 };
@@ -29,8 +31,31 @@ type Work = {
 const empty = (): Partial<Work> => ({
   title: "", slug: "", summary: "", content: "",
   cover_url: "", video_url: "", category: "", year: String(new Date().getFullYear()),
-  client_name: "", featured: false, published: true, sort_order: 0, tags: [],
+  client_name: "", featured: false, published: true, show_on_home: false,
+  orientation: "landscape", sort_order: 0, tags: [],
 });
+
+/** Reads intrinsic dimensions of a local file to detect portrait vs landscape. */
+const detectOrientation = (file: File): Promise<"portrait" | "landscape"> =>
+  new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const done = (w: number, h: number) => {
+      URL.revokeObjectURL(url);
+      resolve(h > w ? "portrait" : "landscape");
+    };
+    if (file.type.startsWith("video")) {
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.onloadedmetadata = () => done(v.videoWidth, v.videoHeight);
+      v.onerror = () => { URL.revokeObjectURL(url); resolve("landscape"); };
+      v.src = url;
+    } else {
+      const img = new Image();
+      img.onload = () => done(img.naturalWidth, img.naturalHeight);
+      img.onerror = () => { URL.revokeObjectURL(url); resolve("landscape"); };
+      img.src = url;
+    }
+  });
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
@@ -60,6 +85,7 @@ const WorksManager = () => {
     const localUrl = URL.createObjectURL(file);
     setEditing((e) => e ? { ...e, [field]: localUrl } : e);
     try {
+      const orientation = await detectOrientation(file);
       const ext = (file.name.split(".").pop() || "bin").toLowerCase();
       const path = `${kind}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
       const { error: upErr } = await supabase.storage
@@ -69,7 +95,7 @@ const WorksManager = () => {
       const { data: signed } = await supabase.storage.from("works-media").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
       const url = signed?.signedUrl || "";
       if (!url) throw new Error("Could not generate file URL");
-      setEditing((e) => e ? { ...e, [field]: url } : e);
+      setEditing((e) => e ? { ...e, [field]: url, orientation } : e);
       URL.revokeObjectURL(localUrl);
       toast({ title: "Uploaded", description: `${kind} uploaded successfully.` });
     } catch (err: any) {
@@ -117,8 +143,17 @@ const WorksManager = () => {
     load();
   };
 
+  const storagePath = (url?: string | null) => {
+    if (!url) return null;
+    const m = url.match(/works-media\/(.+?)(\?|$)/);
+    return m ? decodeURIComponent(m[1]) : null;
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Delete this work? This cannot be undone.")) return;
+    const target = items.find((w) => w.id === id);
+    const paths = [storagePath(target?.cover_url), storagePath(target?.video_url)].filter(Boolean) as string[];
+    if (paths.length) await supabase.storage.from("works-media").remove(paths);
     const { error } = await (supabase as any).from("works").delete().eq("id", id);
     if (error) { toast({ title: "Delete failed", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Deleted" });
@@ -283,16 +318,35 @@ const WorksManager = () => {
                     <Eye size={14} className="text-accent" />
                     <Label className="text-xs uppercase tracking-widest font-bold">Preview (as it will appear on the site)</Label>
                   </div>
-                  <div className="rounded-xl overflow-hidden bg-black aspect-video">
+                  <div className={`rounded-xl overflow-hidden bg-black mx-auto ${editing.orientation === "portrait" ? "aspect-[9/16] max-w-[260px]" : "aspect-video"}`}>
                     <MediaPlayer url={editing.video_url} poster={editing.cover_url} title={editing.title} controls className="w-full h-full object-cover" />
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-2">Review this before turning on "Published". Instagram/YouTube/Vimeo/TikTok links auto-play and loop with no profile chrome.</p>
                 </div>
               )}
 
+              <div>
+                <Label>Orientation</Label>
+                <div className="flex gap-2 mt-1">
+                  {(["landscape", "portrait"] as const).map((o) => (
+                    <button
+                      key={o}
+                      type="button"
+                      onClick={() => setEditing({ ...editing, orientation: o })}
+                      className={`px-3 py-1.5 rounded-md text-xs uppercase tracking-widest font-semibold border transition-colors ${
+                        (editing.orientation || "landscape") === o
+                          ? "bg-accent text-accent-foreground border-accent"
+                          : "border-border text-muted-foreground hover:border-accent"
+                      }`}
+                    >
+                      {o}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1">Detected automatically on upload. Portrait keeps vertical videos uncropped.</p>
+              </div>
 
-
-              <div className="flex items-center gap-6 pt-2">
+              <div className="flex flex-wrap items-center gap-6 pt-2">
                 <div className="flex items-center gap-2">
                   <Switch checked={!!editing.published} onCheckedChange={(v) => setEditing({ ...editing, published: v })} />
                   <Label>Published</Label>
@@ -300,6 +354,10 @@ const WorksManager = () => {
                 <div className="flex items-center gap-2">
                   <Switch checked={!!editing.featured} onCheckedChange={(v) => setEditing({ ...editing, featured: v })} />
                   <Label>Featured</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch checked={!!editing.show_on_home} onCheckedChange={(v) => setEditing({ ...editing, show_on_home: v })} />
+                  <Label>Show on homepage</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <Label>Sort</Label>
