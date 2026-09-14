@@ -22,6 +22,8 @@ type Work = {
   client_name: string | null;
   featured: boolean;
   published: boolean;
+  show_on_home: boolean;
+  orientation: string;
   sort_order: number;
   tags: string[] | null;
 };
@@ -29,8 +31,31 @@ type Work = {
 const empty = (): Partial<Work> => ({
   title: "", slug: "", summary: "", content: "",
   cover_url: "", video_url: "", category: "", year: String(new Date().getFullYear()),
-  client_name: "", featured: false, published: true, sort_order: 0, tags: [],
+  client_name: "", featured: false, published: true, show_on_home: false,
+  orientation: "landscape", sort_order: 0, tags: [],
 });
+
+/** Reads intrinsic dimensions of a local file to detect portrait vs landscape. */
+const detectOrientation = (file: File): Promise<"portrait" | "landscape"> =>
+  new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const done = (w: number, h: number) => {
+      URL.revokeObjectURL(url);
+      resolve(h > w ? "portrait" : "landscape");
+    };
+    if (file.type.startsWith("video")) {
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.onloadedmetadata = () => done(v.videoWidth, v.videoHeight);
+      v.onerror = () => { URL.revokeObjectURL(url); resolve("landscape"); };
+      v.src = url;
+    } else {
+      const img = new Image();
+      img.onload = () => done(img.naturalWidth, img.naturalHeight);
+      img.onerror = () => { URL.revokeObjectURL(url); resolve("landscape"); };
+      img.src = url;
+    }
+  });
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
