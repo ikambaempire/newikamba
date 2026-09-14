@@ -249,7 +249,7 @@ const FeaturedWorkCarousel = () => {
 
         {/* Carousel container */}
         <div className="relative flex items-center justify-center h-[420px] md:h-[480px]">
-          {featuredWork.map((item, i) => {
+          {cards.map((item, i) => {
             const offset = i - activeIndex;
             const absOffset = Math.abs(offset);
             const isActive = offset === 0;
