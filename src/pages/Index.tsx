@@ -308,7 +308,7 @@ const FeaturedWorkCarousel = () => {
 
         {/* Dots */}
         <div className="flex justify-center gap-2 mt-6">
-          {featuredWork.map((_, i) => (
+          {cards.map((_, i) => (
             <button
               key={i}
               onClick={() => {
