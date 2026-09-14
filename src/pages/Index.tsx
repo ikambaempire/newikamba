@@ -275,7 +275,12 @@ const FeaturedWorkCarousel = () => {
                 style={{ perspective: 1000 }}
               >
                 <div className={`relative w-[280px] md:w-[320px] h-[380px] md:h-[420px] rounded-2xl overflow-hidden shadow-2xl ${isActive ? 'ring-2 ring-accent/50' : ''}`}>
-                  <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  {item.video ? (
+                    <MediaPlayer url={item.video} poster={item.image} title={item.title}
+                      className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className="text-[9px] uppercase tracking-[0.2em] bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-semibold">
