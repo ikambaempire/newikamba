@@ -143,8 +143,17 @@ const WorksManager = () => {
     load();
   };
 
+  const storagePath = (url?: string | null) => {
+    if (!url) return null;
+    const m = url.match(/works-media\/(.+?)(\?|$)/);
+    return m ? decodeURIComponent(m[1]) : null;
+  };
+
   const remove = async (id: string) => {
     if (!confirm("Delete this work? This cannot be undone.")) return;
+    const target = items.find((w) => w.id === id);
+    const paths = [storagePath(target?.cover_url), storagePath(target?.video_url)].filter(Boolean) as string[];
+    if (paths.length) await supabase.storage.from("works-media").remove(paths);
     const { error } = await (supabase as any).from("works").delete().eq("id", id);
     if (error) { toast({ title: "Delete failed", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Deleted" });
