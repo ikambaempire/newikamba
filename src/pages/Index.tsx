@@ -191,14 +191,43 @@ const typewriterWords = ["Storytelling", "Documentaries", "Campaigns", "Photogra
 /* Featured Work Carousel - 90seconds Self Serve Creation style */
 const FeaturedWorkCarousel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [cards, setCards] = useState<any[]>(featuredWork);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Admin-selected work items ("Show on homepage") replace the default showcase.
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("works")
+        .select("id, title, slug, summary, category, cover_url, video_url, client_name, orientation")
+        .eq("published", true)
+        .eq("show_on_home", true)
+        .order("sort_order", { ascending: true })
+        .limit(8);
+      if (data && data.length) {
+        setCards(
+          data.map((w: any) => ({
+            title: w.title,
+            category: (w.category || "Story").toUpperCase(),
+            desc: w.summary || "",
+            image: w.cover_url,
+            video: w.video_url,
+            stat: w.client_name || "",
+            href: `/our-work/${w.slug}`,
+          }))
+        );
+        setActiveIndex(0);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % featuredWork.length);
+      setActiveIndex((prev) => (prev + 1) % cards.length);
     }, 3500);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
+  }, [cards.length]);
+
 
   return (
     <section className="section-padding bg-background overflow-hidden">
