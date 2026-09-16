@@ -52,7 +52,9 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [orgName, setOrgName] = useState("");
   const [view, setView] = useState<"table" | "kanban">("table");
-  const [tab, setTab] = useState<"projects" | "blog" | "leads" | "popups" | "users" | "works">("projects");
+  const initialTab = (new URLSearchParams(window.location.search).get("tab") || "projects") as
+    "projects" | "blog" | "leads" | "popups" | "users" | "works";
+  const [tab, setTab] = useState<"projects" | "blog" | "leads" | "popups" | "users" | "works">(initialTab);
 
   const fetchData = async () => {
     const [projRes, clientRes] = await Promise.all([
