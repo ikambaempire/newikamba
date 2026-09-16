@@ -49,11 +49,19 @@ const OurWorkDetail = () => {
             <p className="text-sm uppercase tracking-wider text-muted-foreground font-semibold mb-8">{work.client_name}</p>
           )}
           {work.video_url ? (
-            <div className="w-full rounded-2xl mb-10 bg-black aspect-video overflow-hidden">
+            <div
+              className={`rounded-2xl mb-10 bg-black overflow-hidden mx-auto ${
+                work.orientation === "portrait" ? "aspect-[9/16] max-w-sm w-full" : "aspect-video w-full"
+              }`}
+            >
               <MediaPlayer url={work.video_url} poster={work.cover_url} title={work.title} controls className="w-full h-full object-cover" />
             </div>
           ) : work.cover_url ? (
-            <img src={work.cover_url} alt={work.title} className="w-full rounded-2xl mb-10 object-cover" />
+            <img
+              src={work.cover_url}
+              alt={work.title}
+              className={`rounded-2xl mb-10 object-cover mx-auto ${work.orientation === "portrait" ? "max-w-sm w-full" : "w-full"}`}
+            />
           ) : null}
           {work.summary && <p className="text-xl text-foreground/80 leading-relaxed mb-8">{work.summary}</p>}
           {work.content && (
