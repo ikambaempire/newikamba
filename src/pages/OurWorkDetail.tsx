@@ -9,7 +9,7 @@ import MediaPlayer from "@/components/MediaPlayer";
 type Work = {
   id: string; slug: string; title: string; summary: string | null; content: string | null;
   cover_url: string | null; video_url: string | null; category: string | null;
-  year: string | null; client_name: string | null;
+  year: string | null; client_name: string | null; orientation?: string | null;
 };
 
 const OurWorkDetail = () => {
