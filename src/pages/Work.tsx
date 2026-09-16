@@ -2,13 +2,16 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ArrowUpRight, Pencil, Trash2 } from "lucide-react";
 import { PROJECTS, type PortfolioProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
 import MediaPlayer from "@/components/MediaPlayer";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 type Card = {
+  id?: string;
   slug: string;
   title: string;
   client: string;
@@ -18,42 +21,57 @@ type Card = {
   video?: string;
   excerpt: string;
   href: string;
+  orientation?: string;
+  editable?: boolean;
 };
 
 const fromProject = (p: PortfolioProject): Card => ({
   slug: p.slug, title: p.title, client: p.client, category: p.category, year: p.year,
   cover: p.cover, video: p.video, excerpt: p.excerpt, href: `/work/${p.slug}`,
+  orientation: "landscape",
 });
 
 const OurWork = () => {
   const [active, setActive] = useState("All");
   const [dbWorks, setDbWorks] = useState<Card[]>([]);
+  const { isInternal } = useAuth();
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await (supabase as any)
-        .from("works")
-        .select("*")
-        .eq("published", true)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      if (data) {
-        setDbWorks(
-          (data as any[]).map((w) => ({
-            slug: w.slug,
-            title: w.title,
-            client: w.client_name || "iKAMBA",
-            category: w.category || "Story",
-            year: w.year || "",
-            cover: w.cover_url || "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=80",
-            video: w.video_url || undefined,
-            excerpt: w.summary || "",
-            href: `/our-work/${w.slug}`,
-          }))
-        );
-      }
-    })();
+  const load = useCallback(async () => {
+    const { data } = await (supabase as any)
+      .from("works")
+      .select("*")
+      .eq("published", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+    if (data) {
+      setDbWorks(
+        (data as any[]).map((w) => ({
+          id: w.id,
+          slug: w.slug,
+          title: w.title,
+          client: w.client_name || "iKAMBA",
+          category: w.category || "Story",
+          year: w.year || "",
+          cover: w.cover_url || "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=80",
+          video: w.video_url || undefined,
+          excerpt: w.summary || "",
+          href: `/our-work/${w.slug}`,
+          orientation: w.orientation || "landscape",
+          editable: true,
+        }))
+      );
+    }
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const remove = async (id: string, title: string) => {
+    if (!window.confirm(`Remove "${title}" from Our Work? This cannot be undone.`)) return;
+    const { error } = await (supabase as any).from("works").delete().eq("id", id);
+    if (error) { toast.error("Could not remove this item."); return; }
+    toast.success("Removed from Our Work.");
+    setDbWorks((prev) => prev.filter((w) => w.id !== id));
+  };
 
   const all: Card[] = useMemo(() => [...dbWorks, ...PROJECTS.map(fromProject)], [dbWorks]);
   const categories = ["All", ...Array.from(new Set(all.map((c) => c.category)))];
@@ -92,6 +110,15 @@ const OurWork = () => {
               </button>
             ))}
           </div>
+
+          {isInternal && (
+            <div className="mt-8">
+              <Link to="/admin?tab=works"
+                className="inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground px-5 py-2.5 text-xs uppercase tracking-widest font-bold hover:opacity-90 transition">
+                <Pencil size={14} /> Manage Our Work
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -102,14 +129,17 @@ const OurWork = () => {
             {visible.map((p, i) => (
               <motion.article key={p.href}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: (i % 4) * 0.05 }}>
+                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: (i % 4) * 0.05 }}
+                className="relative">
                 <Link to={p.href} className="group block">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-muted">
+                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-black">
                     <MediaPlayer
                       url={p.video}
                       poster={p.cover}
                       title={p.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className={`absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-105 ${
+                        p.orientation === "portrait" ? "object-cover" : "object-cover"
+                      }`}
                     />
                     <div className="absolute top-3 left-3 bg-background/90 backdrop-blur px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold pointer-events-none">
                       {p.category}
@@ -123,6 +153,21 @@ const OurWork = () => {
                     <p className="text-sm text-foreground/70 leading-relaxed line-clamp-3">{p.excerpt}</p>
                   </div>
                 </Link>
+
+                {isInternal && p.editable && p.id && (
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    <Link to="/admin?tab=works"
+                      className="rounded-full bg-background/90 backdrop-blur p-2 hover:bg-accent hover:text-accent-foreground transition"
+                      aria-label={`Edit ${p.title}`}>
+                      <Pencil size={14} />
+                    </Link>
+                    <button onClick={() => remove(p.id!, p.title)}
+                      className="rounded-full bg-background/90 backdrop-blur p-2 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
+                      aria-label={`Delete ${p.title}`}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
               </motion.article>
             ))}
           </div>
