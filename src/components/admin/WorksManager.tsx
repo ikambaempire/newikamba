@@ -109,12 +109,20 @@ const WorksManager = () => {
 
   const save = async () => {
     if (!editing) return;
+    if (uploading) {
+      toast({ title: "Upload in progress", description: "Wait for the media upload to finish before saving." });
+      return;
+    }
     const payload: any = {
       ...editing,
       slug: editing.slug?.trim() || slugify(editing.title || ""),
     };
     if (!payload.title || !payload.slug) {
       toast({ title: "Missing fields", description: "Title and slug are required.", variant: "destructive" });
+      return;
+    }
+    if ([payload.video_url, payload.cover_url].some((url) => typeof url === "string" && url.startsWith("blob:"))) {
+      toast({ title: "Media is still uploading", description: "Wait for the upload to finish, then save again.", variant: "destructive" });
       return;
     }
     let res;
@@ -367,7 +375,7 @@ const WorksManager = () => {
             </div>
             <div className="p-5 border-t border-border flex justify-end gap-2 sticky bottom-0 bg-background">
               <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
-              <Button onClick={save} className="gap-2"><Save size={14} /> Save</Button>
+              <Button onClick={save} disabled={uploading !== null} className="gap-2"><Save size={14} /> {uploading ? "Uploading…" : "Save"}</Button>
             </div>
           </div>
         </div>
