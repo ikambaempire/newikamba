@@ -126,6 +126,25 @@
   }
 }
 
+/* Our Work — cinematic editorial portfolio */
+.portfolio-page {
+  --background: 220 74% 5%;
+  --foreground: 213 29% 93%;
+  --card: 216 66% 11%;
+  --card-foreground: 213 29% 93%;
+  --muted: 216 42% 15%;
+  --muted-foreground: 216 13% 64%;
+  --border: 215 32% 20%;
+  --accent: 40 68% 46%;
+  --accent-foreground: 220 74% 5%;
+  font-family: 'Barlow', system-ui, sans-serif;
+}
+
+.portfolio-display {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  letter-spacing: 0;
+}
+
 /* ===== iKAMBA Media OS — scoped theme ===== */
 .os-theme {
   font-family: 'Poppins', system-ui, sans-serif;

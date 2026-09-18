@@ -1,12 +1,13 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import MediaPlayer from "@/components/MediaPlayer";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, Pencil, Trash2 } from "lucide-react";
 import { PROJECTS, type PortfolioProject } from "@/data/projects";
 import { supabase } from "@/integrations/supabase/client";
-import MediaPlayer from "@/components/MediaPlayer";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -25,11 +26,36 @@ type Card = {
   editable?: boolean;
 };
 
-const fromProject = (p: PortfolioProject): Card => ({
-  slug: p.slug, title: p.title, client: p.client, category: p.category, year: p.year,
-  cover: p.cover, video: p.video, excerpt: p.excerpt, href: `/work/${p.slug}`,
+const fromProject = (project: PortfolioProject): Card => ({
+  slug: project.slug,
+  title: project.title,
+  client: project.client,
+  category: project.category,
+  year: project.year,
+  cover: project.cover,
+  video: project.video,
+  excerpt: project.excerpt,
+  href: `/work/${project.slug}`,
   orientation: "landscape",
 });
+
+const itemLayouts = [
+  "md:col-span-5",
+  "md:col-span-6 md:col-start-7 md:mt-32",
+  "md:col-span-4",
+  "md:col-span-7 md:col-start-6 md:mt-20",
+  "md:col-span-7",
+  "md:col-span-4 md:col-start-9 md:mt-28",
+];
+
+const mediaLayouts = [
+  "aspect-[4/5]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-video",
+  "aspect-[16/10]",
+  "aspect-[4/5]",
+];
 
 const OurWork = () => {
   const [active, setActive] = useState("All");
@@ -43,148 +69,176 @@ const OurWork = () => {
       .eq("published", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
-    if (data) {
-      setDbWorks(
-        (data as any[]).map((w) => ({
-          id: w.id,
-          slug: w.slug,
-          title: w.title,
-          client: w.client_name || "iKAMBA",
-          category: w.category || "Story",
-          year: w.year || "",
-          cover: w.cover_url || "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1600&q=80",
-          video: w.video_url || undefined,
-          excerpt: w.summary || "",
-          href: `/our-work/${w.slug}`,
-          orientation: w.orientation || "landscape",
-          editable: true,
-        }))
-      );
-    }
+
+    if (!data) return;
+    setDbWorks((data as any[]).map((work) => ({
+      id: work.id,
+      slug: work.slug,
+      title: work.title,
+      client: work.client_name || "iKAMBA",
+      category: work.category || "Story",
+      year: work.year || "",
+      cover: work.cover_url || "",
+      video: work.video_url || undefined,
+      excerpt: work.summary || "",
+      href: `/our-work/${work.slug}`,
+      orientation: work.orientation || "landscape",
+      editable: true,
+    })));
   }, []);
 
   useEffect(() => { load(); }, [load]);
 
   const remove = async (id: string, title: string) => {
-    if (!window.confirm(`Remove "${title}" from Our Work? This cannot be undone.`)) return;
+    if (!window.confirm(`Remove “${title}” from Our Work? This cannot be undone.`)) return;
     const { error } = await (supabase as any).from("works").delete().eq("id", id);
-    if (error) { toast.error("Could not remove this item."); return; }
+    if (error) {
+      toast.error("Could not remove this item.");
+      return;
+    }
+    setDbWorks((previous) => previous.filter((work) => work.id !== id));
     toast.success("Removed from Our Work.");
-    setDbWorks((prev) => prev.filter((w) => w.id !== id));
   };
 
-  const all: Card[] = useMemo(() => [...dbWorks, ...PROJECTS.map(fromProject)], [dbWorks]);
-  const categories = ["All", ...Array.from(new Set(all.map((c) => c.category)))];
-  const visible = active === "All" ? all : all.filter((c) => c.category === active);
+  const all = useMemo(() => [...dbWorks, ...PROJECTS.map(fromProject)], [dbWorks]);
+  const categories = useMemo(() => ["All", ...Array.from(new Set(all.map((card) => card.category)))], [all]);
+  const visible = active === "All" ? all : all.filter((card) => card.category === active);
+  const featured = visible[0];
+  const projects = visible.slice(1);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="portfolio-page min-h-screen bg-background text-foreground">
       <Navbar />
 
-      {/* Editorial header */}
-      <section className="section-padding pt-32 pb-12 md:pt-40 gradient-navy text-white">
-        <div className="max-w-7xl mx-auto">
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-xs uppercase tracking-[0.25em] font-semibold text-accent mb-6">
-            Our Work · Portfolio Journal
-          </motion.p>
-          <div className="grid md:grid-cols-12 gap-6 items-end">
-            <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="md:col-span-8 text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.02] text-balance">
-              Stories we've helped <span className="text-accent">tell.</span>
-            </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="md:col-span-4 text-base text-white/70 leading-relaxed">
-              Read how we approached each campaign — the brief, the craft, and the outcome. New entries are added as we wrap projects.
-            </motion.p>
-          </div>
+      <main className="mx-auto max-w-7xl px-5 pb-24 pt-28 sm:px-8 md:pb-32 md:pt-40 lg:px-12">
+        <header className="mb-16 border-b border-border pb-10 md:mb-24 md:flex md:items-end md:justify-between md:gap-12 md:pb-14">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
+            <p className="mb-5 text-[10px] font-semibold uppercase tracking-[0.35em] text-accent">Portfolio · East Africa</p>
+            <h1 className="portfolio-display text-7xl font-normal uppercase leading-[0.82] sm:text-8xl md:text-[8.5rem]">
+              Our Work
+            </h1>
+            <p className="mt-7 max-w-lg text-base font-light leading-relaxed text-muted-foreground md:text-lg">
+              Documentary, campaign and photographic stories shaped with purpose—from the first frame to the final archive.
+            </p>
+          </motion.div>
 
-          <div className="mt-10 flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <button key={c} onClick={() => setActive(c)}
-                className={`px-4 py-2 rounded-full text-xs uppercase tracking-widest font-semibold border transition-all ${active === c
-                  ? "bg-accent text-accent-foreground border-accent"
-                  : "bg-transparent text-white/80 border-white/20 hover:border-accent hover:text-accent"
-                  }`}>
-                {c}
-              </button>
+          <div className="mt-10 flex max-w-xl flex-wrap gap-x-6 gap-y-3 md:mt-0 md:justify-end">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setActive(category)}
+                className={`h-auto rounded-none px-0 py-1 text-[10px] uppercase tracking-[0.2em] hover:bg-transparent ${active === category ? "text-accent" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {category}
+              </Button>
             ))}
           </div>
+        </header>
 
-          {isInternal && (
-            <div className="mt-8">
-              <Link to="/admin?tab=works"
-                className="inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground px-5 py-2.5 text-xs uppercase tracking-widest font-bold hover:opacity-90 transition">
-                <Pencil size={14} /> Manage Our Work
+        {featured ? (
+          <section key={active} className="grid grid-cols-1 gap-x-8 gap-y-20 md:grid-cols-12 md:gap-y-28">
+            <motion.article
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="group relative md:col-span-12"
+            >
+              <Link to={featured.href} className="block">
+                <div className="relative aspect-[4/3] overflow-hidden bg-card sm:aspect-[16/8]">
+                  <MediaPlayer
+                    url={featured.video}
+                    poster={featured.cover}
+                    title={featured.title}
+                    className="absolute inset-0 h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.025]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/55 via-transparent to-transparent" />
+                  <span className="absolute left-4 top-4 border border-foreground/20 bg-background/70 px-3 py-2 text-[9px] uppercase tracking-[0.25em] backdrop-blur-md md:left-6 md:top-6">
+                    Featured story
+                  </span>
+                </div>
+                <div className="mt-7 gap-8 md:flex md:items-start md:justify-between">
+                  <div>
+                    <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-accent">
+                      {featured.category} · {featured.client}{featured.year ? ` · ${featured.year}` : ""}
+                    </p>
+                    <h2 className="portfolio-display max-w-3xl text-4xl font-normal uppercase leading-none md:text-6xl">{featured.title}</h2>
+                  </div>
+                  <p className="mt-5 max-w-sm text-sm font-light leading-relaxed text-muted-foreground md:mt-1">{featured.excerpt}</p>
+                </div>
               </Link>
-            </div>
-          )}
-        </div>
-      </section>
+              {isInternal && featured.editable && featured.id && (
+                <div className="absolute right-4 top-4 z-10 flex gap-2 md:right-6 md:top-6">
+                  <Button asChild size="icon" variant="secondary" aria-label={`Edit ${featured.title}`}>
+                    <Link to="/admin?tab=works"><Pencil /></Link>
+                  </Button>
+                  <Button size="icon" variant="destructive" onClick={() => remove(featured.id as string, featured.title)} aria-label={`Delete ${featured.title}`}>
+                    <Trash2 />
+                  </Button>
+                </div>
+              )}
+            </motion.article>
 
-      {/* Uniform card grid */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {visible.map((p, i) => (
-              <motion.article key={p.href}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5, delay: (i % 4) * 0.05 }}
-                className="relative">
-                <Link to={p.href} className="group block">
-                  <div className="relative overflow-hidden rounded-2xl aspect-[4/5] bg-black">
+            {projects.map((project, index) => (
+              <motion.article
+                key={project.href}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.65 }}
+                className={`group relative ${itemLayouts[index % itemLayouts.length]}`}
+              >
+                <Link to={project.href} className="block">
+                  <div className={`relative overflow-hidden bg-card ${mediaLayouts[index % mediaLayouts.length]}`}>
                     <MediaPlayer
-                      url={p.video}
-                      poster={p.cover}
-                      title={p.title}
-                      className={`absolute inset-0 h-full w-full transition-transform duration-700 group-hover:scale-105 ${
-                        p.orientation === "portrait" ? "object-cover" : "object-cover"
-                      }`}
+                      url={project.video}
+                      poster={project.cover}
+                      title={project.title}
+                      className={`absolute inset-0 h-full w-full transition duration-1000 ease-out group-hover:scale-[1.035] ${project.orientation === "portrait" ? "object-contain bg-card" : "object-cover"}`}
                     />
-                    <div className="absolute top-3 left-3 bg-background/90 backdrop-blur px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold pointer-events-none">
-                      {p.category}
+                    <div className="absolute inset-0 bg-background/10 transition-colors duration-700 group-hover:bg-transparent" />
+                    <span className="absolute right-4 top-4 text-[10px] tracking-[0.25em] text-foreground/70">{String(index + 2).padStart(2, "0")}</span>
+                  </div>
+                  <div className="mt-5 border-t border-border pt-5">
+                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-accent">
+                      {project.category}{project.year ? ` · ${project.year}` : ""}
+                    </p>
+                    <div className="flex items-start justify-between gap-5">
+                      <div>
+                        <h2 className="portfolio-display text-3xl font-normal uppercase leading-none md:text-4xl">{project.title}</h2>
+                        <p className="mt-3 text-xs uppercase tracking-[0.14em] text-muted-foreground">{project.client}</p>
+                      </div>
+                      <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent" />
                     </div>
                   </div>
-                  <div className="pt-4">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-1.5">
-                      {p.client}{p.year ? ` · ${p.year}` : ""}
-                    </p>
-                    <h2 className="text-lg md:text-xl font-extrabold leading-snug mb-2 line-clamp-2 group-hover:text-accent transition-colors">{p.title}</h2>
-                    <p className="text-sm text-foreground/70 leading-relaxed line-clamp-3">{p.excerpt}</p>
-                  </div>
                 </Link>
-
-                {isInternal && p.editable && p.id && (
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    <Link to="/admin?tab=works"
-                      className="rounded-full bg-background/90 backdrop-blur p-2 hover:bg-accent hover:text-accent-foreground transition"
-                      aria-label={`Edit ${p.title}`}>
-                      <Pencil size={14} />
-                    </Link>
-                    <button onClick={() => remove(p.id!, p.title)}
-                      className="rounded-full bg-background/90 backdrop-blur p-2 text-destructive hover:bg-destructive hover:text-destructive-foreground transition"
-                      aria-label={`Delete ${p.title}`}>
-                      <Trash2 size={14} />
-                    </button>
+                {isInternal && project.editable && project.id && (
+                  <div className="absolute right-3 top-3 z-10 flex gap-2">
+                    <Button asChild size="icon" variant="secondary" aria-label={`Edit ${project.title}`}>
+                      <Link to="/admin?tab=works"><Pencil /></Link>
+                    </Button>
+                    <Button size="icon" variant="destructive" onClick={() => remove(project.id as string, project.title)} aria-label={`Delete ${project.title}`}>
+                      <Trash2 />
+                    </Button>
                   </div>
                 )}
               </motion.article>
             ))}
-          </div>
-        </div>
+          </section>
+        ) : (
+          <div className="py-24 text-center text-muted-foreground">No projects in this category yet.</div>
+        )}
 
-        <div className="max-w-6xl mx-auto px-4 md:px-8 mt-24 border-t border-border pt-12 grid md:grid-cols-2 gap-8 items-end">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-            Have a story worth telling well?
-          </h2>
-          <div className="md:text-right">
-            <Link to="/start-a-project"
-              className="inline-flex items-center gap-2 text-base font-semibold border-b-2 border-accent pb-1 hover:gap-3 transition-all">
-              Start a project <ArrowUpRight size={18} />
-            </Link>
-          </div>
-        </div>
-      </section>
+        <section className="mt-36 border-t border-border pt-20 text-center md:mt-52 md:pt-28">
+          <p className="mb-7 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Have a story worth telling?</p>
+          <Link to="/start-a-project" className="group inline-flex items-center gap-4">
+            <span className="portfolio-display text-5xl font-normal uppercase leading-none transition-colors group-hover:text-accent md:text-7xl">Start a project</span>
+            <ArrowUpRight className="h-8 w-8 text-accent transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+          </Link>
+        </section>
+      </main>
 
       <Footer />
     </div>
