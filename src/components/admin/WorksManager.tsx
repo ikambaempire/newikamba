@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus, Upload, Save, X, Pencil, Eye } from "lucide-react";
 import MediaPlayer from "@/components/MediaPlayer";
+import { useSearchParams } from "react-router-dom";
 
 type Work = {
   id: string;
@@ -66,6 +67,7 @@ const WorksManager = () => {
   const [editing, setEditing] = useState<Partial<Work> | null>(null);
   const [uploading, setUploading] = useState<"cover" | "video" | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const load = async () => {
     setLoading(true);
@@ -77,6 +79,22 @@ const WorksManager = () => {
   };
 
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const editId = searchParams.get("edit");
+    if (!editId || items.length === 0) return;
+    const selected = items.find((item) => item.id === editId);
+    if (selected) setEditing(selected);
+  }, [items, searchParams]);
+
+  const closeEditor = () => {
+    setEditing(null);
+    if (searchParams.has("edit")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("edit");
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   const handleUpload = async (file: File, kind: "cover" | "video") => {
     setUploading(kind);
@@ -137,7 +155,7 @@ const WorksManager = () => {
       return;
     }
     toast({ title: "Saved", description: "Work item saved." });
-    setEditing(null);
+    closeEditor();
     load();
   };
 
@@ -219,11 +237,11 @@ const WorksManager = () => {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
+        <div className="fixed inset-0 z-50 bg-background/70 flex items-center justify-center p-4" onClick={closeEditor}>
           <div className="bg-background border border-border rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-5 border-b border-border sticky top-0 bg-background z-10">
               <h3 className="font-bold">{(editing as Work).id ? "Edit work" : "New work"}</h3>
-              <Button variant="ghost" size="sm" onClick={() => setEditing(null)}><X size={16} /></Button>
+              <Button variant="ghost" size="sm" onClick={closeEditor}><X size={16} /></Button>
             </div>
             <div className="p-5 space-y-4">
               <div>
@@ -374,7 +392,7 @@ const WorksManager = () => {
               </div>
             </div>
             <div className="p-5 border-t border-border flex justify-end gap-2 sticky bottom-0 bg-background">
-              <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+              <Button variant="outline" onClick={closeEditor}>Cancel</Button>
               <Button onClick={save} disabled={uploading !== null} className="gap-2"><Save size={14} /> {uploading ? "Uploading…" : "Save"}</Button>
             </div>
           </div>
