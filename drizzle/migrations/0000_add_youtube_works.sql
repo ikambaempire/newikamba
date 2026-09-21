@@ -1,0 +1,18 @@
+INSERT INTO public.works (title, slug, video_url, cover_url, category, client_name, year, published, orientation, sort_order) VALUES
+('Explorease Launch App Video', 'explorease-launch-app-video', 'https://youtu.be/UQy82jb4Xno', 'https://i.ytimg.com/vi/UQy82jb4Xno/maxresdefault.jpg', 'Commercial', 'Explorease', '2026', true, 'landscape', 10),
+('GS Kamabuye Rising AI Tablet', 'gs-kamabuye-rising-ai-tablet', 'https://youtu.be/c1Aqk4o-6u8', 'https://i.ytimg.com/vi/c1Aqk4o-6u8/maxresdefault.jpg', 'Documentary', 'Rising Academies', '2026', true, 'landscape', 11),
+('Four Points by Sheraton Kigali Hotel Commercial', 'four-points-by-sheraton-kigali-hotel-commercial', 'https://youtu.be/SEqsxy5NPCA', 'https://i.ytimg.com/vi/SEqsxy5NPCA/maxresdefault.jpg', 'Commercial', 'Four Points by Sheraton', '2026', true, 'landscape', 12),
+('IOM Workshop Video Day 01', 'iom-workshop-video-day-01', 'https://youtu.be/2aibCfeANgQ', 'https://i.ytimg.com/vi/2aibCfeANgQ/maxresdefault.jpg', 'Event', 'IOM', '2026', true, 'landscape', 13),
+('Launch Video', 'launch-video', 'https://youtu.be/2S4PaMhOor4', 'https://i.ytimg.com/vi/2S4PaMhOor4/maxresdefault.jpg', 'Commercial', '', '2026', true, 'landscape', 14),
+('Mövenpick', 'movenpick', 'https://youtu.be/1mXVsQ-9lJM', 'https://i.ytimg.com/vi/1mXVsQ-9lJM/maxresdefault.jpg', 'Commercial', 'Mövenpick', '2026', true, 'landscape', 15),
+('LDK ServiceNow', 'ldk-servicenow', 'https://youtu.be/JBcPkG4C2ho', 'https://i.ytimg.com/vi/JBcPkG4C2ho/maxresdefault.jpg', 'Corporate', 'LDK', '2026', true, 'landscape', 16),
+('Imagine We Team Day', 'imagine-we-team-day', 'https://youtu.be/3rhIhxOOJgw', 'https://i.ytimg.com/vi/3rhIhxOOJgw/maxresdefault.jpg', 'Event', 'Imagine We', '2026', true, 'landscape', 17),
+('AITBLP Official Launch at GS Kamabuye', 'aitblp-official-launch-at-gs-kamabuye', 'https://youtu.be/iTaqVVEDLGk', 'https://i.ytimg.com/vi/iTaqVVEDLGk/maxresdefault.jpg', 'Event', 'AITBLP', '2026', true, 'landscape', 18),
+('CFA Society East Africa 2025/26 Research Challenge', 'cfa-society-east-africa-202526-research-challenge', 'https://youtu.be/zshKIdV6qj0', 'https://i.ytimg.com/vi/zshKIdV6qj0/maxresdefault.jpg', 'Event', 'CFA Society East Africa', '2026', true, 'landscape', 19),
+('Women''s Day PSF', 'womens-day-psf', 'https://youtu.be/4cwdTDyupec', 'https://i.ytimg.com/vi/4cwdTDyupec/maxresdefault.jpg', 'Event', 'PSF', '2026', true, 'landscape', 20),
+('Woman''s Month 2026 by HerInTech', 'womans-month-2026-by-herintech', 'https://youtu.be/XydlqksRDZA', 'https://i.ytimg.com/vi/XydlqksRDZA/maxresdefault.jpg', 'Campaign', 'HerInTech', '2026', true, 'landscape', 21),
+('UNICEF Schools for Africa Rwanda — Girls'' Education II', 'unicef-schools-for-africa-rwanda-girls-education-ii', 'https://youtu.be/ddViHU1ownQ', 'https://i.ytimg.com/vi/ddViHU1ownQ/maxresdefault.jpg', 'Documentary', 'UNICEF', '2026', true, 'landscape', 22),
+('UNICEF Schools for Africa Rwanda — Girls'' Education', 'unicef-schools-for-africa-rwanda-girls-education', 'https://youtu.be/Jm3D8dMUVaA', 'https://i.ytimg.com/vi/Jm3D8dMUVaA/maxresdefault.jpg', 'Documentary', 'UNICEF', '2026', true, 'landscape', 23),
+('Rwandan Women Transforming Their Farms With Trees', 'rwandan-women-transforming-their-farms-with-trees', 'https://youtu.be/U3D_r8uvuR0', 'https://i.ytimg.com/vi/U3D_r8uvuR0/maxresdefault.jpg', 'Documentary', 'World Resources Institute', '2026', true, 'landscape', 24),
+('Women Empowering Women in Rwanda — Zaza Rising', 'women-empowering-women-in-rwanda-zaza-rising', 'https://youtu.be/S2iihpF5tM8', 'https://i.ytimg.com/vi/S2iihpF5tM8/maxresdefault.jpg', 'Documentary', 'Created by Women', '2026', true, 'landscape', 25)
+ON CONFLICT (slug) DO NOTHING;
