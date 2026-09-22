@@ -68,9 +68,16 @@ const OurWork = () => {
     toast.success("Removed from Our Work.");
   };
 
-  // Only database-backed video entries appear here, so every published item can
-  // also be edited, reordered, unpublished, or deleted from the dashboard.
-  const all = useMemo(() => dbWorks.filter((card) => Boolean(card.video)), [dbWorks]);
+  // Only dashboard-managed video entries appear here. Portrait work leads the
+  // collection, followed by landscape work; saved sort order applies within each group.
+  const all = useMemo(() => {
+    const videos = dbWorks.filter((card) => Boolean(card.video));
+    return [...videos].sort((a, b) => {
+      const aPortrait = a.orientation === "portrait" ? 0 : 1;
+      const bPortrait = b.orientation === "portrait" ? 0 : 1;
+      return aPortrait - bPortrait;
+    });
+  }, [dbWorks]);
   const categories = useMemo(() => ["All", ...Array.from(new Set(all.map((card) => card.category)))], [all]);
   const visible = active === "All" ? all : all.filter((card) => card.category === active);
 
@@ -118,7 +125,7 @@ const OurWork = () => {
                 className="group relative min-w-0"
               >
                 <Link to={project.href} className="block">
-                  <div className="relative aspect-video overflow-hidden bg-card">
+                   <div className={`relative overflow-hidden bg-card ${project.orientation === "portrait" ? "aspect-[9/16]" : "aspect-video"}`}>
                     <MediaPlayer
                       url={project.video}
                       poster={project.cover}
@@ -136,6 +143,9 @@ const OurWork = () => {
                       <div>
                         <h2 className="portfolio-display text-2xl font-normal uppercase leading-none md:text-3xl">{project.title}</h2>
                         <p className="mt-3 text-xs uppercase tracking-[0.14em] text-muted-foreground">{project.client}</p>
+                        {project.excerpt && (
+                          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{project.excerpt}</p>
+                        )}
                       </div>
                       <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent" />
                     </div>
