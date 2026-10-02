@@ -22,6 +22,7 @@ import creativeSilhouette from "@/assets/creative-silhouette.webp";
 import popupStrategy from "@/assets/popup-strategy.jpg";
 import popupStoryClarity from "@/assets/popup-story-clarity.jpg";
 import problemBg from "@/assets/problem-bg.jpg";
+import mockupReel from "@/assets/mockup-reel.mp4.asset.json";
 
 type PopupSetting = {
   id: string;
@@ -262,7 +263,7 @@ const DeviceMockups = () => (
       </div>
       <div className="relative aspect-video overflow-hidden bg-black">
         <video
-          src="/mockup-reel.mp4"
+          src={mockupReel.url}
           autoPlay
           loop
           muted
@@ -282,7 +283,7 @@ const DeviceMockups = () => (
     >
       <div className="relative aspect-[9/16] overflow-hidden bg-black">
         <video
-          src="/mockup-reel.mp4"
+          src={mockupReel.url}
           autoPlay
           loop
           muted
@@ -301,7 +302,7 @@ const PopupMediaCarousel = ({ showVideo = false, customMedia }: { showVideo?: bo
     ? [{ type: (customMedia.type === "video" ? "video" : "image") as "video" | "image", src: customMedia.url, label: "Popup media" }]
     : showVideo
     ? [
-      { type: "video" as const, src: "/mockup-reel.mp4", label: "iKAMBA story preview" },
+      { type: "video" as const, src: mockupReel.url, label: "iKAMBA story preview" },
       { type: "image" as const, src: popupStoryClarity, label: "iKAMBA story clarity message" },
       { type: "image" as const, src: popupStrategy, label: "iKAMBA free audit resource" },
     ]
