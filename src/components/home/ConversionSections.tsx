@@ -246,6 +246,14 @@ const StepAuditForm = ({ source, onSuccess, onStepChange, ctaLabel = "Get My Fre
   );
 };
 
+const loopMockupBeforeLogo = (event: FormEvent<HTMLVideoElement>) => {
+  const video = event.currentTarget;
+  if (Number.isFinite(video.duration) && video.duration > 5 && video.currentTime >= video.duration - 5) {
+    video.currentTime = 0;
+    void video.play().catch(() => undefined);
+  }
+};
+
 const DeviceMockups = () => (
   <div className="relative min-h-[420px] lg:min-h-[520px]">
     {/* Laptop mockup with autoplay video (landscape) */}
@@ -269,6 +277,7 @@ const DeviceMockups = () => (
           muted
           playsInline
           preload="auto"
+           onTimeUpdate={loopMockupBeforeLogo}
           className="h-full w-full object-cover"
         />
       </div>
@@ -289,6 +298,7 @@ const DeviceMockups = () => (
           muted
           playsInline
           preload="auto"
+           onTimeUpdate={loopMockupBeforeLogo}
           className="h-full w-full object-cover"
         />
       </div>
