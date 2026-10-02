@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent, type SyntheticEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
@@ -245,13 +245,6 @@ const StepAuditForm = ({ source, onSuccess, onStepChange, ctaLabel = "Get My Fre
   );
 };
 
-const restartBeforeEnd = (event: SyntheticEvent<HTMLVideoElement>) => {
-  const video = event.currentTarget;
-  if (Number.isFinite(video.duration) && video.duration > 3 && video.currentTime >= video.duration - 3) {
-    video.currentTime = 0;
-  }
-};
-
 const DeviceMockups = () => (
   <div className="relative min-h-[420px] lg:min-h-[520px]">
     {/* Laptop mockup with autoplay video (landscape) */}
@@ -271,10 +264,10 @@ const DeviceMockups = () => (
         <video
           src="/mockup-reel.mp4"
           autoPlay
+          loop
           muted
           playsInline
           preload="auto"
-          onTimeUpdate={restartBeforeEnd}
           className="h-full w-full object-cover"
         />
       </div>
@@ -291,10 +284,10 @@ const DeviceMockups = () => (
         <video
           src="/mockup-reel.mp4"
           autoPlay
+          loop
           muted
           playsInline
           preload="auto"
-          onTimeUpdate={restartBeforeEnd}
           className="h-full w-full object-cover"
         />
       </div>
